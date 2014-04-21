@@ -344,11 +344,11 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `xuehaitiku`.`payrecord`
+-- Table `xuehaitiku`.`pay_record`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `xuehaitiku`.`payrecord` ;
+DROP TABLE IF EXISTS `xuehaitiku`.`pay_record` ;
 
-CREATE  TABLE IF NOT EXISTS `xuehaitiku`.`payrecord` (
+CREATE  TABLE IF NOT EXISTS `xuehaitiku`.`pay_record` (
   `payment_record_id` INT NOT NULL AUTO_INCREMENT COMMENT '支付记录' ,
   `user_id` INT NOT NULL ,
   `exam_bank_id` INT NOT NULL ,
