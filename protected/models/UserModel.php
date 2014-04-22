@@ -5,7 +5,7 @@
  *
  * The followings are the available columns in table 'user':
  * @property integer $user_id
- * @property string $name
+ * @property string $username
  * @property string $password
  * @property string $creation_time
  * @property integer $is_admin
@@ -16,7 +16,7 @@
  * @property Payrecord[] $payrecords
  * @property QuestionInstance[] $questionInstances
  */
-class UserModel extends CActiveRecord
+class UserModel extends ActiveRecord
 {
 	/**
 	 * @return string the associated database table name
@@ -34,14 +34,15 @@ class UserModel extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('name, password', 'required'),
+			array('username, password', 'required'),
 			array('is_admin', 'numerical', 'integerOnly'=>true),
-			array('name', 'length', 'max'=>30),
+			array('username', 'length', 'max'=>30),
+			array('username', 'unique'),
 			array('password', 'length', 'max'=>32),
 			array('creation_time', 'safe'),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('user_id, name, password, creation_time, is_admin', 'safe', 'on'=>'search'),
+			array('user_id, username, password, creation_time, is_admin', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -66,11 +67,11 @@ class UserModel extends CActiveRecord
 	public function attributeLabels()
 	{
 		return array(
-			'user_id' => 'User',
-			'name' => 'Name',
-			'password' => 'Password',
-			'creation_time' => 'Creation Time',
-			'is_admin' => 'Is Admin',
+			'user_id' => 'ID',
+			'username' => '用户名',
+			'password' => '密码',
+			'creation_time' => '创建时间',
+			'is_admin' => '是否管理员',
 		);
 	}
 
@@ -93,7 +94,7 @@ class UserModel extends CActiveRecord
 		$criteria=new CDbCriteria;
 
 		$criteria->compare('user_id',$this->user_id);
-		$criteria->compare('name',$this->name,true);
+		$criteria->compare('username',$this->username,true);
 		$criteria->compare('password',$this->password,true);
 		$criteria->compare('creation_time',$this->creation_time,true);
 		$criteria->compare('is_admin',$this->is_admin);

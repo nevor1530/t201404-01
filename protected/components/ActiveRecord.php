@@ -8,7 +8,7 @@
  */
 class ActiveRecord extends CActiveRecord {
 
-	public $attrCreateTime='create_time';
+	public $attrCreateTime='creation_time';
 	public $attrModifyTime='update_time';
 
 	public function beforeSave() {

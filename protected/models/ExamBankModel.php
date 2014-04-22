@@ -49,7 +49,7 @@ class ExamBankModel extends CActiveRecord
 		// class name for the relations automatically generated below.
 		return array(
 			'payments' => array(self::HAS_MANY, 'Payment', 'exam_bank_id'),
-			'payrecords' => array(self::HAS_MANY, 'Payrecord', 'exam_bank_id'),
+			'pay_records' => array(self::HAS_MANY, 'PayRecord', 'exam_bank_id'),
 			'subjects' => array(self::HAS_MANY, 'Subject', 'exam_bank_id'),
 		);
 	}
@@ -60,9 +60,9 @@ class ExamBankModel extends CActiveRecord
 	public function attributeLabels()
 	{
 		return array(
-			'exam_bank_id' => 'Exam Bank',
-			'name' => 'Name',
-			'price' => 'Price',
+			'exam_bank_id' => 'ID',
+			'name' => '题库名称',
+			'price' => '价格(元/月)',
 		);
 	}
 

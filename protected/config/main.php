@@ -7,8 +7,9 @@
 // CWebApplication properties can be configured here.
 return array(
 	'basePath'=>dirname(__FILE__).DIRECTORY_SEPARATOR.'..',
-	'name'=>'猿题库',
+	'name'=>'学海题库',
 	'language'=>'zh_cn',
+	'timeZone'=>'Asia/Shanghai',
 
 	// preloading 'log' component
 	'preload'=>array('log'),
