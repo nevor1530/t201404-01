@@ -1,0 +1,35 @@
+.navbar {
+	background-color: #3774b4;
+	height: 70px;
+}
+
+.navbar-fixed-top {
+	position: fixed
+}
+
+.navbar .logo {
+	padding-top: 5px;
+	padding-bottom: 5px;
+	height: 100%;
+	width: auto;
+}
+
+.navbar .btn-container {
+	font-size: 20px;
+	color: #FFFFFF;
+	margin-top: 40px;
+}
+
+.navbar .divider {
+	width:20px; 
+	height:20px;
+	margin-left: 10px;
+    margin-right: 10px;
+	border-left-color:#FFFFFF; 
+	border-left-style:solid; 
+	border-left-width:2px;
+}
+
+#page {
+	padding-top: 90px;
+}

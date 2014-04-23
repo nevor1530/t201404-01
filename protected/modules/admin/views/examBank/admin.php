@@ -30,7 +30,7 @@ $('.search-form form').submit(function(){
 		'exam_bank_id',
 		'name',
 		'price',
-		'subjects',
+		//'subjects',
 		array(
 			'class'=>'bootstrap.widgets.TbButtonColumn',
 			'template'=>'{update} {add_subject} {delete}',

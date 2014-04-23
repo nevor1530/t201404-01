@@ -107,7 +107,7 @@ DROP TABLE IF EXISTS `xuehaitiku`.`user` ;
 
 CREATE  TABLE IF NOT EXISTS `xuehaitiku`.`user` (
   `user_id` INT NOT NULL AUTO_INCREMENT ,
-  `name` VARCHAR(30) NOT NULL ,
+  `username` VARCHAR(30) NOT NULL ,
   `password` CHAR(32) NOT NULL ,
   `creation_time` TIMESTAMP NULL ,
   `is_admin` BIT NOT NULL DEFAULT 0 ,
