@@ -1,12 +1,9 @@
 <?php
-/* @var $this ExamBankController */
-/* @var $model ExamBankModel */
-
 $this->breadcrumbs=array(
 );
 
 $this->menu=array(
-	array('label'=>'创建题库', 'url'=>array('create')),
+	array('label'=>'创建题库','url'=>array('create')),
 );
 
 Yii::app()->clientScript->registerScript('search', "
@@ -15,7 +12,7 @@ $('.search-button').click(function(){
 	return false;
 });
 $('.search-form form').submit(function(){
-	$('#exam-bank-model-grid').yiiGridView('update', {
+	$.fn.yiiGridView.update('exam-bank-model-grid', {
 		data: $(this).serialize()
 	});
 	return false;
@@ -23,15 +20,27 @@ $('.search-form form').submit(function(){
 ");
 ?>
 
-<?php $this->widget('zii.widgets.grid.CGridView', array(
+<h1>题库管理</h1>
+
+<?php $this->widget('bootstrap.widgets.TbGridView',array(
 	'id'=>'exam-bank-model-grid',
 	'dataProvider'=>$model->search(),
 	'filter'=>$model,
 	'columns'=>array(
+		'exam_bank_id',
 		'name',
 		'price',
+		'subjects',
 		array(
-			'class'=>'CButtonColumn',
+			'class'=>'bootstrap.widgets.TbButtonColumn',
+			'template'=>'{update} {add_subject} {delete}',
+			'buttons'=>array(
+				'add_subject' => array(
+					'label'=>'增加课程',
+					'url'=>'abc',
+					'icon'=>'plus',
+				),
+			),
 		),
 	),
 )); ?>

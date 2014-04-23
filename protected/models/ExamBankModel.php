@@ -48,9 +48,9 @@ class ExamBankModel extends CActiveRecord
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
-			'payments' => array(self::HAS_MANY, 'Payment', 'exam_bank_id'),
-			'pay_records' => array(self::HAS_MANY, 'PayRecord', 'exam_bank_id'),
-			'subjects' => array(self::HAS_MANY, 'Subject', 'exam_bank_id'),
+			'payments' => array(self::HAS_MANY, 'PaymentModel', 'exam_bank_id'),
+			'pay_records' => array(self::HAS_MANY, 'PayRecordModel', 'exam_bank_id'),
+			'subjects' => array(self::HAS_MANY, 'SubjectModel', 'exam_bank_id'),
 		);
 	}
 
@@ -63,6 +63,7 @@ class ExamBankModel extends CActiveRecord
 			'exam_bank_id' => 'ID',
 			'name' => '题库名称',
 			'price' => '价格(元/月)',
+			'subjects' => '包含课程',
 		);
 	}
 
