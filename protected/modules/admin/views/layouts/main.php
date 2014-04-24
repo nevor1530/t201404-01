@@ -19,14 +19,9 @@
         array(
             'class'=>'bootstrap.widgets.TbMenu',
             'items'=>array(
-				array('label'=>'首页', 'url'=>array('/admin/examBank/index')),
-				array('label'=>'高考', 'url'=>array('/admin/examBank/'), 
-					'items'=>array(
-						array('label'=>'高考语文', 'url'=>array('/site/index')),
-						array('label'=>'高考数学', 'url'=>array('/site/page', 'view'=>'about')),
-						array('label'=>'高考英语', 'url'=>array('/site/contact')),
-					),
-				),
+				array('label'=>'题库', 'url'=>array('/admin/examBank/index')),
+				array('label'=>'课程', 'url'=>array('/admin/subject/index')),
+				array('label'=>'考点树', 'url'=>array('/admin/examPoint/index'))
 			),
         ),
     ),

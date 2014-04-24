@@ -11,7 +11,7 @@ class ExamBankController extends AdminController
 		$model=new ExamBankModel;
 
 		// Uncomment the following line if AJAX validation is needed
-		// $this->performAjaxValidation($model);
+		$this->performAjaxValidation($model);
 
 		if(isset($_POST['ExamBankModel']))
 		{
@@ -41,7 +41,7 @@ class ExamBankController extends AdminController
 		{
 			$model->attributes=$_POST['ExamBankModel'];
 			if($model->save())
-				$this->redirect(array('view','id'=>$model->exam_bank_id));
+				$this->redirect(array('index'));
 		}
 
 		$this->render('update',array(

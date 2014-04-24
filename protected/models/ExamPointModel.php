@@ -1,28 +1,25 @@
 <?php
 
 /**
- * This is the model class for table "subject".
+ * This is the model class for table "exam_point".
  *
- * The followings are the available columns in table 'subject':
- * @property integer $subject_id
- * @property integer $exam_bank_id
+ * The followings are the available columns in table 'exam_point':
  * @property integer $exam_point_id
  * @property string $name
- * @property integer $exam_point_show_level
+ * @property integer $pid
  *
  * The followings are the available model relations:
- * @property ExamPaper[] $examPapers
- * @property ExamBank $examBank
- * @property ExamPoint $examPoint
+ * @property QuestionExamPoint[] $questionExamPoints
+ * @property Subject[] $subjects
  */
-class SubjectModel extends CActiveRecord
+class ExamPointModel extends CActiveRecord
 {
 	/**
 	 * @return string the associated database table name
 	 */
 	public function tableName()
 	{
-		return 'subject';
+		return 'exam_point';
 	}
 
 	/**
@@ -33,13 +30,21 @@ class SubjectModel extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('exam_bank_id, name', 'required'),
-			array('exam_bank_id, exam_point_id, exam_point_show_level', 'numerical', 'integerOnly'=>true),
+			array('name', 'required'),
+			array('pid', 'numerical', 'integerOnly'=>true),
 			array('name', 'length', 'max'=>45),
-			array('exam_point_show_level', 'numerical', 'min'=>1, 'max'=>5),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('subject_id, exam_bank_id, exam_point_id, name, exam_point_show_level', 'safe', 'on'=>'search'),
+			array('exam_point_id, name, pid', 'safe', 'on'=>'search'),
+		);
+	}
+		
+	public function scopes()
+	{
+		return array(
+			'top'=>array(
+				'condition'=>'pid=0',
+			)
 		);
 	}
 
@@ -51,9 +56,8 @@ class SubjectModel extends CActiveRecord
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
-			'examPapers' => array(self::HAS_MANY, 'ExamPaper', 'subject_id'),
-			'examBank' => array(self::BELONGS_TO, 'ExamBank', 'exam_bank_id'),
-			'examPoint' => array(self::BELONGS_TO, 'ExamPoint', 'exam_point_id'),
+			'questionExamPoints' => array(self::HAS_MANY, 'QuestionExamPoint', 'exam_point_id'),
+			'subjects' => array(self::HAS_MANY, 'Subject', 'exam_point_id'),
 		);
 	}
 
@@ -63,11 +67,9 @@ class SubjectModel extends CActiveRecord
 	public function attributeLabels()
 	{
 		return array(
-			'subject_id' => 'ID',
-			'exam_bank_id' => '题库',
-			'exam_point_id' => '考点树',
-			'name' => '课程名称',
-			'exam_point_show_level' => '考点树显示层级',
+			'exam_point_id' => 'Exam Point',
+			'name' => 'Name',
+			'pid' => 'Pid',
 		);
 	}
 
@@ -89,11 +91,9 @@ class SubjectModel extends CActiveRecord
 
 		$criteria=new CDbCriteria;
 
-		$criteria->compare('subject_id',$this->subject_id);
-		$criteria->compare('exam_bank_id',$this->exam_bank_id);
 		$criteria->compare('exam_point_id',$this->exam_point_id);
 		$criteria->compare('name',$this->name,true);
-		$criteria->compare('exam_point_show_level',$this->exam_point_show_level);
+		$criteria->compare('pid',$this->pid);
 
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
@@ -104,7 +104,7 @@ class SubjectModel extends CActiveRecord
 	 * Returns the static model of the specified AR class.
 	 * Please note that you should have this exact method in all your CActiveRecord descendants!
 	 * @param string $className active record class name.
-	 * @return SubjectModel the static model class
+	 * @return ExamPointModel the static model class
 	 */
 	public static function model($className=__CLASS__)
 	{

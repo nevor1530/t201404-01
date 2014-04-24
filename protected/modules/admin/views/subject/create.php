@@ -1,15 +1,16 @@
 <?php
+// subject create
+
 $this->breadcrumbs=array(
-	'Subject Models'=>array('index'),
-	'Create',
+	'课程管理'=>array('index'),
+	'创建课程',
 );
 
 $this->menu=array(
-	array('label'=>'List SubjectModel','url'=>array('index')),
-	array('label'=>'Manage SubjectModel','url'=>array('admin')),
 );
 ?>
 
-<h1>Create SubjectModel</h1>
+<h1>创建课程</h1>
 
-<?php echo $this->renderPartial('_form', array('model'=>$model)); ?>
+<?php include '_form.php';?>
+<?php //echo $this->renderPartial('_form', array('model'=>$model)); ?>

@@ -1,21 +1,21 @@
 <?php $form=$this->beginWidget('bootstrap.widgets.TbActiveForm',array(
-	'action'=>Yii::app()->createUrl($this->route),
-	'method'=>'get',
+	'id'=>'exam-point-model-form',
+	'enableAjaxValidation'=>false,
 )); ?>
 
-	<?php echo $form->textFieldRow($model,'subject_id',array('class'=>'span5')); ?>
+	<p class="help-block">Fields with <span class="required">*</span> are required.</p>
 
-	<?php echo $form->textFieldRow($model,'exam_bank_id',array('class'=>'span5')); ?>
-
-	<?php echo $form->textFieldRow($model,'exam_point_id',array('class'=>'span5')); ?>
+	<?php echo $form->errorSummary($model); ?>
 
 	<?php echo $form->textFieldRow($model,'name',array('class'=>'span5','maxlength'=>45)); ?>
+
+	<?php echo $form->textFieldRow($model,'pid',array('class'=>'span5')); ?>
 
 	<div class="form-actions">
 		<?php $this->widget('bootstrap.widgets.TbButton', array(
 			'buttonType'=>'submit',
 			'type'=>'primary',
-			'label'=>'Search',
+			'label'=>$model->isNewRecord ? 'Create' : 'Save',
 		)); ?>
 	</div>
 

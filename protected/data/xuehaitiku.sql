@@ -41,19 +41,10 @@ CREATE  TABLE IF NOT EXISTS `xuehaitiku`.`subject` (
   `exam_bank_id` INT NOT NULL ,
   `exam_point_id` INT NOT NULL COMMENT '顶级考点的ID' ,
   `name` VARCHAR(45) NOT NULL ,
+  `exam_point_show_level` TINYINT NOT NULL DEFAULT 3 ,
   PRIMARY KEY (`subject_id`) ,
   INDEX `fk_subject_tiku1_idx` (`exam_bank_id` ASC) ,
-  INDEX `fk_subject_topic1_idx` (`exam_point_id` ASC) ,
-  CONSTRAINT `fk_subject_tiku1`
-    FOREIGN KEY (`exam_bank_id` )
-    REFERENCES `xuehaitiku`.`exam_bank` (`exam_bank_id` )
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
-  CONSTRAINT `fk_subject_topic1`
-    FOREIGN KEY (`exam_point_id` )
-    REFERENCES `xuehaitiku`.`exam_point` (`exam_point_id` )
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
+  INDEX `fk_subject_topic1_idx` (`exam_point_id` ASC) )
 ENGINE = InnoDB;
 
 
@@ -86,17 +77,7 @@ CREATE  TABLE IF NOT EXISTS `xuehaitiku`.`exam_paper` (
   `time_length` SMALLINT NULL DEFAULT 0 COMMENT '考试时间，以秒为单位' ,
   PRIMARY KEY (`examp_paper_id`) ,
   INDEX `fk_paper_subject1_idx` (`subject_id` ASC) ,
-  INDEX `fk_paper_category1_idx` (`category_id` ASC) ,
-  CONSTRAINT `fk_paper_subject1`
-    FOREIGN KEY (`subject_id` )
-    REFERENCES `xuehaitiku`.`subject` (`subject_id` )
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
-  CONSTRAINT `fk_paper_category1`
-    FOREIGN KEY (`category_id` )
-    REFERENCES `xuehaitiku`.`category` (`category_id` )
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
+  INDEX `fk_paper_category1_idx` (`category_id` ASC) )
 ENGINE = InnoDB;
 
 
@@ -109,9 +90,10 @@ CREATE  TABLE IF NOT EXISTS `xuehaitiku`.`user` (
   `user_id` INT NOT NULL AUTO_INCREMENT ,
   `username` VARCHAR(30) NOT NULL ,
   `password` CHAR(32) NOT NULL ,
-  `creation_time` TIMESTAMP NULL ,
+  `creation_time` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP ,
   `is_admin` BIT NOT NULL DEFAULT 0 ,
-  PRIMARY KEY (`user_id`) )
+  PRIMARY KEY (`user_id`) ,
+  UNIQUE INDEX `name` (`username` ASC) )
 ENGINE = InnoDB;
 
 
@@ -128,17 +110,7 @@ CREATE  TABLE IF NOT EXISTS `xuehaitiku`.`exam_paper_instance` (
   `remain_time` SMALLINT NOT NULL COMMENT '剩余时间' ,
   PRIMARY KEY (`exam_paper_instance_id`) ,
   INDEX `fk_paperinstance_paper_idx` (`exam_paper_id` ASC) ,
-  INDEX `fk_paperinstance_user1_idx` (`user_id` ASC) ,
-  CONSTRAINT `fk_paperinstance_paper`
-    FOREIGN KEY (`exam_paper_id` )
-    REFERENCES `xuehaitiku`.`exam_paper` (`examp_paper_id` )
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
-  CONSTRAINT `fk_paperinstance_user1`
-    FOREIGN KEY (`user_id` )
-    REFERENCES `xuehaitiku`.`user` (`user_id` )
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
+  INDEX `fk_paperinstance_user1_idx` (`user_id` ASC) )
 ENGINE = InnoDB;
 
 
@@ -184,22 +156,7 @@ CREATE  TABLE IF NOT EXISTS `xuehaitiku`.`question` (
   PRIMARY KEY (`question_id`) ,
   INDEX `fk_question_paper1_idx` (`exam_paper_id` ASC) ,
   INDEX `fk_question_module1_idx` (`question_type_id` ASC) ,
-  INDEX `fk_question_article1_idx` (`material_id` ASC) ,
-  CONSTRAINT `fk_question_paper1`
-    FOREIGN KEY (`exam_paper_id` )
-    REFERENCES `xuehaitiku`.`exam_paper` (`examp_paper_id` )
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
-  CONSTRAINT `fk_question_module1`
-    FOREIGN KEY (`question_type_id` )
-    REFERENCES `xuehaitiku`.`question_type` (`question_type_id` )
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
-  CONSTRAINT `fk_question_article1`
-    FOREIGN KEY (`material_id` )
-    REFERENCES `xuehaitiku`.`material` (`material_id` )
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
+  INDEX `fk_question_article1_idx` (`material_id` ASC) )
 ENGINE = InnoDB;
 
 
@@ -217,22 +174,7 @@ CREATE  TABLE IF NOT EXISTS `xuehaitiku`.`question_instance` (
   PRIMARY KEY (`question_instance_id`) ,
   INDEX `fk_questioninstance_paperinstance1_idx` (`exam_paper_instance_id` ASC) ,
   INDEX `fk_questioninstance_question1_idx` (`question_id` ASC) ,
-  INDEX `fk_questioninstance_user1_idx` (`user_id` ASC) ,
-  CONSTRAINT `fk_questioninstance_paperinstance1`
-    FOREIGN KEY (`exam_paper_instance_id` )
-    REFERENCES `xuehaitiku`.`exam_paper_instance` (`exam_paper_instance_id` )
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
-  CONSTRAINT `fk_questioninstance_question1`
-    FOREIGN KEY (`question_id` )
-    REFERENCES `xuehaitiku`.`question` (`question_id` )
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
-  CONSTRAINT `fk_questioninstance_user1`
-    FOREIGN KEY (`user_id` )
-    REFERENCES `xuehaitiku`.`user` (`user_id` )
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
+  INDEX `fk_questioninstance_user1_idx` (`user_id` ASC) )
 ENGINE = InnoDB;
 
 
@@ -259,17 +201,7 @@ CREATE  TABLE IF NOT EXISTS `xuehaitiku`.`exam_paper_question_type` (
   `question_type_id` INT NOT NULL ,
   INDEX `fk_papermodule_paper1_idx` (`exam_paper_question_type_id` ASC) ,
   INDEX `fk_papermodule_module1_idx` (`exam_paper_id` ASC) ,
-  PRIMARY KEY (`exam_paper_question_type_id`) ,
-  CONSTRAINT `fk_papermodule_paper1`
-    FOREIGN KEY (`exam_paper_question_type_id` )
-    REFERENCES `xuehaitiku`.`exam_paper` (`examp_paper_id` )
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
-  CONSTRAINT `fk_papermodule_module1`
-    FOREIGN KEY (`exam_paper_id` )
-    REFERENCES `xuehaitiku`.`question_type` (`question_type_id` )
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
+  PRIMARY KEY (`exam_paper_question_type_id`) )
 ENGINE = InnoDB;
 
 
@@ -284,17 +216,7 @@ CREATE  TABLE IF NOT EXISTS `xuehaitiku`.`question_exam_point` (
   `question_id` INT NOT NULL ,
   INDEX `fk_questiontopic_topic1_idx` (`exam_point_id` ASC) ,
   INDEX `fk_questiontopic_question1_idx` (`question_id` ASC) ,
-  PRIMARY KEY (`question_exam_point_id`) ,
-  CONSTRAINT `fk_questiontopic_topic1`
-    FOREIGN KEY (`exam_point_id` )
-    REFERENCES `xuehaitiku`.`exam_point` (`exam_point_id` )
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
-  CONSTRAINT `fk_questiontopic_question1`
-    FOREIGN KEY (`question_id` )
-    REFERENCES `xuehaitiku`.`question` (`question_id` )
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
+  PRIMARY KEY (`question_exam_point_id`) )
 ENGINE = InnoDB;
 
 
@@ -308,12 +230,7 @@ CREATE  TABLE IF NOT EXISTS `xuehaitiku`.`question_extra` (
   `title` TEXT NULL COMMENT '富文本' ,
   `analysis` TEXT NULL DEFAULT NULL COMMENT '解析' ,
   INDEX `fk_title_question1_idx` (`question_id` ASC) ,
-  PRIMARY KEY (`question_id`) ,
-  CONSTRAINT `fk_title_question1`
-    FOREIGN KEY (`question_id` )
-    REFERENCES `xuehaitiku`.`question` (`question_id` )
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
+  PRIMARY KEY (`question_id`) )
 ENGINE = InnoDB;
 
 
@@ -329,17 +246,7 @@ CREATE  TABLE IF NOT EXISTS `xuehaitiku`.`payment` (
   `expiry` TIMESTAMP NOT NULL ,
   INDEX `fk_pay_user1_idx` (`user_id` ASC) ,
   INDEX `fk_pay_exam1_idx` (`exam_bank_id` ASC) ,
-  PRIMARY KEY (`payment_id`) ,
-  CONSTRAINT `fk_pay_user1`
-    FOREIGN KEY (`user_id` )
-    REFERENCES `xuehaitiku`.`user` (`user_id` )
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
-  CONSTRAINT `fk_pay_exam1`
-    FOREIGN KEY (`exam_bank_id` )
-    REFERENCES `xuehaitiku`.`exam_bank` (`exam_bank_id` )
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
+  PRIMARY KEY (`payment_id`) )
 ENGINE = InnoDB;
 
 
@@ -355,17 +262,7 @@ CREATE  TABLE IF NOT EXISTS `xuehaitiku`.`pay_record` (
   `money` FLOAT NOT NULL DEFAULT 0 ,
   PRIMARY KEY (`payment_record_id`) ,
   INDEX `fk_payrecord_user1_idx` (`user_id` ASC) ,
-  INDEX `fk_payrecord_exam1_idx` (`exam_bank_id` ASC) ,
-  CONSTRAINT `fk_payrecord_user1`
-    FOREIGN KEY (`user_id` )
-    REFERENCES `xuehaitiku`.`user` (`user_id` )
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
-  CONSTRAINT `fk_payrecord_exam1`
-    FOREIGN KEY (`exam_bank_id` )
-    REFERENCES `xuehaitiku`.`exam_bank` (`exam_bank_id` )
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
+  INDEX `fk_payrecord_exam1_idx` (`exam_bank_id` ASC) )
 ENGINE = InnoDB;
 
 
@@ -381,12 +278,7 @@ CREATE  TABLE IF NOT EXISTS `xuehaitiku`.`question_answer_option` (
   `is_image` BIT NOT NULL DEFAULT 0 COMMENT '如果is_image为1，description是图片的地址' ,
   `index` TINYINT NOT NULL ,
   PRIMARY KEY (`question_answer_option_id`) ,
-  INDEX `fk_question_answer_option_question1_idx` (`question_id` ASC) ,
-  CONSTRAINT `fk_question_answer_option_question1`
-    FOREIGN KEY (`question_id` )
-    REFERENCES `xuehaitiku`.`question` (`question_id` )
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
+  INDEX `fk_question_answer_option_question1_idx` (`question_id` ASC) )
 ENGINE = InnoDB;
 
 USE `xuehaitiku` ;

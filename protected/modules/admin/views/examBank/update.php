@@ -1,18 +1,13 @@
 <?php
 $this->breadcrumbs=array(
-	'Exam Bank Models'=>array('index'),
-	$model->name=>array('view','id'=>$model->exam_bank_id),
-	'Update',
+	'题库管理'=>array('index'),
+	'更新题库',
 );
 
 $this->menu=array(
-	array('label'=>'List ExamBankModel','url'=>array('index')),
-	array('label'=>'Create ExamBankModel','url'=>array('create')),
-	array('label'=>'View ExamBankModel','url'=>array('view','id'=>$model->exam_bank_id)),
-	array('label'=>'Manage ExamBankModel','url'=>array('admin')),
 );
 ?>
 
-<h1>Update ExamBankModel <?php echo $model->exam_bank_id; ?></h1>
+<h1>更新题库 '<?php echo $model->name; ?>'</h1>
 
 <?php echo $this->renderPartial('_form',array('model'=>$model)); ?>

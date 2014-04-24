@@ -9,8 +9,8 @@
  * @property double $price
  *
  * The followings are the available model relations:
+ * @property PayRecord[] $payRecords
  * @property Payment[] $payments
- * @property Payrecord[] $payrecords
  * @property Subject[] $subjects
  */
 class ExamBankModel extends CActiveRecord
@@ -48,8 +48,8 @@ class ExamBankModel extends CActiveRecord
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
+			'payRecords' => array(self::HAS_MANY, 'PayRecordModel', 'exam_bank_id'),
 			'payments' => array(self::HAS_MANY, 'PaymentModel', 'exam_bank_id'),
-			'pay_records' => array(self::HAS_MANY, 'PayRecordModel', 'exam_bank_id'),
 			'subjects' => array(self::HAS_MANY, 'SubjectModel', 'exam_bank_id'),
 		);
 	}

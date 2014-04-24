@@ -1,5 +1,6 @@
 <?php
 $this->breadcrumbs=array(
+	'题库管理'
 );
 
 $this->menu=array(
@@ -30,14 +31,17 @@ $('.search-form form').submit(function(){
 		'exam_bank_id',
 		'name',
 		'price',
-		//'subjects',
+		array(
+			'name'=>'subjects',
+			'filter'=>false,
+		),
 		array(
 			'class'=>'bootstrap.widgets.TbButtonColumn',
 			'template'=>'{update} {add_subject} {delete}',
 			'buttons'=>array(
 				'add_subject' => array(
 					'label'=>'增加课程',
-					'url'=>'abc',
+					'url'=>'Yii::app()->controller->createUrl("/admin/subject/create",array("exam_bank_id"=>$data->primaryKey))',
 					'icon'=>'plus',
 				),
 			),

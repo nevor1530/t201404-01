@@ -1,5 +1,6 @@
 <?php
 $this->breadcrumbs=array(
+	'题库管理'=>array('index'),
 	'创建题库',
 );
 
