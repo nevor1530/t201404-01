@@ -17,6 +17,9 @@
  */
 class SubjectModel extends CActiveRecord
 {
+	public $exam_bank;
+	public $exam_point;
+	
 	/**
 	 * @return string the associated database table name
 	 */
@@ -39,7 +42,7 @@ class SubjectModel extends CActiveRecord
 			array('exam_point_show_level', 'numerical', 'min'=>1, 'max'=>5),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('subject_id, exam_bank_id, exam_point_id, name, exam_point_show_level', 'safe', 'on'=>'search'),
+			array('subject_id, exam_bank, exam_point, name, exam_point_show_level', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -51,9 +54,9 @@ class SubjectModel extends CActiveRecord
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
-			'examPapers' => array(self::HAS_MANY, 'ExamPaper', 'subject_id'),
-			'examBank' => array(self::BELONGS_TO, 'ExamBank', 'exam_bank_id'),
-			'examPoint' => array(self::BELONGS_TO, 'ExamPoint', 'exam_point_id'),
+			'examPapers' => array(self::HAS_MANY, 'ExamPaperModel', 'subject_id'),
+			'examBank' => array(self::BELONGS_TO, 'ExamBankModel', 'exam_bank_id'),
+			'examPoint' => array(self::BELONGS_TO, 'ExamPointModel', 'exam_point_id'),
 		);
 	}
 
@@ -65,7 +68,9 @@ class SubjectModel extends CActiveRecord
 		return array(
 			'subject_id' => 'ID',
 			'exam_bank_id' => '题库',
+			'exam_bank' => '题库',
 			'exam_point_id' => '考点树',
+			'exam_point' => '考点树',
 			'name' => '课程名称',
 			'exam_point_show_level' => '考点树显示层级',
 		);
@@ -88,15 +93,29 @@ class SubjectModel extends CActiveRecord
 		// @todo Please modify the following code to remove attributes that should not be searched.
 
 		$criteria=new CDbCriteria;
+		$criteria->with = array('examBank', 'examPoint');
 
 		$criteria->compare('subject_id',$this->subject_id);
-		$criteria->compare('exam_bank_id',$this->exam_bank_id);
-		$criteria->compare('exam_point_id',$this->exam_point_id);
+		$criteria->compare('examBank.name',$this->exam_bank, true);
+		$criteria->compare('examPoint.name',$this->exam_point, true);
 		$criteria->compare('name',$this->name,true);
 		$criteria->compare('exam_point_show_level',$this->exam_point_show_level);
 
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
+			'sort'=>array(
+		        'attributes'=>array(
+		            'exam_bank'=>array(
+		                'asc'=>'examBank.name',
+		                'desc'=>'examBank.name DESC',
+		            ),
+		            'exam_point'=>array(
+		                'asc'=>'examPoint.name',
+		                'desc'=>'examPoint.name DESC',
+		            ),
+		            '*',
+		        ),
+		    ),
 		));
 	}
 

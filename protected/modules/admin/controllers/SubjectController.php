@@ -12,7 +12,6 @@ class SubjectController extends AdminController
 		
 		$model=new SubjectModel;
 		
-		$examBankModel = null;
 		if ($exam_bank_id && !ExamBankModel::model()->exists('exam_bank_id=:id', array(':id'=>$exam_bank_id))) {
 			throw new Exception("ID为'{$exam_bank_id}'的题库不存在");
 		}
@@ -27,7 +26,7 @@ class SubjectController extends AdminController
 				$this->redirect(array('index'));
 		}
 
-		$model->exam_bank_id = $examBankModel->exam_bank_id;
+		$model->exam_bank_id = $exam_bank_id;
 		
 		$res['model'] = $model;
 		$res['examBanks'] = ExamBankModel::model()->findAll();
@@ -71,6 +70,17 @@ class SubjectController extends AdminController
 
 		$this->render('admin',array(
 			'model'=>$model,
+		));
+	}
+	
+	/**
+	 * Displays a particular model.
+	 * @param integer $id the ID of the model to be displayed
+	 */
+	public function actionView($id)
+	{
+		$this->render('view',array(
+			'model'=>$this->loadModel($id),
 		));
 	}
 

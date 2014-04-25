@@ -17,10 +17,12 @@ $this->menu=array(
 	'columns'=>array(
 		'subject_id',
 		'name',
-		'exam_bank_id',
-		'exam_point_id',
+		array('name'=>'exam_bank', 'value'=>'$data->examBank->name'),
+		array('name'=>'exam_point', 'value'=>'$data->examPoint->name ? $data->examPoint->name : "<无>"'),
 		array(
 			'class'=>'bootstrap.widgets.TbButtonColumn',
+			'template'=>'{update} {delete}',
+			'header'=>'操作',
 		),
 	),
 )); ?>

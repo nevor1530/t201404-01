@@ -34,9 +34,11 @@ $('.search-form form').submit(function(){
 		array(
 			'name'=>'subjects',
 			'filter'=>false,
+			'value'=>'$data->subjects ? $data->subjects : "<无>"',
 		),
 		array(
 			'class'=>'bootstrap.widgets.TbButtonColumn',
+			'header'=>'操作',
 			'template'=>'{update} {add_subject} {delete}',
 			'buttons'=>array(
 				'add_subject' => array(
