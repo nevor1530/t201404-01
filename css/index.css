@@ -1,6 +1,10 @@
+body {
+	padding-top: 90px;
+}
+
 .navbar {
 	background-color: #3774b4;
-	height: 70px;
+	height: 80px;
 }
 
 .navbar-fixed-top {
@@ -8,16 +12,28 @@
 }
 
 .navbar .logo {
-	padding-top: 5px;
-	padding-bottom: 5px;
-	height: 100%;
+	padding-top: 10px;
+	padding-bottom: 10px;
+	height: 60px;
 	width: auto;
 }
 
 .navbar .btn-container {
 	font-size: 20px;
-	color: #FFFFFF;
 	margin-top: 40px;
+	color: #FFFFFF;
+}
+
+.navbar .register-btn {
+	color: #FFFFFF;
+}
+
+.navbar .login-btn {
+	color: #FFFFFF;
+}
+
+.navbar .username {
+	color: #FFFFFF;
 }
 
 .navbar .divider {
@@ -30,6 +46,79 @@
 	border-left-width:2px;
 }
 
-#page {
-	padding-top: 90px;
+.login {
+	padding-top: 50px;
+	margin: 0 auto;
 }
+
+.login .title-group {
+	margin: 0 auto;
+	display: table;
+	width: auto;
+}
+
+.login .user-icon {
+	background: url("../images/user.png") no-repeat;
+	background-size: 22px 22px;
+	width: 22px;
+	height: 22px;
+	display: inline-block;
+	vertical-align: top;
+	margin-right: 5px;
+}
+
+.login .title {
+	font-weight: 600;
+	font-family: "Microsoft YaHei" !important;
+	font-size: 18px;
+	letter-spacing: 1px;
+}
+
+.login .login-form {
+	margin-top: 40px;
+}
+
+.login .control-group {
+	display: table;
+	width: auto;
+	margin-left: auto;
+	margin-right: auto;
+	margin-bottom: 10px;
+}
+
+.login .login-form .control-label {
+	width: 40px;
+}
+
+.login .login-form .controls {
+	margin-left: 60px;
+}
+
+.login .login-form .controls .username-input {
+	width: 240px;
+}
+
+.login .login-form .controls .password-input {
+	width: 240px;
+}
+
+.login .login-btn {
+ 	padding-bottom: 8px;
+    padding-left: 45px;
+    padding-right: 45px;
+    padding-top: 8px;
+    box-shadow: 0 -4px 0 #2A6496 inset;
+    border-radius: 6px;
+    background-color: #4391e3;
+    color: #FFFFFF;
+    font-size: 19px;
+    letter-spacing: 10px;
+    border-width: 0;
+    margin-left: 60px;
+}
+
+.login .auto-login-text {
+	line-height: 42px;
+	font-size: 12px;
+}
+

@@ -9,11 +9,6 @@ $this->breadcrumbs=array(
 );
 ?>
 
-<h1>Login</h1>
-
-<p>Please fill out the following form with your login credentials:</p>
-
-<div class="form">
 <?php $form=$this->beginWidget('CActiveForm', array(
 	'id'=>'login-form',
 	'enableClientValidation'=>true,
@@ -21,33 +16,34 @@ $this->breadcrumbs=array(
 		'validateOnSubmit'=>true,
 	),
 )); ?>
-
-	<p class="note">Fields with <span class="required">*</span> are required.</p>
-
-	<div class="row">
-		<?php echo $form->labelEx($model,'username'); ?>
-		<?php echo $form->textField($model,'username'); ?>
-		<?php echo $form->error($model,'username'); ?>
-	</div>
-
-	<div class="row">
-		<?php echo $form->labelEx($model,'password'); ?>
-		<?php echo $form->passwordField($model,'password'); ?>
-		<?php echo $form->error($model,'password'); ?>
-		<p class="hint">
-			Hint: You may login with <kbd>demo</kbd>/<kbd>demo</kbd> or <kbd>admin</kbd>/<kbd>admin</kbd>.
-		</p>
-	</div>
-
-	<div class="row rememberMe">
-		<?php echo $form->checkBox($model,'rememberMe'); ?>
-		<?php echo $form->label($model,'rememberMe'); ?>
-		<?php echo $form->error($model,'rememberMe'); ?>
-	</div>
-
-	<div class="row buttons">
-		<?php echo CHtml::submitButton('Login'); ?>
-	</div>
-
-<?php $this->endWidget(); ?>
-</div><!-- form -->
+		
+<div class="login">
+	<div class="title-group">
+		<span class="user-icon"></span>
+		<span class="title">学海题库欢迎您回来练习</span>
+	</div>	
+	
+	<div class="login-form form-horizontal">
+		 <div class="control-group">
+			<label class="control-label"><?php echo $form->labelEx($model,'username'); ?></label>
+			<div class="controls">
+				<input class="username-input" type="text" id="LoginForm_username" name="LoginForm[username]" placeholder="请输入邮箱">
+			</div>
+		</div>
+	
+		<div class="control-group">
+			<label class="control-label"><?php echo $form->labelEx($model,'password'); ?></label>
+			<div class="controls">
+				<input class="password-input" type="text" id="LoginForm_password" name="LoginForm[password]" placeholder="请输入6个以上字符">
+			</div>
+		</div>
+	
+		<div class="control-group">
+			<input class="login-btn" type="submit" value="登录">
+			<input type="checkbox">
+			<span class="auto-login-text">下次自动登录</span>
+		</div>
+		
+		<?php $this->endWidget(); ?>
+	</div><!-- form -->
+</div>

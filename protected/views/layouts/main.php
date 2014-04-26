@@ -20,11 +20,17 @@
 		<div class="offset2 span4 text-left">
 			<img class="logo" src="<?php echo Yii::app()->request->baseUrl; ?>/images/logo.png"/>
 		</div>
+		<?php if (Yii::app()->user->isGuest) : ?>
 		<div class="span4 text-right btn-container">
-			<span class="register-btn">注册</span>
+			<a href="<?php echo $this->createUrl('site/register') ?>" class="register-btn"><span>注册</span></a>
 			<span class="divider"></span>
-			<span class="login-btn">登陆</span>
+			<a href="<?php echo $this->createUrl('site/login') ?>" class="login-btn">登陆</a>
 		</div>
+		<?php else : ?>
+		<div class="span4 text-right btn-container">
+			<a href="" class="username"><span><?php echo Yii::app()->user->name ?></span></a>
+		</div>
+		<?php endif ?>
 	</div>
 </div>
 	
