@@ -117,8 +117,109 @@ body {
     margin-left: 60px;
 }
 
+.login .register-btn {
+	padding: 8px 31px;
+    box-shadow: 0 -4px 0 #2A6496 inset;
+    border-radius: 6px;
+    background-color: #4391e3;
+    color: #FFFFFF;
+    font-size: 16px;
+    letter-spacing: 0.5px;
+    border-width: 0;
+    margin-left: 65px;
+}
+
 .login .auto-login-text {
 	line-height: 42px;
 	font-size: 12px;
 }
 
+.register {
+	padding-top: 50px;
+	margin: 0 auto;
+}
+
+.register .title-group {
+	margin: 0 auto;
+	padding-left: 70px;
+	display: table;
+	width: auto;
+}
+
+.register .user-icon {
+	background: url("../images/user.png") no-repeat;
+	background-size: 22px 22px;
+	width: 22px;
+	height: 22px;
+	display: inline-block;
+	vertical-align: top;
+	margin-right: 5px;
+}
+
+.register .title {
+	font-weight: 600;
+	font-family: "Microsoft YaHei" !important;
+	font-size: 18px;
+	letter-spacing: 1px;
+}
+
+.register .register-form {
+	margin-top: 40px;
+}
+
+.register .control-group {
+	display: table;
+	width: auto;
+	margin-left: auto;
+	margin-right: auto;
+	margin-bottom: 10px;
+}
+
+.register .register-form .control-label {
+	width: 80px;
+}
+
+.register .register-form .controls {
+	margin-left: 100px;
+}
+
+.register .register-form .controls .username-input {
+	width: 240px;
+}
+
+.register .register-form .controls .password-input {
+	width: 240px;
+}
+
+.register .register-form .controls .confirm-input {
+	width: 240px;
+}
+
+.register .register-btn {
+ 	padding: 8px 15px;
+    box-shadow: 0 -4px 0 #2A6496 inset;
+    background-color: #4391e3;
+    border-radius: 4px;
+    color: #FFFFFF;
+    font-size: 19px;
+    letter-spacing: 6px;
+    border-width: 0;
+    margin-left: 60px;
+}
+
+.register .login-btn {
+	padding: 10px 60px;
+    box-shadow: 0 -4px 0 #2A6496 inset;
+    border-radius: 6px;
+    background-color: #4391e3;
+    color: #FFFFFF;
+    font-size: 16px;
+    letter-spacing: 0.5px;
+    border-width: 0;
+    margin-left: 50px;
+}
+
+.register .policy-text {
+	line-height: 49px;
+	font-size: 13px;
+}

@@ -3,49 +3,47 @@
 /* @var $model LoginForm */
 /* @var $form CActiveForm  */
 
-$this->pageTitle=Yii::app()->name . ' - 登录';
-$this->breadcrumbs=array(
-	'Login',
-);
+$this->pageTitle=Yii::app()->name . ' - 修改密码';
 ?>
 
 <?php $form=$this->beginWidget('CActiveForm', array(
-	'id'=>'login-form',
+	'id'=>'updatePassword-form',
 	'enableClientValidation'=>true,
 	'clientOptions'=>array(
 		'validateOnSubmit'=>true,
 	),
 )); ?>
 		
-<div class="login">
+<div class="updatePassword">
 	<div class="title-group">
 		<span class="user-icon"></span>
-		<span class="title">学海题库欢迎您回来练习</span>
+		<span class="title">修改密码</span>
 	</div>	
 	
 	<div class="login-form form-horizontal">
 		<div class="control-group">
 			<label class="control-label"><?php echo $form->labelEx($model,'username'); ?></label>
 			<div class="controls">
-				<input class="username-input" type="text" id="LoginForm_username" name="LoginForm[username]" placeholder="请输入邮箱">
+				<input class="username-input" type="text" id="LoginForm_username" name="UpdatePasswordForm[username]" placeholder="请输入邮箱">
 			</div>
 		</div>
 	
 		<div class="control-group">
 			<label class="control-label"><?php echo $form->labelEx($model,'password'); ?></label>
 			<div class="controls">
-				<input class="password-input" type="text" id="LoginForm_password" name="LoginForm[password]" placeholder="请输入6个以上字符">
+				<input class="password-input" type="text" id="UpdatePasswordForm_password" name="UpdatePasswordForm[password]" placeholder="请输入6个以上字符">
+			</div>
+		</div>
+		
+		<div class="control-group">
+			<label class="control-label"><?php echo $form->labelEx($model,'confirm'); ?></label>
+			<div class="controls">
+				<input class="confirm-input" type="text" id="UpdatePasswordForm_confirm" name="UpdatePasswordForm[confirm]" placeholder="请输入6个以上字符">
 			</div>
 		</div>
 	
 		<div class="control-group">
-			<input class="login-btn" type="submit" value="登录">
-			<input type="checkbox">
-			<span class="auto-login-text">下次自动登录</span>
-		</div>
-		
-		<div class="control-group">
-			<input class="register-btn" type="submit" value="还没有账号？立即注册>>">
+			<input class="confirm-btn" type="submit" value="确认提交">
 		</div>
 		
 		<?php $this->endWidget(); ?>
