@@ -67,9 +67,9 @@ class ExamPointModel extends CActiveRecord
 	public function attributeLabels()
 	{
 		return array(
-			'exam_point_id' => 'Exam Point',
-			'name' => 'Name',
-			'pid' => 'Pid',
+			'exam_point_id' => 'ID',
+			'name' => '考点树名称',
+			'pid' => '父级ID',
 		);
 	}
 
