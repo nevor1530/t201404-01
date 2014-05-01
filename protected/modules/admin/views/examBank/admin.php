@@ -32,9 +32,11 @@ $('.search-form form').submit(function(){
 		'name',
 		'price',
 		array(
+			'class'=>'LinksColumn',
 			'name'=>'subjects',
-			'filter'=>false,
-			'value'=>'$data->subjects ? $data->subjects : "<无>"',
+			'urlExpression'=>'Yii::app()->createUrl("/admin/subject/view", array("id"=>$data->primaryKey))',
+			'linkHtmlOptions'=>array('class'=>'links_column_item'),
+			'header'=>'课程',
 		),
 		array(
 			'class'=>'bootstrap.widgets.TbButtonColumn',

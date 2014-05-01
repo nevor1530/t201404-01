@@ -18,7 +18,7 @@ $this->menu=array(
 		'subject_id',
 		'name',
 		array('name'=>'exam_bank', 'value'=>'$data->examBank->name'),
-		array('name'=>'exam_point', 'value'=>'$data->examPoint->name ? $data->examPoint->name : "<无>"'),
+		array('name'=>'exam_point', 'value'=>'$data->examPoint ? $data->examPoint->name : "<无>"'),
 		array(
 			'class'=>'bootstrap.widgets.TbButtonColumn',
 			'template'=>'{update} {delete}',
