@@ -11,6 +11,7 @@ class NavUtil {
 				foreach($examBankModels as $examBankModel){
 					$item = array();
 					$item['label'] = $examBankModel->name;
+					$item['url'] = "#";
 					$subjectModels = $examBankModel->subjects;
 					if (!empty($subjectModels)){
 						$subItems = array();

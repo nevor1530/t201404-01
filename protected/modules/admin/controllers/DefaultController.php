@@ -2,10 +2,15 @@
 
 class DefaultController extends AdminController
 {
-	public $layout='main';
-	
 	public function actionIndex()
 	{
-		$this->redirect(array('examBank/index'));
+		$model=new ExamBankModel('search');
+		$model->unsetAttributes();  // clear any default values
+		if(isset($_GET['ExamBankModel']))
+			$model->attributes=$_GET['ExamBankModel'];
+
+		$this->render('index',array(
+			'model'=>$model,
+		));
 	}
 }

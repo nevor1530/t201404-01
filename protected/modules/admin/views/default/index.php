@@ -1,17 +1,38 @@
 <?php
-/* @var $this DefaultController */
-
-$this->breadcrumbs=array(
-	$this->module->id,
+$this->menu=array(
+	array('label'=>'创建题库','url'=>array('/admin/examBank/create')),
 );
-?>
-<h1><?php echo $this->uniqueId . '/' . $this->action->id; ?></h1>
 
-<p>
-This is the view content for action "<?php echo $this->action->id; ?>".
-The action belongs to the controller "<?php echo get_class($this); ?>"
-in the "<?php echo $this->module->id; ?>" module.
-</p>
-<p>
-You may customize this page by editing <tt><?php echo __FILE__; ?></tt>
-</p>
+?>
+
+<h1>题库管理</h1>
+
+<?php $this->widget('bootstrap.widgets.TbGridView',array(
+	'id'=>'exam-bank-model-grid',
+	'dataProvider'=>$model->search(),
+	'filter'=>$model,
+	'columns'=>array(
+		'exam_bank_id',
+		'name',
+		'price',
+		array(
+			'class'=>'LinksColumn',
+			'name'=>'subjects',
+			'urlExpression'=>'Yii::app()->createUrl("/admin/subject/view", array("id"=>$data->primaryKey))',
+			'linkHtmlOptions'=>array('class'=>'links_column_item'),
+			'header'=>'课程',
+		),
+		array(
+			'class'=>'bootstrap.widgets.TbButtonColumn',
+			'header'=>'操作',
+			'template'=>'{update} {add_subject} {delete}',
+			'buttons'=>array(
+				'add_subject' => array(
+					'label'=>'增加课程',
+					'url'=>'Yii::app()->controller->createUrl("/admin/subject/create",array("exam_bank_id"=>$data->primaryKey))',
+					'icon'=>'plus',
+				),
+			),
+		),
+	),
+)); ?>
