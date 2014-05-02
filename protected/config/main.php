@@ -19,6 +19,7 @@ return array(
 	'import'=>array(
 		'application.models.*',
 		'application.components.*',
+		'application.services.*',
 	),
 
 	'modules'=>array(
@@ -60,6 +61,10 @@ return array(
 			'username' => 'root',
 			'password' => 'root',
 			'charset' => 'utf8',
+		),
+		'cache'=>array(
+			'class'=>'system.caching.CDbCache',
+			'connectionID'=>'db',
 		),
 		'errorHandler'=>array(
 			// use 'site/error' action to display errors
