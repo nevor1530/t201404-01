@@ -7,18 +7,34 @@
         </div><!-- content -->
     </div>
     <div class="span2">
-        <div id="sidebar" class="well well-small">
-        <?php
-            $this->beginWidget('zii.widgets.CPortlet', array(
-                'title'=>'操作',
-            ));
-            $this->widget('bootstrap.widgets.TbMenu', array(
-                'items'=>$this->menu,
-                'htmlOptions'=>array('class'=>'operations'),
-            ));
-            $this->endWidget();
-        ?>
-        </div><!-- sidebar -->
+    	<?php if (!empty($this->sideNav)):?>
+	        <div class="well well-small">
+	        <?php
+	            $this->beginWidget('zii.widgets.CPortlet', array(
+	                'title'=>'子导航',
+	            ));
+	            $this->widget('bootstrap.widgets.TbMenu', array(
+	                'items'=>$this->sideNav,
+	                'htmlOptions'=>array('class'=>'operations'),
+	            ));
+	            $this->endWidget();
+	        ?>
+	        </div><!-- sidebar -->
+        <?php endif; ?>
+    	<?php if (!empty($this->menu)):?>
+	        <div id="sidebar" class="well well-small">
+	        <?php
+	            $this->beginWidget('zii.widgets.CPortlet', array(
+	                'title'=>'操作',
+	            ));
+	            $this->widget('bootstrap.widgets.TbMenu', array(
+	                'items'=>$this->menu,
+	                'htmlOptions'=>array('class'=>'operations'),
+	            ));
+	            $this->endWidget();
+	        ?>
+	        </div><!-- sidebar -->
+        <?php endif; ?>
     </div>
 </div>
 <?php $this->endContent(); ?>

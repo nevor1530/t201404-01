@@ -6,13 +6,14 @@ class SubjectController extends AdminController
 	 * Creates a new model.
 	 * If creation is successful, the browser will be redirected to the 'view' page.
 	 */
-	public function actionCreate($exam_bank_id = null)
+	public function actionCreate($exam_bank_id)
 	{
 		$res = array();
 		
 		$model=new SubjectModel;
 		
-		if ($exam_bank_id && !ExamBankModel::model()->exists('exam_bank_id=:id', array(':id'=>$exam_bank_id))) {
+		$examBankModel = ExamBankModel::model()->findByPk($exam_bank_id);
+		if (!$examBankModel) {
 			throw new Exception("ID为'{$exam_bank_id}'的题库不存在");
 		}
 		
@@ -22,15 +23,16 @@ class SubjectController extends AdminController
 		if(isset($_POST['SubjectModel']))
 		{
 			$model->attributes=$_POST['SubjectModel'];
-			if($model->save())
-				$this->redirect(array('index'));
+			if($model->save()){
+				NavUtil::navChanged();
+				$this->redirect(array('view', 'id'=>$model->primaryKey));
+			}
 		}
 
 		$model->exam_bank_id = $exam_bank_id;
 		
 		$res['model'] = $model;
-		$res['examBanks'] = ExamBankModel::model()->findAll();
-		$res['examPoints'] = ExamPointModel::model()->top()->findAll();
+		$res['examBankModel'] = $examBankModel;
 		$this->render('create', $res);
 	}
 
@@ -49,8 +51,10 @@ class SubjectController extends AdminController
 		if(isset($_POST['SubjectModel']))
 		{
 			$model->attributes=$_POST['SubjectModel'];
-			if($model->save())
-				$this->redirect(array('index'));
+			if($model->save()){
+				NavUtil::navChanged();				
+				$this->redirect(array('view', 'id'=>$model->primaryKey));
+			}
 		}
 
 		$this->render('update',array(
@@ -74,13 +78,29 @@ class SubjectController extends AdminController
 	}
 	
 	/**
+	 * Deletes a particular model.
+	 * If deletion is successful, the browser will be redirected to the 'admin' page.
+	 * @param integer $id the ID of the model to be deleted
+	 */
+	public function actionDelete($id)
+	{
+		$this->loadModel($id)->delete();
+		NavUtil::navChanged();
+		// if AJAX request (triggered by deletion via admin grid view), we should not redirect the browser
+		if(!isset($_GET['ajax']))
+			$this->redirect(isset($_POST['returnUrl']) ? $_POST['returnUrl'] : array('admin'));
+	}
+	
+	/**
 	 * Displays a particular model.
 	 * @param integer $id the ID of the model to be displayed
 	 */
 	public function actionView($id)
 	{
+		$model = $this->loadModel($id);
 		$this->render('view',array(
-			'model'=>$this->loadModel($id),
+			'subjectModel'=>$model,
+			'model'=>$model,
 		));
 	}
 

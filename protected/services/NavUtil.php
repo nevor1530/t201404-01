@@ -26,9 +26,13 @@ class NavUtil {
 					$items[] = $item;
 				}
 			}
-			$cacheDenpendency = new CGlobalStateCacheDependency(GlobalStateKey::$IS_NAV_CHANGED);
+			$cacheDenpendency = new CGlobalStateCacheDependency(GlobalStateKey::$NAV_TIMESTAMP);
 			Yii::app()->cache->set(CacheKey::$NAV, $items, 0, $cacheDenpendency);
 		}
 		return $items;
+	}
+	
+	public static function navChanged(){
+		Yii::app()->setGlobalState(GlobalStateKey::$NAV_TIMESTAMP, time());
 	}
 }

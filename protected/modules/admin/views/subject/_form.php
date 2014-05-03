@@ -9,15 +9,11 @@
 	
 	<?php echo $form->textFieldRow($model,'name',array('class'=>'span5','maxlength'=>45)); ?>
 	
-	<?php echo $form->dropDownListRow($model, 'exam_bank_id', 
-										CHtml::listData($examBanks, 'exam_bank_id', 'name'),
-										array('class'=>'span5', 'empty'=>'无')); ?>
+	<?php echo $form->hiddenField($model, 'exam_bank_id'); ?>
 
-	<?php echo $form->dropDownListRow($model, 'exam_point_id', 
-										CHtml::listData($examPoints, 'exam_point_id', 'name'),
-										array('class'=>'span5', 'empty'=>'无')); ?>
-	
 	<?php echo $form->textFieldRow($model,'exam_point_show_level',array('class'=>'span5')); ?>
+	
+	<?php echo $form->checkBoxRow($model, 'do_paper_recommendation'); ?>
 
 	<div class="form-actions">
 		<?php $this->widget('bootstrap.widgets.TbButton', array(

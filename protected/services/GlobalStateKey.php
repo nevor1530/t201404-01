@@ -1,4 +1,4 @@
 <?php
 class GlobalStateKey {
-	public static $IS_NAV_CHANGED = 'isnavchanged';
+	public static $NAV_TIMESTAMP = 'nav_timestamp';
 }

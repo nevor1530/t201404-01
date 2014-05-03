@@ -26,6 +26,8 @@ $this->menu=array(
 			'class'=>'bootstrap.widgets.TbButtonColumn',
 			'header'=>'操作',
 			'template'=>'{update} {add_subject} {delete}',
+			'updateButtonUrl'=>'Yii::app()->controller->createUrl("/admin/examBank/update",array("id"=>$data->primaryKey))',
+			'deleteButtonUrl'=>'Yii::app()->controller->createUrl("/admin/examBank/delete",array("id"=>$data->primaryKey))',
 			'buttons'=>array(
 				'add_subject' => array(
 					'label'=>'增加课程',

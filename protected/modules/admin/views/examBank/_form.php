@@ -15,7 +15,7 @@
 		<?php $this->widget('bootstrap.widgets.TbButton', array(
 			'buttonType'=>'submit',
 			'type'=>'primary',
-			'label'=>$model->isNewRecord ? 'Create' : 'Save',
+			'label'=>$model->isNewRecord ? '创建' : '修改',
 		)); ?>
 	</div>
 

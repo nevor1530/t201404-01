@@ -21,5 +21,7 @@ $this->menu=array(
 		'exam_point_id',
 		'name',
 		'pid',
+		'subject_id',
+		'order',
 	),
 )); ?>

@@ -45,6 +45,8 @@ or <b>=</b>) at the beginning of each of your search values to specify how the c
 		'exam_point_id',
 		'name',
 		'pid',
+		'subject_id',
+		'order',
 		array(
 			'class'=>'bootstrap.widgets.TbButtonColumn',
 		),

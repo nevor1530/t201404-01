@@ -6,14 +6,16 @@
  * The followings are the available columns in table 'subject':
  * @property integer $subject_id
  * @property integer $exam_bank_id
- * @property integer $exam_point_id
  * @property string $name
+ * @property integer $do_paper_recommendation
  * @property integer $exam_point_show_level
  *
  * The followings are the available model relations:
+ * @property Category[] $categories
  * @property ExamPaper[] $examPapers
+ * @property ExamPoint[] $examPoints
+ * @property PaperRecommendation[] $paperRecommendations
  * @property ExamBank $examBank
- * @property ExamPoint $examPoint
  */
 class SubjectModel extends CActiveRecord
 {
@@ -37,12 +39,12 @@ class SubjectModel extends CActiveRecord
 		// will receive user inputs.
 		return array(
 			array('exam_bank_id, name', 'required'),
-			array('exam_bank_id, exam_point_id, exam_point_show_level', 'numerical', 'integerOnly'=>true),
+			array('exam_bank_id, do_paper_recommendation, exam_point_show_level', 'numerical', 'integerOnly'=>true),
 			array('name', 'length', 'max'=>45),
 			array('exam_point_show_level', 'numerical', 'min'=>1, 'max'=>5),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('subject_id, exam_bank, exam_point, name, exam_point_show_level', 'safe', 'on'=>'search'),
+			array('subject_id, exam_bank, exam_point, name, exam_point_show_level, paper_recommendation', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -54,9 +56,11 @@ class SubjectModel extends CActiveRecord
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
+			'categories' => array(self::HAS_MANY, 'CategoryModel', 'subject_id'),
 			'examPapers' => array(self::HAS_MANY, 'ExamPaperModel', 'subject_id'),
-			'examBank' => array(self::BELONGS_TO, 'ExamBankModel', 'exam_bank_id'),
-			'examPoint' => array(self::BELONGS_TO, 'ExamPointModel', 'exam_point_id'),
+            'examPoints' => array(self::HAS_MANY, 'ExamPointModel', 'subject_id'),
+            'paperRecommendations' => array(self::HAS_MANY, 'PaperRecommendationModel', 'subject_id'),
+            'examBank' => array(self::BELONGS_TO, 'ExamBankModel', 'exam_bank_id'),
 		);
 	}
 
@@ -73,6 +77,7 @@ class SubjectModel extends CActiveRecord
 			'exam_point' => '考点树',
 			'name' => '课程名称',
 			'exam_point_show_level' => '考点树显示层级',
+			'do_paper_recommendation' => '推荐真题列表',
 		);
 	}
 
@@ -97,8 +102,9 @@ class SubjectModel extends CActiveRecord
 
 		$criteria->compare('subject_id',$this->subject_id);
 		$criteria->compare('examBank.name',$this->exam_bank, true);
-		$criteria->compare('examPoint.name',$this->exam_point, true);
 		$criteria->compare('name',$this->name,true);
+		$criteria->compare('exam_point_show_level',$this->exam_point_show_level);
+		$criteria->compare('do_paper_recommendation',$this->do_paper_recommendation);
 		$criteria->compare('exam_point_show_level',$this->exam_point_show_level);
 
 		return new CActiveDataProvider($this, array(
@@ -108,10 +114,6 @@ class SubjectModel extends CActiveRecord
 		            'exam_bank'=>array(
 		                'asc'=>'examBank.name',
 		                'desc'=>'examBank.name DESC',
-		            ),
-		            'exam_point'=>array(
-		                'asc'=>'examPoint.name',
-		                'desc'=>'examPoint.name DESC',
 		            ),
 		            '*',
 		        ),

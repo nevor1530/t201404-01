@@ -1,29 +1,27 @@
 <?php
 
 /**
- * This is the model class for table "exam_point".
+ * This is the model class for table "paper_recommendation".
  *
- * The followings are the available columns in table 'exam_point':
- * @property integer $exam_point_id
- * @property string $name
- * @property integer $pid
+ * The followings are the available columns in table 'paper_recommendation':
+ * @property integer $paper_recommendation_id
  * @property integer $subject_id
+ * @property integer $examp_paper_id
  * @property integer $order
- * @property integer $visible
- * @property string $description
+ * @property double $difficuty
  *
  * The followings are the available model relations:
  * @property Subject $subject
- * @property QuestionExamPoint[] $questionExamPoints
+ * @property ExamPaper $exampPaper
  */
-class ExamPointModel extends CActiveRecord
+class PaperRecommendationModel extends CActiveRecord
 {
 	/**
 	 * @return string the associated database table name
 	 */
 	public function tableName()
 	{
-		return 'exam_point';
+		return 'paper_recommendation';
 	}
 
 	/**
@@ -34,13 +32,12 @@ class ExamPointModel extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('name, subject_id', 'required'),
-			array('pid, subject_id, order, visible', 'numerical', 'integerOnly'=>true),
-			array('name', 'length', 'max'=>45),
-			array('description', 'length', 'max'=>500),
+			array('subject_id, examp_paper_id', 'required'),
+			array('subject_id, examp_paper_id, order', 'numerical', 'integerOnly'=>true),
+			array('difficuty', 'numerical'),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('exam_point_id, name, pid, subject_id, order, visible, description', 'safe', 'on'=>'search'),
+			array('paper_recommendation_id, subject_id, examp_paper_id, order, difficuty', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -53,17 +50,7 @@ class ExamPointModel extends CActiveRecord
 		// class name for the relations automatically generated below.
 		return array(
 			'subject' => array(self::BELONGS_TO, 'Subject', 'subject_id'),
-			'questionExamPoints' => array(self::HAS_MANY, 'QuestionExamPoint', 'exam_point_id'),
-			'subExamPoints' => array(self::HAS_MANY, 'ExamPointModel', 'pid'),
-		);
-	}
-	
-	public function scopes()
-	{
-		return array(
-			'top'=>array(
-				'condition'=>'pid=0',
-			),
+			'exampPaper' => array(self::BELONGS_TO, 'ExamPaper', 'examp_paper_id'),
 		);
 	}
 
@@ -73,9 +60,11 @@ class ExamPointModel extends CActiveRecord
 	public function attributeLabels()
 	{
 		return array(
-			'name' => '考点名称',
-			'visible' => '前台是否显示',
-			'description' => '描述',
+			'paper_recommendation_id' => 'Paper Recommendation',
+			'subject_id' => 'Subject',
+			'examp_paper_id' => 'Examp Paper',
+			'order' => 'Order',
+			'difficuty' => 'Difficuty',
 		);
 	}
 
@@ -97,13 +86,11 @@ class ExamPointModel extends CActiveRecord
 
 		$criteria=new CDbCriteria;
 
-		$criteria->compare('exam_point_id',$this->exam_point_id);
-		$criteria->compare('name',$this->name,true);
-		$criteria->compare('pid',$this->pid);
+		$criteria->compare('paper_recommendation_id',$this->paper_recommendation_id);
 		$criteria->compare('subject_id',$this->subject_id);
+		$criteria->compare('examp_paper_id',$this->examp_paper_id);
 		$criteria->compare('order',$this->order);
-		$criteria->compare('visible',$this->visible);
-		$criteria->compare('description',$this->description,true);
+		$criteria->compare('difficuty',$this->difficuty);
 
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
@@ -114,7 +101,7 @@ class ExamPointModel extends CActiveRecord
 	 * Returns the static model of the specified AR class.
 	 * Please note that you should have this exact method in all your CActiveRecord descendants!
 	 * @param string $className active record class name.
-	 * @return ExamPointModel the static model class
+	 * @return PaperRecommendationModel the static model class
 	 */
 	public static function model($className=__CLASS__)
 	{

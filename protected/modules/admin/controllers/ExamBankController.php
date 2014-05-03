@@ -17,7 +17,8 @@ class ExamBankController extends AdminController
 		{
 			$model->attributes=$_POST['ExamBankModel'];
 			if($model->save())
-				$this->redirect(array('index'));
+				NavUtil::navChanged();
+				$this->redirect(array('/admin'));
 		}
 
 		$this->render('create',array(
@@ -41,7 +42,8 @@ class ExamBankController extends AdminController
 		{
 			$model->attributes=$_POST['ExamBankModel'];
 			if($model->save())
-				$this->redirect(array('index'));
+				NavUtil::navChanged();
+				$this->redirect(array('/admin'));
 		}
 
 		$this->render('update',array(
@@ -62,6 +64,17 @@ class ExamBankController extends AdminController
 		$this->render('admin',array(
 			'model'=>$model,
 		));
+	}
+	
+	/**
+	 * Deletes a particular model.
+	 * If deletion is successful, the browser will be redirected to the 'admin' page.
+	 * @param integer $id the ID of the model to be deleted
+	 */
+	public function actionDelete($id)
+	{
+		NavUtil::navChanged();
+		parent::actionDelete($id);
 	}
 
 	/**
