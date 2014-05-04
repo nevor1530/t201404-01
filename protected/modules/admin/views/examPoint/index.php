@@ -26,24 +26,82 @@ Yii::app()->getClientScript()->registerScriptFile($baseUrl.'/js/admin.js');
 <div id="topPoint" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
   <div class="modal-header">
     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-    <h3>增加顶级节点</h3>
+    <h3 id="modal-title">增加顶级节点</h3>
   </div>
   <div class="modal-body">
-  	<?php $this->renderPartial('ajax_form', array('model'=>new ExamPointModel()))?>
+  	<?php $this->renderPartial('ajax_form', array('model'=>$examPointModel))?>
   </div>
 </div>
 
 <script type="text/javascript">
-		
 	$(function(){
+		var createUrl = "<?php echo Yii::app()->createUrl('/admin/examPoint/ajaxCreate'); ?>";
+		var updateUrl = "<?php echo Yii::app()->createUrl('/admin/examPoint/ajaxUpdate', array('id'=>'_id_')); ?>";
+		
 		var $modal = $('#topPoint');
+		var $form = $('#exam-point-model-form');
+		
+		$modal.modal({show: false});
  
 		$('#create-top-point').on('click', function(e){
 			e.preventDefault();
-			var $this = $(this);
-			$modal.find('.modal-body').load($this.attr('href'), function(){
-				$modal.modal();
-			});
+			$("#modal-title").html("增加顶级节点");
+			$("#ExamPointModel_pid").val(0);
+			$form.attr("action", createUrl);
+			$modal.modal('show');
 		});
+		
+		$(".add_sub_exam_point").live("click", function(e){
+			e.preventDefault();
+			$this = $(this);
+			$("#modal-title").html("增加"+$this.attr('data-name')+"的节点");
+			$("#ExamPointModel_pid").val($this.attr('data-id'));
+			$form.attr("action", createUrl);
+			$modal.modal('show');
+		})
+		
+		$(".update_exam_point").live("click", function(e){
+			e.preventDefault();
+			$.get("<?php echo Yii::app()->createUrl('/admin/examPoint/ajaxModel');?>", 
+					{id: $(this).attr('data-id')}, 
+					function(data){
+						if (data.status === 0){
+							$("#modal-title").html("编辑节点 "+data.data.name);
+							$("#ExamPointModel_name").val(data.data.name);
+							$("#ExamPointModel_pid").val(data.data.pid);
+							$("ExamPointModel_description").val(data.data.description);
+							var url = updateUrl.replace(/_id_/, data.data.exam_point_id);
+							$form.attr("action", url);
+							$modal.modal('show');
+						} else {
+							alert(data.errMsg);
+						}
+			}, 'json');
+			$("#ExamPointModel_pid").val($(this).attr('data-id'));
+			$form.attr("action", createUrl);
+			$modal.modal('show');
+		});
+		
+		$(".delete_exam_point").live("click", function(e){
+			e.preventDefault();
+			$this = $(this);
+			if (confirm("确定删除考点 "+$this.attr('data-name')+" 及其子考点吗？")){
+				$.post($(this).attr('href'), function(){
+					location.reload();
+				})
+			}
+		})
+		
+		$(".exam_point_visible input").live("change", function(){
+			$this = $(this);
+			var url = "<?php echo Yii::app()->createUrl('/admin/examPoint/visible')?>";
+			var data = {id: $this.attr('data-id')};
+			data.value = $this.attr("checked") ? 1 : 0;
+			$.post(url, data);
+		});
+		
+		$("#topPoint").on("hidden", function(){
+			$("#exam-point-model-form")[0].reset();
+		})
 	});
 </script>

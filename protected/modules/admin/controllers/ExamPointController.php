@@ -12,7 +12,8 @@ class ExamPointController extends AdminController
 
 		$res['subjectModel']=$subjectModel;
 		$res['data'] = $this->genTreeData(ExamPointModel::model()->top()->findAll());
-		$res['model'] = new ExamPointModel;	// 让index页面加载ajax form需要的js文件
+		$res['examPointModel'] = new ExamPointModel();	// 让index页面加载ajax form需要的js文件
+		$res['examPointModel']->subject_id = htmlspecialchars($subject_id);
 		$this->render('index', $res);
 	}	
 	
@@ -53,12 +54,6 @@ class ExamPointController extends AdminController
 				// @TODO
 			}
 		}
-
-		$model->subject_id = $subject_id;
-		$this->layout = 'empty';
-		$this->renderPartial('ajax_form',array(
-			'model'=>$model,
-		));
 	}
 
 	/**
@@ -71,7 +66,7 @@ class ExamPointController extends AdminController
 		$model=$this->loadModel($id);
 
 		// Uncomment the following line if AJAX validation is needed
-		// $this->performAjaxValidation($model);
+		$this->performAjaxValidation($model);
 
 		if(isset($_POST['ExamPointModel']))
 		{
@@ -83,6 +78,22 @@ class ExamPointController extends AdminController
 		$this->render('update',array(
 			'model'=>$model,
 		));
+	}
+	
+	public function actionAjaxUpdate($id)
+	{
+		$model=$this->loadModel($id);
+
+		// Uncomment the following line if AJAX validation is needed
+		$this->performAjaxValidation($model);
+
+		if(isset($_POST['ExamPointModel']))
+		{
+			$model->attributes=$_POST['ExamPointModel'];
+			if($model->save()){
+				
+			}
+		}
 	}
 
 	/**
@@ -99,7 +110,39 @@ class ExamPointController extends AdminController
 			'model'=>$model,
 		));
 	}
+	
+	public function actionAjaxModel($id){
+		$model = $this->loadModel($id);
+		if ($model){
+			$result = $model->attributes;
+			$data = array('status'=>0, 'data'=>$result);
+		} else {
+			$data = array('status'=>1, 'errMsg'=>'数据不存在');
+		}
+		echo json_encode($data);
+		Yii::app()->end();
+	}
 
+	
+	public function actionDelete($id)
+	{
+		$model = $this->loadModel($id);
+		if ($model){
+			$this->deleteExamPoints(array($model));
+		}
+
+		// if AJAX request (triggered by deletion via admin grid view), we should not redirect the browser
+		if(!isset($_GET['ajax']))
+			$this->redirect(isset($_POST['returnUrl']) ? $_POST['returnUrl'] : array('admin'));
+	}
+	
+	public function actionVisible($id, $value){
+		$model = $this->loadModel($id);
+		$value = $value ? 1 : 0;
+		$model->visible = $value;
+		$model->save();
+	}
+	
 	/**
 	 * Returns the data model based on the primary key given in the GET variable.
 	 * If the data model is not found, an HTTP exception will be raised.
@@ -111,6 +154,17 @@ class ExamPointController extends AdminController
 		if($model===null)
 			throw new CHttpException(404,'The requested page does not exist.');
 		return $model;
+	}
+	
+	private function deleteExamPoints($models){
+		if (is_array($models)){
+			foreach($models as $model){
+				if ($model->subExamPoints){
+					$this->deleteExamPoints($model->subExamPoints);
+				}
+				$model->delete();
+			}
+		}
 	}
 	
 	private function genTreeData($models){

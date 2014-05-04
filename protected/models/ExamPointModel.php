@@ -124,10 +124,10 @@ class ExamPointModel extends CActiveRecord
 	public function beforeSave() {
 		$metaData = $this->getMetaData ();
 		if ($this->getIsNewRecord ()) {
-			$sql = 'select max(`order`) as `order` from '.$this->getTableSchema()->rawName;
+			$sql = 'select max(`order`) as `order` from '.$this->getTableSchema()->rawName.' where pid='.$this->pid;
 			$result = self::model()->findBySql($sql);
-			if (!$result){
-				$this->order = $result['order'] + 1;
+			if ($result){
+				$this->order = $result->order + 1;
 			}
 		}
 		return parent::beforeSave ();

@@ -9,3 +9,11 @@
 .exam_point_visible {
 	margin-right: 50px;
 }
+
+.exam_point_tree_item {
+	background-color: #dddddd;
+}
+
+.exam_point_tree_item:hover {
+	background-color: #eeeeee;
+}

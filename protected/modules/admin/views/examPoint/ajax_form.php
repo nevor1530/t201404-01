@@ -1,5 +1,6 @@
 <?php $form=$this->beginWidget('bootstrap.widgets.TbActiveForm',array(
 	'id'=>'exam-point-model-form',
+	'action'=>Yii::app()->createUrl('/admin/examPoint/ajaxCreate'),
 	'enableAjaxValidation'=>true,
 	'clientOptions' => array(  
                         'validateOnSubmit' => true,  

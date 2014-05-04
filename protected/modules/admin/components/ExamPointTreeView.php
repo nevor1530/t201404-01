@@ -111,21 +111,28 @@ class ExamPointTreeView extends CWidget{
 				if(isset($node['id']))
 					$options['id']=$node['id'];
 
-				$html.=CHtml::tag('li',$options,$node['text'],false);
+				$html.=CHtml::tag('li',$options, '', false);
 				
-				$html.=CHtml::tag('span', array('class'=>'pull-right'), '', false);
-				$html.=CHtml::link('增加子考点', "#");
-				$html.=' | '.CHtml::link('上移', Yii::app()->createUrl("#"));
-				$html.=' | '.CHtml::link('下移', Yii::app()->createUrl("#"));
-				$html.=' | '.CHtml::link('编辑', Yii::app()->createUrl("#"));
-				$html.=' | '.CHtml::link('删除', Yii::app()->createUrl("#"));
-				$html.=CHtml::closeTag('span');
-				
-				$visibleId = 'is-visible-'.($node['model']->primaryKey);
-				$html.=CHtml::tag('label', array('class'=>'pull-right exam_point_visible'), '', false);
-				$html.=CHtml::checkBox($visibleId, $node['model']->visible, array('id'=>$visibleId, 'data-exam-point-id'=>$node['model']->primaryKey));
-				$html.='前台是否显示';
-				$html.=CHtml::closeTag('label');
+					$html.=CHtml::tag('div', array('class'=>'exam_point_tree_item'), $node['text'], false);
+						$html.=CHtml::tag('span', array('class'=>'pull-right'), '', false);
+							$html.=CHtml::link('增加子考点', "#", array('class'=>'add_sub_exam_point',
+																		'data-id'=>$node['id'],
+																		'data-name'=>$node['text']));
+							$html.=' | '.CHtml::link('上移', Yii::app()->createUrl("#"));
+							$html.=' | '.CHtml::link('下移', Yii::app()->createUrl("#"));
+							$html.=' | '.CHtml::link('编辑', "#", array('class'=>'update_exam_point',
+																		'data-id'=>$node['id'],
+																		'data-name'=>$node['text']));
+							$html.=' | '.CHtml::link('删除', Yii::app()->createUrl('/admin/examPoint/delete', array('id'=>$node['model']->primaryKey)), 
+								array('class'=>'delete_exam_point', 'data-name'=>$node['text']));
+						$html.=CHtml::closeTag('span');
+					
+						$visibleId = 'is-visible-'.($node['model']->primaryKey);
+						$html.=CHtml::tag('label', array('class'=>'pull-right exam_point_visible'), '', false);
+							$html.=CHtml::checkBox($visibleId, $node['model']->visible, array('id'=>$visibleId, 'data-id'=>$node['model']->primaryKey));
+							$html.='前台是否显示';
+						$html.=CHtml::closeTag('label');
+					$html.=CHtml::closeTag('div');
 				
 				if(!empty($node['children']))
 				{
