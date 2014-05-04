@@ -120,4 +120,16 @@ class ExamPointModel extends CActiveRecord
 	{
 		return parent::model($className);
 	}
+	
+	public function beforeSave() {
+		$metaData = $this->getMetaData ();
+		if ($this->getIsNewRecord ()) {
+			$sql = 'select max(`order`) as `order` from '.$this->getTableSchema()->rawName;
+			$result = self::model()->findBySql($sql);
+			if (!$result){
+				$this->order = $result['order'] + 1;
+			}
+		}
+		return parent::beforeSave ();
+	}
 }

@@ -9,7 +9,7 @@ class ExamPointController extends AdminController
 		$subjectModel=SubjectModel::model()->findByPk($subject_id);
 		if($subjectModel===null)
 			throw new CHttpException(404,'The requested page does not exist.');
-		
+
 		$res['subjectModel']=$subjectModel;
 		$res['data'] = $this->genTreeData(ExamPointModel::model()->top()->findAll());
 		$res['model'] = new ExamPointModel;	// 让index页面加载ajax form需要的js文件
@@ -56,7 +56,7 @@ class ExamPointController extends AdminController
 
 		$model->subject_id = $subject_id;
 		$this->layout = 'empty';
-		$this->render('ajax_form',array(
+		$this->renderPartial('ajax_form',array(
 			'model'=>$model,
 		));
 	}
@@ -119,6 +119,7 @@ class ExamPointController extends AdminController
 			$item = array();
 			$item['text'] = $model->name;
 			$item['id'] = $model->exam_point_id;
+			$item['model'] = $model;
 			if (!empty($model->subExamPoints)){
 				$item['hasChildren'] = true;
 				$item['children'] = $this->genTreeData($model->subExamPoints);

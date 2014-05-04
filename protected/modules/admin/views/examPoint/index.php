@@ -19,7 +19,7 @@ Yii::app()->getClientScript()->registerScriptFile($baseUrl.'/js/admin.js');
 
 <h1>考点树管理</h1>
 
-<?php $this->widget('CTreeView',array(
+<?php $this->widget('ExamPointTreeView',array(
 	'data'=>$data,
 )); ?>
 
@@ -29,6 +29,7 @@ Yii::app()->getClientScript()->registerScriptFile($baseUrl.'/js/admin.js');
     <h3>增加顶级节点</h3>
   </div>
   <div class="modal-body">
+  	<?php $this->renderPartial('ajax_form', array('model'=>new ExamPointModel()))?>
   </div>
 </div>
 
