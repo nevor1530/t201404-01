@@ -84,6 +84,8 @@ class ExamPointTreeView extends CWidget{
 		{
 			foreach($data as $node)
 			{
+				$model = $node['model'];
+				
 				if(!isset($node['text']))
 					continue;
 
@@ -118,18 +120,18 @@ class ExamPointTreeView extends CWidget{
 							$html.=CHtml::link('增加子考点', "#", array('class'=>'add_sub_exam_point',
 																		'data-id'=>$node['id'],
 																		'data-name'=>$node['text']));
-							$html.=' | '.CHtml::link('上移', Yii::app()->createUrl("#"));
-							$html.=' | '.CHtml::link('下移', Yii::app()->createUrl("#"));
+							$html.=' | '.CHtml::link('上移', Yii::app()->createUrl('/admin/examPoint/move', array('id'=>$model->primaryKey, 'direction'=>'up')), array('class'=>'exam_point_move_up'));
+							$html.=' | '.CHtml::link('下移', Yii::app()->createUrl('/admin/examPoint/move', array('id'=>$model->primaryKey, 'direction'=>'down')), array('class'=>'exam_point_move_down'));
 							$html.=' | '.CHtml::link('编辑', "#", array('class'=>'update_exam_point',
 																		'data-id'=>$node['id'],
 																		'data-name'=>$node['text']));
-							$html.=' | '.CHtml::link('删除', Yii::app()->createUrl('/admin/examPoint/delete', array('id'=>$node['model']->primaryKey)), 
+							$html.=' | '.CHtml::link('删除', Yii::app()->createUrl('/admin/examPoint/delete', array('id'=>$model->primaryKey)), 
 								array('class'=>'delete_exam_point', 'data-name'=>$node['text']));
 						$html.=CHtml::closeTag('span');
 					
-						$visibleId = 'is-visible-'.($node['model']->primaryKey);
+						$visibleId = 'is-visible-'.($model->primaryKey);
 						$html.=CHtml::tag('label', array('class'=>'pull-right exam_point_visible'), '', false);
-							$html.=CHtml::checkBox($visibleId, $node['model']->visible, array('id'=>$visibleId, 'data-id'=>$node['model']->primaryKey));
+							$html.=CHtml::checkBox($visibleId, $model->visible, array('id'=>$visibleId, 'data-id'=>$model->primaryKey));
 							$html.='前台是否显示';
 						$html.=CHtml::closeTag('label');
 					$html.=CHtml::closeTag('div');

@@ -19,9 +19,13 @@ Yii::app()->getClientScript()->registerScriptFile($baseUrl.'/js/admin.js');
 
 <h1>考点树管理</h1>
 
-<?php $this->widget('ExamPointTreeView',array(
-	'data'=>$data,
-)); ?>
+<?php if (empty($data)):?>
+	<p>当前没有考点数据</p>
+<?php else:?>
+	<?php $this->widget('ExamPointTreeView',array(
+		'data'=>$data,
+	)); ?>
+<?php endif; ?>
 
 <div id="topPoint" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
   <div class="modal-header">
@@ -90,7 +94,31 @@ Yii::app()->getClientScript()->registerScriptFile($baseUrl.'/js/admin.js');
 					location.reload();
 				})
 			}
-		})
+		});
+		
+		$(".exam_point_move_up").live("click", function(e){
+			e.preventDefault();
+			$this = $(this);
+			$.post($this.attr("href"), function(data){
+				if (data.status === 0){
+					location.reload();
+				} else {
+					alert(data.errMsg);
+				}
+			}, "json");
+		});
+		
+		$(".exam_point_move_down").live("click", function(e){
+			e.preventDefault();
+			$this = $(this);
+			$.post($this.attr("href"), function(data){
+				if (data.status === 0){
+					location.reload();
+				} else {
+					alert(data.errMsg);
+				}
+			}, "json");
+		});
 		
 		$(".exam_point_visible input").live("change", function(){
 			$this = $(this);
@@ -102,6 +130,10 @@ Yii::app()->getClientScript()->registerScriptFile($baseUrl.'/js/admin.js');
 		
 		$("#topPoint").on("hidden", function(){
 			$("#exam-point-model-form")[0].reset();
+		})
+		
+		$("#topPoint").on("shown", function(){
+			$("#ExamPointModel_name").focus();
 		})
 	});
 </script>

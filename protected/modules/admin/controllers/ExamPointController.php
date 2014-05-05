@@ -2,6 +2,14 @@
 
 class ExamPointController extends AdminController
 {
+	public function filters()
+	{
+		return array(
+			'accessControl', // perform access control for CRUD operations
+			'postOnly + delete, create, ajaxCreate, ajaxUpdate, visible', // we only allow deletion via POST request
+		);
+	}
+	
 	public function actionIndex($subject_id)
 	{
 		$res = array();
@@ -136,11 +144,49 @@ class ExamPointController extends AdminController
 			$this->redirect(isset($_POST['returnUrl']) ? $_POST['returnUrl'] : array('admin'));
 	}
 	
-	public function actionVisible($id, $value){
+	public function actionVisible(){
+		$id = $_POST['id'];
+		$value = $_POST['value'];
 		$model = $this->loadModel($id);
 		$value = $value ? 1 : 0;
 		$model->visible = $value;
 		$model->save();
+	}
+	
+	public function actionMove($id, $direction){
+		$model = $this->loadModel($id);
+		$criteria = new CDbCriteria();
+		$criteria->limit = 1;
+		$criteria->addCondition('pid='.$model->pid);
+		if ($direction === 'up') {
+			$criteria->order = '`order` desc';
+			$criteria->addCondition('`order`<'.$model->order);
+			$anotherModel = ExamPointModel::model()->find($criteria);
+			if (!$anotherModel){
+				echo json_encode(array('status'=>1, 'errMsg'=>'当前位置已是首位，不能再上移'));
+				Yii::app()->end();
+			} else {
+				$model->order--;
+				$anotherModel->order++;
+				$model->save();
+				$anotherModel->save();
+			}
+		} elseif ($direction === 'down') {
+			$criteria->order = '`order` asc';
+			$criteria->addCondition('`order`>'.$model->order);
+			$anotherModel = ExamPointModel::model()->find($criteria);
+			if (!$anotherModel){
+				echo json_encode(array('status'=>1, 'errMsg'=>'当前位置已是末尾，不能再下移'));
+				Yii::app()->end();
+			} else {
+				$model->order++;
+				$anotherModel->order--;
+				$model->save();
+				$anotherModel->save();
+			}
+		}
+		echo json_encode(array('status'=>0));
+		Yii::app()->end();
 	}
 	
 	/**

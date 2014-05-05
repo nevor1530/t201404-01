@@ -54,7 +54,7 @@ class ExamPointModel extends CActiveRecord
 		return array(
 			'subject' => array(self::BELONGS_TO, 'Subject', 'subject_id'),
 			'questionExamPoints' => array(self::HAS_MANY, 'QuestionExamPoint', 'exam_point_id'),
-			'subExamPoints' => array(self::HAS_MANY, 'ExamPointModel', 'pid'),
+			'subExamPoints' => array(self::HAS_MANY, 'ExamPointModel', 'pid', 'order'=>'`order` asc'),
 		);
 	}
 	
@@ -63,6 +63,7 @@ class ExamPointModel extends CActiveRecord
 		return array(
 			'top'=>array(
 				'condition'=>'pid=0',
+				'order'=>'`order` asc',
 			),
 		);
 	}
