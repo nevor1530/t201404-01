@@ -3,6 +3,7 @@
 // uncomment the following to define a path alias
 // Yii::setPathOfAlias('local','path/to/local-folder');
 Yii::setPathOfAlias('bootstrap', dirname(__FILE__).'/../extensions/bootstrap');
+Yii::setPathOfAlias('umeditor', dirname(__FILE__).'/../extensions/umeditor');
 
 // This is the main Web application configuration. Any writable
 // CWebApplication properties can be configured here.
@@ -41,6 +42,11 @@ return array(
 		'bootstrap'=>array(
             'class'=>'bootstrap.components.Bootstrap',
         ),
+        
+        'umeditor'=>array(
+        	'class'=>'umeditor.components.UMeditor',
+        ),
+        
 		'user'=>array(
 			// enable cookie-based authentication
 			'allowAutoLogin'=>true,

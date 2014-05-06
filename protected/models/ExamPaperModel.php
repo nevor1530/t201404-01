@@ -12,6 +12,15 @@
  * @property integer $recommendation
  * @property integer $category_id
  * @property integer $time_length
+ * @property integer $order
+ *
+ * The followings are the available model relations:
+ * @property Category $category
+ * @property Subject $subject
+ * @property ExamPaperInstance[] $examPaperInstances
+ * @property PaperRecommendation[] $paperRecommendations
+ * @property Question[] $questions
+ * @property QuestionType[] $questionTypes
  */
 class ExamPaperModel extends CActiveRecord
 {
@@ -32,11 +41,11 @@ class ExamPaperModel extends CActiveRecord
 		// will receive user inputs.
 		return array(
 			array('subject_id, name', 'required'),
-			array('subject_id, score, recommendation, category_id, time_length', 'numerical', 'integerOnly'=>true),
+			array('subject_id, score, recommendation, category_id, time_length, order', 'numerical', 'integerOnly'=>true),
 			array('name, short_name', 'length', 'max'=>45),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('examp_paper_id, subject_id, name, short_name, score, recommendation, category_id, time_length', 'safe', 'on'=>'search'),
+			array('examp_paper_id, subject_id, name, short_name, score, recommendation, category_id, time_length, order', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -48,6 +57,12 @@ class ExamPaperModel extends CActiveRecord
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
+			'category' => array(self::BELONGS_TO, 'Category', 'category_id'),
+			'subject' => array(self::BELONGS_TO, 'Subject', 'subject_id'),
+			'examPaperInstances' => array(self::HAS_MANY, 'ExamPaperInstance', 'exam_paper_id'),
+			'paperRecommendations' => array(self::HAS_MANY, 'PaperRecommendation', 'examp_paper_id'),
+			'questions' => array(self::HAS_MANY, 'Question', 'exam_paper_id'),
+			'questionTypes' => array(self::HAS_MANY, 'QuestionType', 'examp_paper_id'),
 		);
 	}
 
@@ -65,6 +80,7 @@ class ExamPaperModel extends CActiveRecord
 			'recommendation' => 'Recommendation',
 			'category_id' => 'Category',
 			'time_length' => 'Time Length',
+			'order' => 'Order',
 		);
 	}
 
@@ -94,6 +110,7 @@ class ExamPaperModel extends CActiveRecord
 		$criteria->compare('recommendation',$this->recommendation);
 		$criteria->compare('category_id',$this->category_id);
 		$criteria->compare('time_length',$this->time_length);
+		$criteria->compare('order',$this->order);
 
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,

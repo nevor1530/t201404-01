@@ -303,7 +303,7 @@ class Bootstrap extends CApplicationComponent
 		else
 		{
 			$assetsPath = Yii::getPathOfAlias('bootstrap.assets');
-			$assetsUrl = Yii::app()->assetManager->publish($assetsPath, true, -1, $this->forceCopyAssets);
+			$assetsUrl = Yii::app()->assetManager->publish($assetsPath, false, -1, $this->forceCopyAssets);
 			return $this->_assetsUrl = $assetsUrl;
 		}
 	}
