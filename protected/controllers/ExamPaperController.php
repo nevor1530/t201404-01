@@ -70,7 +70,7 @@ class ExamPaperController extends Controller
 		{
 			$model->attributes=$_POST['ExamPaperModel'];
 			if($model->save())
-				$this->redirect(array('view','id'=>$model->examp_paper_id));
+				$this->redirect(array('view','id'=>$model->exam_paper_id));
 		}
 
 		$this->render('create',array(
@@ -94,7 +94,7 @@ class ExamPaperController extends Controller
 		{
 			$model->attributes=$_POST['ExamPaperModel'];
 			if($model->save())
-				$this->redirect(array('view','id'=>$model->examp_paper_id));
+				$this->redirect(array('view','id'=>$model->exam_paper_id));
 		}
 
 		$this->render('update',array(

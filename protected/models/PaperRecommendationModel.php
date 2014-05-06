@@ -6,7 +6,7 @@
  * The followings are the available columns in table 'paper_recommendation':
  * @property integer $paper_recommendation_id
  * @property integer $subject_id
- * @property integer $examp_paper_id
+ * @property integer $exam_paper_id
  * @property integer $order
  * @property double $difficuty
  *
@@ -32,12 +32,12 @@ class PaperRecommendationModel extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('subject_id, examp_paper_id', 'required'),
-			array('subject_id, examp_paper_id, order', 'numerical', 'integerOnly'=>true),
+			array('subject_id, exam_paper_id', 'required'),
+			array('subject_id, exam_paper_id, order', 'numerical', 'integerOnly'=>true),
 			array('difficuty', 'numerical'),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('paper_recommendation_id, subject_id, examp_paper_id, order, difficuty', 'safe', 'on'=>'search'),
+			array('paper_recommendation_id, subject_id, exam_paper_id, order, difficuty', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -50,7 +50,7 @@ class PaperRecommendationModel extends CActiveRecord
 		// class name for the relations automatically generated below.
 		return array(
 			'subject' => array(self::BELONGS_TO, 'Subject', 'subject_id'),
-			'exampPaper' => array(self::BELONGS_TO, 'ExamPaper', 'examp_paper_id'),
+			'exampPaper' => array(self::BELONGS_TO, 'ExamPaper', 'exam_paper_id'),
 		);
 	}
 
@@ -62,7 +62,7 @@ class PaperRecommendationModel extends CActiveRecord
 		return array(
 			'paper_recommendation_id' => 'Paper Recommendation',
 			'subject_id' => 'Subject',
-			'examp_paper_id' => 'Examp Paper',
+			'exam_paper_id' => 'Examp Paper',
 			'order' => 'Order',
 			'difficuty' => 'Difficuty',
 		);
@@ -88,7 +88,7 @@ class PaperRecommendationModel extends CActiveRecord
 
 		$criteria->compare('paper_recommendation_id',$this->paper_recommendation_id);
 		$criteria->compare('subject_id',$this->subject_id);
-		$criteria->compare('examp_paper_id',$this->examp_paper_id);
+		$criteria->compare('exam_paper_id',$this->exam_paper_id);
 		$criteria->compare('order',$this->order);
 		$criteria->compare('difficuty',$this->difficuty);
 

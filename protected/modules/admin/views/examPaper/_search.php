@@ -3,7 +3,7 @@
 	'method'=>'get',
 )); ?>
 
-	<?php echo $form->textFieldRow($model,'examp_paper_id',array('class'=>'span5')); ?>
+	<?php echo $form->textFieldRow($model,'exam_paper_id',array('class'=>'span5')); ?>
 
 	<?php echo $form->textFieldRow($model,'subject_id',array('class'=>'span5')); ?>
 

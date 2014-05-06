@@ -11,6 +11,15 @@
  * @property integer $index
  * @property integer $is_multiple
  * @property integer $answer
+ *
+ * The followings are the available model relations:
+ * @property Material $material
+ * @property QuestionType $questionType
+ * @property ExamPaper $examPaper
+ * @property QuestionAnswerOption[] $questionAnswerOptions
+ * @property QuestionExamPoint[] $questionExamPoints
+ * @property QuestionExtra $questionExtra
+ * @property QuestionInstance[] $questionInstances
  */
 class QuestionModel extends CActiveRecord
 {
@@ -46,6 +55,13 @@ class QuestionModel extends CActiveRecord
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
+			'material' => array(self::BELONGS_TO, 'Material', 'material_id'),
+			'questionType' => array(self::BELONGS_TO, 'QuestionType', 'question_type_id'),
+			'examPaper' => array(self::BELONGS_TO, 'ExamPaper', 'exam_paper_id'),
+			'questionAnswerOptions' => array(self::HAS_MANY, 'QuestionAnswerOption', 'question_id'),
+			'questionExamPoints' => array(self::HAS_MANY, 'QuestionExamPoint', 'question_id'),
+			'questionExtra' => array(self::HAS_ONE, 'QuestionExtra', 'question_id'),
+			'questionInstances' => array(self::HAS_MANY, 'QuestionInstance', 'question_id'),
 		);
 	}
 

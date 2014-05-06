@@ -4,7 +4,7 @@
  * This is the model class for table "exam_paper".
  *
  * The followings are the available columns in table 'exam_paper':
- * @property integer $examp_paper_id
+ * @property integer $exam_paper_id
  * @property integer $subject_id
  * @property string $name
  * @property string $short_name
@@ -45,7 +45,7 @@ class ExamPaperModel extends CActiveRecord
 			array('name, short_name', 'length', 'max'=>45),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('examp_paper_id, subject_id, name, short_name, score, recommendation, category_id, time_length, order', 'safe', 'on'=>'search'),
+			array('exam_paper_id, subject_id, name, short_name, score, recommendation, category_id, time_length, order', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -60,9 +60,9 @@ class ExamPaperModel extends CActiveRecord
 			'category' => array(self::BELONGS_TO, 'Category', 'category_id'),
 			'subject' => array(self::BELONGS_TO, 'Subject', 'subject_id'),
 			'examPaperInstances' => array(self::HAS_MANY, 'ExamPaperInstance', 'exam_paper_id'),
-			'paperRecommendations' => array(self::HAS_MANY, 'PaperRecommendation', 'examp_paper_id'),
+			'paperRecommendations' => array(self::HAS_MANY, 'PaperRecommendation', 'exam_paper_id'),
 			'questions' => array(self::HAS_MANY, 'Question', 'exam_paper_id'),
-			'questionTypes' => array(self::HAS_MANY, 'QuestionType', 'examp_paper_id'),
+			'questionTypes' => array(self::HAS_MANY, 'QuestionType', 'exam_paper_id'),
 		);
 	}
 
@@ -72,7 +72,7 @@ class ExamPaperModel extends CActiveRecord
 	public function attributeLabels()
 	{
 		return array(
-			'examp_paper_id' => 'Examp Paper',
+			'exam_paper_id' => 'Exam Paper',
 			'subject_id' => 'Subject',
 			'name' => 'Name',
 			'short_name' => 'Short Name',
@@ -102,7 +102,7 @@ class ExamPaperModel extends CActiveRecord
 
 		$criteria=new CDbCriteria;
 
-		$criteria->compare('examp_paper_id',$this->examp_paper_id);
+		$criteria->compare('exam_paper_id',$this->exam_paper_id);
 		$criteria->compare('subject_id',$this->subject_id);
 		$criteria->compare('name',$this->name,true);
 		$criteria->compare('short_name',$this->short_name,true);

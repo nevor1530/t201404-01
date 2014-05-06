@@ -1,7 +1,7 @@
 <div class="view">
 
-	<b><?php echo CHtml::encode($data->getAttributeLabel('examp_paper_id')); ?>:</b>
-	<?php echo CHtml::link(CHtml::encode($data->examp_paper_id),array('view','id'=>$data->examp_paper_id)); ?>
+	<b><?php echo CHtml::encode($data->getAttributeLabel('exam_paper_id')); ?>:</b>
+	<?php echo CHtml::link(CHtml::encode($data->exam_paper_id),array('view','id'=>$data->exam_paper_id)); ?>
 	<br />
 
 	<b><?php echo CHtml::encode($data->getAttributeLabel('subject_id')); ?>:</b>
