@@ -15,6 +15,13 @@ $this->menu=array(
 		'exam_bank_id',
 		'name',
 		'price',
+		
+		array(  
+            'type'=>'raw',
+            'value'=> 'CHtml::image(Yii::app()->baseUrl ."/data/icon/examBank/" . $data->icon, "", array("width"=>"200px" ,"height"=>"200px"))',
+            'header'=>'题库图标',  
+		),
+		
 		array(
 			'class'=>'LinksColumn',
 			'name'=>'subjects',

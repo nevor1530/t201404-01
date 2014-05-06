@@ -2,6 +2,8 @@
 
 class ExamBankController extends AdminController
 {
+	const ICON_DIR_PATH = 'data/icon/examBank/';
+	
 	/**
 	 * Creates a new model.
 	 * If creation is successful, the browser will be redirected to the 'view' page.
@@ -16,9 +18,15 @@ class ExamBankController extends AdminController
 		if(isset($_POST['ExamBankModel']))
 		{
 			$model->attributes=$_POST['ExamBankModel'];
-			if($model->save())
+			$model->icon=CUploadedFile::getInstance($model,'icon');
+			if($model->save()) {
+				$fileName = $_FILES['ExamBankModel']['name']['icon']; 
+				FileUtil::mkdirs(self::ICON_DIR_PATH);
+				$model->icon->saveAs(self::ICON_DIR_PATH . $fileName);
 				NavUtil::navChanged();
-				$this->redirect(array('/admin'));
+			}
+			
+			$this->redirect(array('/admin'));
 		}
 
 		$this->render('create',array(
@@ -41,9 +49,15 @@ class ExamBankController extends AdminController
 		if(isset($_POST['ExamBankModel']))
 		{
 			$model->attributes=$_POST['ExamBankModel'];
-			if($model->save())
+			$model->icon=CUploadedFile::getInstance($model,'icon');
+			if($model->save()) {
+				$fileName = $_FILES['ExamBankModel']['name']['icon']; 
+				FileUtil::mkdirs(self::ICON_DIR_PATH);
+				$model->icon->saveAs(self::ICON_DIR_PATH . $fileName);
 				NavUtil::navChanged();
-				$this->redirect(array('/admin'));
+			}
+
+			$this->redirect(array('/admin'));
 		}
 
 		$this->render('update',array(

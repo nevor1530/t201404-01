@@ -15,6 +15,8 @@
  */
 class ExamBankModel extends CActiveRecord
 {
+	public $icon;
+	
 	/**
 	 * @return string the associated database table name
 	 */
@@ -34,6 +36,7 @@ class ExamBankModel extends CActiveRecord
 			array('name', 'required'),
 			array('price', 'numerical'),
 			array('name', 'length', 'max'=>45),
+			array('icon', 'file', 'types' => 'jpg,jpeg,gif,png'),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
 			array('exam_bank_id, name, price', 'safe', 'on'=>'search'),
@@ -63,6 +66,7 @@ class ExamBankModel extends CActiveRecord
 			'exam_bank_id' => 'ID',
 			'name' => '题库名称',
 			'price' => '价格(元/月)',
+			'icon' => '题库图标',
 			'subjects' => '包含课程',
 		);
 	}

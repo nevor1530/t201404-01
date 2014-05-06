@@ -23,7 +23,9 @@ $('.search-form form').submit(function(){
 
 <h1>题库管理</h1>
 
-<?php $this->widget('bootstrap.widgets.TbGridView',array(
+<?php 
+$iconDirPath = ExamBankController::ICON_DIR_PATH;
+$this->widget('bootstrap.widgets.TbGridView',array(
 	'id'=>'exam-bank-model-grid',
 	'dataProvider'=>$model->search(),
 	'filter'=>$model,
@@ -31,6 +33,13 @@ $('.search-form form').submit(function(){
 		'exam_bank_id',
 		'name',
 		'price',
+		
+		array(  
+            'type'=>'raw',
+            'value'=> 'CHtml::image(Yii::app()->baseUrl ."/data/icon/examBank/" . $data->icon, "", array("width"=>"200px" ,"height"=>"200px"))',
+            'header'=>'题库图标',  
+		),
+		  
 		array(
 			'class'=>'LinksColumn',
 			'name'=>'subjects',
@@ -38,6 +47,7 @@ $('.search-form form').submit(function(){
 			'linkHtmlOptions'=>array('class'=>'links_column_item'),
 			'header'=>'课程',
 		),
+		
 		array(
 			'class'=>'bootstrap.widgets.TbButtonColumn',
 			'header'=>'操作',
@@ -50,5 +60,6 @@ $('.search-form form').submit(function(){
 				),
 			),
 		),
-	),
-)); ?>
+	)
+));
+?>
