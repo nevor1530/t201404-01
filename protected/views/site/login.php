@@ -34,7 +34,7 @@ $this->breadcrumbs=array(
 		<div class="control-group">
 			<label class="control-label"><?php echo $form->labelEx($model,'password'); ?></label>
 			<div class="controls">
-				<input class="password-input" type="text" id="LoginForm_password" name="LoginForm[password]" placeholder="请输入6个以上字符">
+				<input class="password-input" type="password" id="LoginForm_password" name="LoginForm[password]" placeholder="请输入6个以上字符">
 			</div>
 		</div>
 	

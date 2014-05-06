@@ -32,14 +32,14 @@ $this->pageTitle=Yii::app()->name . ' - 注册';
 		<div class="control-group">
 			<label class="control-label"><?php echo $form->labelEx($model,'password'); ?></label>
 			<div class="controls">
-				<input class="password-input" type="text" id="RegisterForm_password" name="RegisterForm[password]" placeholder="请输入6个以上字符">
+				<input class="password-input" type="password" id="RegisterForm_password" name="RegisterForm[password]" placeholder="请输入6个以上字符">
 			</div>
 		</div>
 		
 		<div class="control-group">
 			<label class="control-label"><?php echo $form->labelEx($model,'confirm'); ?></label>
 			<div class="controls">
-				<input class="confirm-input" type="text" id="RegisterForm_confirm" name="RegisterForm[confirm]" placeholder="请输入6个以上字符">
+				<input class="confirm-input" type="password" id="RegisterForm_confirm" name="RegisterForm[confirm]" placeholder="请输入6个以上字符">
 			</div>
 		</div>
 	
