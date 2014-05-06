@@ -2,7 +2,7 @@
 $this->breadcrumbs=array(
 	$subjectModel->examBank->name=>array('/admin'),
 	$subjectModel->name=>array('/admin/subject/view', 'id'=>$subjectModel->subject_id),
-	'考点树'
+	'考点树管理'
 );
 
 $this->menu=array(

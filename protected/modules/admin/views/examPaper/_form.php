@@ -6,7 +6,7 @@ $form=$this->beginWidget('bootstrap.widgets.TbActiveForm',array(
 	'enableAjaxValidation'=>false,
 )); ?>
 
-	<p class="help-block">Fields with <span class="required">*</span> are required.</p>
+	<p class="help-block">带<span class="required">*</span>为必填项目</p>
 
 	<?php echo $form->errorSummary($model); ?>
 
@@ -24,7 +24,7 @@ $form=$this->beginWidget('bootstrap.widgets.TbActiveForm',array(
 
 	<?php echo $form->textFieldRow($model,'time_length',array('class'=>'span5')); ?>
 
-	<?php echo $form->textFieldRow($model,'order',array('class'=>'span5')); ?>
+	<?php echo $form->textFieldRow($model,'sequence',array('class'=>'span5')); ?>
 
 	<div class="form-actions">
 		<?php $this->widget('bootstrap.widgets.TbButton', array(

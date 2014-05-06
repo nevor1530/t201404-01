@@ -61,21 +61,6 @@ class SubjectController extends AdminController
 			'model'=>$model,
 		));
 	}
-
-	/**
-	 * Manages all models.
-	 */
-	public function actionAdmin()
-	{
-		$model=new SubjectModel('search');
-		$model->unsetAttributes();  // clear any default values
-		if(isset($_GET['SubjectModel']))
-			$model->attributes=$_GET['SubjectModel'];
-
-		$this->render('admin',array(
-			'model'=>$model,
-		));
-	}
 	
 	/**
 	 * Deletes a particular model.

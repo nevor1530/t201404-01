@@ -12,7 +12,9 @@
  * @property integer $recommendation
  * @property integer $category_id
  * @property integer $time_length
- * @property integer $order
+ * @property integer $sequence
+ * @property string $publish_time
+ * @property integer $status
  *
  * The followings are the available model relations:
  * @property Category $category
@@ -24,6 +26,8 @@
  */
 class ExamPaperModel extends CActiveRecord
 {
+	public $_question_number = null;
+	
 	/**
 	 * @return string the associated database table name
 	 */
@@ -41,11 +45,12 @@ class ExamPaperModel extends CActiveRecord
 		// will receive user inputs.
 		return array(
 			array('subject_id, name', 'required'),
-			array('subject_id, score, recommendation, category_id, time_length, order', 'numerical', 'integerOnly'=>true),
+			array('subject_id, score, recommendation, category_id, time_length, sequence, status', 'numerical', 'integerOnly'=>true),
 			array('name, short_name', 'length', 'max'=>45),
+			array('publish_time', 'safe'),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('exam_paper_id, subject_id, name, short_name, score, recommendation, category_id, time_length, order', 'safe', 'on'=>'search'),
+			array('exam_paper_id, subject_id, name, short_name, score, recommendation, category_id, time_length, sequence, publish_time, status', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -60,9 +65,9 @@ class ExamPaperModel extends CActiveRecord
 			'category' => array(self::BELONGS_TO, 'Category', 'category_id'),
 			'subject' => array(self::BELONGS_TO, 'Subject', 'subject_id'),
 			'examPaperInstances' => array(self::HAS_MANY, 'ExamPaperInstance', 'exam_paper_id'),
-			'paperRecommendations' => array(self::HAS_MANY, 'PaperRecommendation', 'exam_paper_id'),
+			'paperRecommendations' => array(self::HAS_MANY, 'PaperRecommendation', 'examp_paper_id'),
 			'questions' => array(self::HAS_MANY, 'Question', 'exam_paper_id'),
-			'questionTypes' => array(self::HAS_MANY, 'QuestionType', 'exam_paper_id'),
+			'questionTypes' => array(self::HAS_MANY, 'QuestionType', 'examp_paper_id'),
 		);
 	}
 
@@ -72,15 +77,15 @@ class ExamPaperModel extends CActiveRecord
 	public function attributeLabels()
 	{
 		return array(
-			'exam_paper_id' => 'Exam Paper',
-			'subject_id' => 'Subject',
-			'name' => 'Name',
-			'short_name' => 'Short Name',
-			'score' => 'Score',
-			'recommendation' => 'Recommendation',
-			'category_id' => 'Category',
-			'time_length' => 'Time Length',
-			'order' => 'Order',
+			'exam_paper_id' => 'ID',
+			'name' => '试卷名称',
+			'short_name' => '简称',
+			'score' => '总分',
+			'recommendation' => '推荐值',
+			'category_id' => '分类ID',
+			'time_length' => '答卷时间',
+			'publish_time' => '试卷年份',
+			'status' => '状态',
 		);
 	}
 
@@ -110,7 +115,9 @@ class ExamPaperModel extends CActiveRecord
 		$criteria->compare('recommendation',$this->recommendation);
 		$criteria->compare('category_id',$this->category_id);
 		$criteria->compare('time_length',$this->time_length);
-		$criteria->compare('order',$this->order);
+		$criteria->compare('sequence',$this->sequence);
+		$criteria->compare('publish_time',$this->publish_time,true);
+		$criteria->compare('status',$this->status);
 
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
@@ -126,5 +133,12 @@ class ExamPaperModel extends CActiveRecord
 	public static function model($className=__CLASS__)
 	{
 		return parent::model($className);
+	}
+	
+	public function getQuestionNumber(){
+		if ($this->_question_number === null){
+			
+		}
+		return $this->_question_number;
 	}
 }
