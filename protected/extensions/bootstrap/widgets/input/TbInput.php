@@ -27,7 +27,7 @@ abstract class TbInput extends CInputWidget
 	const TYPE_TEXT = 'text';
 	const TYPE_CAPTCHA = 'captcha';
 	const TYPE_UNEDITABLE = 'uneditable';
-	const TYPE_DATETIMEPICKDER = 'datetimepicker';
+	const TYPE_DATETIMEPICKER = 'datetimepicker';
 
 	/**
 	 * @var TbActiveForm the associated form widget.

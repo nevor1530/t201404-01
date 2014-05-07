@@ -269,22 +269,25 @@ class Bootstrap extends CApplicationComponent
 	public function registerDateTimePicker($selector = null, $options = array()){
 		$this->register();
 		// css
+		$cs = Yii::app()->getClientScript();
 		$filename = YII_DEBUG ? 'bootstrap-datetimepicker.css' : 'bootstrap-datetimepicker.min.css';
 		$cs->registerCssFile($this->getAssetsUrl().'/css/'.$filename);
 		// js
 		$filename = YII_DEBUG ? 'bootstrap-datetimepicker.js' : 'bootstrap-datetimepicker.min.js';
-		$cs->registerCssFile($this->getAssetsUrl().'/js/'.$filename);
-		$cs->registerCssFile($this->getAssetsUrl().'/js/locals/bootstrap-datetimepicker.zh-CN.js');
+		$cs->registerScriptFile($this->getAssetsUrl().'/js/'.$filename);
+		$cs->registerScriptFile($this->getAssetsUrl().'/js/locales/bootstrap-datetimepicker.zh-CN.js');
 		
 		$defaultOptions = array(
-	        language=> 'zh-CN',
-	        weekStart=>1,
-	        todayBtn=> 1,
-			autoclose=>1,
-			todayHighlight=>1,
-			startView=>2,
-			forceParse=>0,
-	        showMeridian=>1
+	        'language'=>'zh-CN',
+	        'weekStart'=>1,
+	        'todayBtn'=> 1,
+			'autoclose'=>1,
+			'todayHighlight'=>1,
+			'startView'=>2,
+			'forceParse'=>0,
+	        'showMeridian'=>1,
+	        'startView'=>2,
+	        'minView'=>2,
 	    );
 	    
 	    $options = array_merge($defaultOptions, $options);
