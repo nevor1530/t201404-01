@@ -2,6 +2,15 @@
 
 class QuestionController extends AdminController
 {
+	public static $questionTypes = array (	
+		'1' => '单选',
+		'2' => '多选',
+		'3' => '不定项',
+		'4' => '填空',
+		'5' => '判断',
+		'6' => '材料',
+	);
+	
 	public function filters()
 	{
 		return array(
@@ -25,11 +34,12 @@ class QuestionController extends AdminController
 	
 	public function actionCreateChoiceQuestion($subject_id) {
 		$choiceQuestionModel=new ChoiceQuestionForm;
-		
+		$choiceQuestionTypes = array_slice(self::$questionTypes, 0, 3);
 		$this->render('create_choice_question', array(
 			'subject_id' => $subject_id,
 			'choiceQuestionModel' => $choiceQuestionModel,
 			'examPaperListData'=>$this->getExamPaperListData($subject_id),
+			'choiceQuestionTypes' => $choiceQuestionTypes,
 		));
 	}
 	
