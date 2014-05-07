@@ -1,5 +1,7 @@
 <?php
 $this->breadcrumbs=array(
+	$subjectModel->examBank->name=>array('/admin'),
+	$subjectModel->name=>array('/admin/subject/view', 'id'=>$subjectModel->subject_id),
 	'试题管理' => array('/admin/question/index', 'subject_id'=>$subject_id),
 	'添加判断题',
 );
@@ -18,19 +20,19 @@ $this->breadcrumbs=array(
 
 <div class="wide form">
 	<div class="row" style="padding-left:30px;padding-top:20px">
-		<?php  echo $form->dropDownListRow($trueOrFalseQuestionModel, 'examPaper', $examPaperListData, array('class'=>'span5', 'empty'=>'全部')); ?>
+		<?php  echo $form->dropDownListRow($trueOrFalseQuestionForm, 'examPaper', $examPaperListData, array('class'=>'span5', 'empty'=>'暂不指定试卷')); ?>
 	</div>
 	
 	<div class="row" style="padding-left:30px;padding-top:20px">
-		<?php echo $form->labelEx($trueOrFalseQuestionModel, 'questionNumber'); ?>
-		<?php echo $form->textField($trueOrFalseQuestionModel, 'questionNumber'); ?>
-		<?php echo $form->error($trueOrFalseQuestionModel, 'questionNumber'); ?>
+		<?php echo $form->labelEx($trueOrFalseQuestionForm, 'questionNumber'); ?>
+		<?php echo $form->textField($trueOrFalseQuestionForm, 'questionNumber'); ?>
+		<?php echo $form->error($trueOrFalseQuestionForm, 'questionNumber'); ?>
 	</div>
 	
 	<div class="row" style="padding-left:30px;padding-top:20px">
-		<?php echo $form->labelEx($trueOrFalseQuestionModel, 'content'); ?>
+		<?php echo $form->labelEx($trueOrFalseQuestionForm, 'content'); ?>
 		<?php $this->widget('umeditor.widgets.UMeditorField', array(
-			'model'=>$trueOrFalseQuestionModel,
+			'model'=>$trueOrFalseQuestionForm,
 			'name'=>'content',
 			'width' => '800px',
 			'height' => '150px'
@@ -38,7 +40,7 @@ $this->breadcrumbs=array(
 	</div>
 	
 	<div class="row" style="padding-left:30px;padding-top:20px">
-		<?php echo $form->radioButtonListInlineRow($trueOrFalseQuestionModel, 'answer', $questionAnswerOptions); ?>
+		<?php echo $form->radioButtonListInlineRow($trueOrFalseQuestionForm, 'answer', $questionAnswerOptions); ?>
 	</div>
 	
 	<div class="form-actions">

@@ -1,5 +1,7 @@
 <?php
 $this->breadcrumbs=array(
+	$subjectModel->examBank->name=>array('/admin'),
+	$subjectModel->name=>array('/admin/subject/view', 'id'=>$subjectModel->subject_id),
 	'试题管理' => array('/admin/question/index', 'subject_id'=>$subject_id),
 	'添加选择题',
 );
@@ -39,6 +41,20 @@ $this->breadcrumbs=array(
 			'width' => '800px',
 			'height' => '150px'
 		)); ?>
+	</div>
+	
+	<div class="row" style="padding-left:30px;padding-top:20px">
+		<?php echo $form->labelEx($choiceQuestionModel, 'questionAnswerOptions'); ?>
+		<?php $this->widget('umeditor.widgets.UMeditorField', array(
+			'model'=>$choiceQuestionModel,
+			'name'=>'questionAnswerOptions',
+			'width' => '800px',
+			'height' => '150px'
+		)); ?>
+	</div>
+	
+	<div class="row" style="padding-left:30px;padding-top:20px">
+		<?php echo $form->labelEx($choiceQuestionModel, 'answer'); ?>
 	</div>
 	
 	<div class="form-actions">

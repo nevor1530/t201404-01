@@ -10,13 +10,11 @@ class ChoiceQuestionForm extends CFormModel
 	public $questionNumber;
 	public $questionType;
 	public $content;
-	public $questionOptions;
+	public $questionAnswerOptions;
 	public $answer;
 
 	/**
 	 * Declares the validation rules.
-	 * The rules state that username and password are required,
-	 * and password needs to be authenticated.
 	 */
 	public function rules()
 	{
