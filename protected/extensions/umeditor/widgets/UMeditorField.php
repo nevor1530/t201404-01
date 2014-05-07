@@ -19,7 +19,8 @@ class UMeditorField extends CWidget {
 		$htmlOptions = array('type'=>'text/plain', 'id'=>$id, 'style'=>"width:$this->width;height:$this->height;");
 		CHtml::resolveNameID($this->model,$this->name,$htmlOptions);
 		echo CHtml::tag('script',$htmlOptions, false, false);
-		echo $this->model->getAttribute($this->name);
+		$attribute = $this->name;
+		echo $this->model->$attribute;
 		echo CHtml::closeTag('script');
 		
 		$cs = Yii::app()->getClientScript();
