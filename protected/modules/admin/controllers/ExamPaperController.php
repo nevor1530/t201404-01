@@ -17,12 +17,17 @@ class ExamPaperController extends AdminController
 	 * Creates a new model.
 	 * If creation is successful, the browser will be redirected to the 'view' page.
 	 */
-	public function actionCreate()
+	public function actionCreate($subject_id)
 	{
 		$model=new ExamPaperModel;
+		$subjectModel=SubjectModel::model()->findByPk($subject_id);
+		if($subjectModel===null)
+			throw new CHttpException(404,'The requested page does not exist.');
+			
+		$model->subject_id = $subject_id;
 
 		// Uncomment the following line if AJAX validation is needed
-		// $this->performAjaxValidation($model);
+		$this->performAjaxValidation($model);
 
 		if(isset($_POST['ExamPaperModel']))
 		{
@@ -33,6 +38,7 @@ class ExamPaperController extends AdminController
 
 		$this->render('create',array(
 			'model'=>$model,
+			'subjectModel'=>$subjectModel,
 		));
 	}
 
@@ -80,18 +86,22 @@ class ExamPaperController extends AdminController
 			throw new CHttpException(400,'Invalid request. Please do not repeat this request again.');
 	}
 
-	/**
-	 * Manages all models.
-	 */
-	public function actionAdmin()
+	public function actionIndex($subject_id	)
 	{
+		$res = array();
+		
+		$subjectModel=SubjectModel::model()->findByPk($subject_id);
+		if($subjectModel===null)
+			throw new CHttpException(404,'The requested page does not exist.');
+			
 		$model=new ExamPaperModel('search');
 		$model->unsetAttributes();  // clear any default values
 		if(isset($_GET['ExamPaperModel']))
 			$model->attributes=$_GET['ExamPaperModel'];
 
-		$this->render('admin',array(
+		$this->render('index',array(
 			'model'=>$model,
+			'subjectModel'=>$subjectModel,
 		));
 	}
 

@@ -103,21 +103,6 @@ class ExamPointController extends AdminController
 			}
 		}
 	}
-
-	/**
-	 * Manages all models.
-	 */
-	public function actionAdmin()
-	{
-		$model=new ExamPointModel('search');
-		$model->unsetAttributes();  // clear any default values
-		if(isset($_GET['ExamPointModel']))
-			$model->attributes=$_GET['ExamPointModel'];
-
-		$this->render('admin',array(
-			'model'=>$model,
-		));
-	}
 	
 	public function actionAjaxModel($id){
 		$model = $this->loadModel($id);
