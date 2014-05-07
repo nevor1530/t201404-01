@@ -19,13 +19,14 @@ class ExamBankController extends AdminController
 			$model->attributes=$_POST['ExamBankModel'];
 			$model->icon=CUploadedFile::getInstance($model,'icon');
 			if($model->save()) {
-				$fileName = $_FILES['ExamBankModel']['name']['icon']; 
-				FileUtil::mkdirs(Constants::$EXAM_BANK_ICON_DIR_PATH);
-				$model->icon->saveAs(Constants::$EXAM_BANK_ICON_DIR_PATH . $fileName);
+				if ($model->icon != null){
+					$fileName = $_FILES['ExamBankModel']['name']['icon']; 
+					FileUtil::mkdirs(Constants::$EXAM_BANK_ICON_DIR_PATH);
+					$model->icon->saveAs(Constants::$EXAM_BANK_ICON_DIR_PATH . $fileName);
+				}
 				NavUtil::navChanged();
+				$this->redirect(array('/admin'));
 			}
-			
-			$this->redirect(array('/admin'));
 		}
 
 		$this->render('create',array(

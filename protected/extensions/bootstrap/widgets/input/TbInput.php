@@ -27,6 +27,7 @@ abstract class TbInput extends CInputWidget
 	const TYPE_TEXT = 'text';
 	const TYPE_CAPTCHA = 'captcha';
 	const TYPE_UNEDITABLE = 'uneditable';
+	const TYPE_DATETIMEPICKDER = 'datetimepicker';
 
 	/**
 	 * @var TbActiveForm the associated form widget.
@@ -236,6 +237,10 @@ abstract class TbInput extends CInputWidget
 
 			case self::TYPE_UNEDITABLE:
 				$this->uneditableField();
+				break;
+
+			case self::TYPE_DATETIMEPICKER:
+				$this->datetimepickerField();
 				break;
 
 			default:
@@ -475,4 +480,6 @@ abstract class TbInput extends CInputWidget
 	 * @abstract
 	 */
 	abstract protected function uneditableField();
+	
+	abstract protected function datetimepickerField();
 }

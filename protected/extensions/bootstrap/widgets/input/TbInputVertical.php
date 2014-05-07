@@ -143,6 +143,12 @@ class TbInputVertical extends TbInput
 		echo $this->getAppend();
 		echo $this->getError().$this->getHint();
 	}
+	
+	protected function datetimepickerField(){
+		echo $this->getLabel();
+		echo $this->form->datetimepickerField($this->model, $this->attribute, $this->htmlOptions);
+		echo $this->getError().$this->getHint();
+	}
 
 	/**
 	 * Renders a CAPTCHA.

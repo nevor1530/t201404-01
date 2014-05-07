@@ -26,6 +26,7 @@ class Bootstrap extends CApplicationComponent
     const PLUGIN_TOOLTIP = 'tooltip';
     const PLUGIN_TRANSITION = 'transition';
     const PLUGIN_TYPEAHEAD = 'typeahead';
+    const PLUGIN_DATETIMEPICKER = 'datetimepicker';
 
 	/**
 	 * @var array plugin initial options (name=>options).
@@ -263,6 +264,32 @@ class Bootstrap extends CApplicationComponent
 	public function registerTypeahead($selector = null, $options = array())
 	{
 		$this->registerPlugin(self::PLUGIN_TYPEAHEAD, $selector, $options);
+	}
+	
+	public function registerDateTimePicker($selector = null, $options = array()){
+		$this->register();
+		// css
+		$filename = YII_DEBUG ? 'bootstrap-datetimepicker.css' : 'bootstrap-datetimepicker.min.css';
+		$cs->registerCssFile($this->getAssetsUrl().'/css/'.$filename);
+		// js
+		$filename = YII_DEBUG ? 'bootstrap-datetimepicker.js' : 'bootstrap-datetimepicker.min.js';
+		$cs->registerCssFile($this->getAssetsUrl().'/js/'.$filename);
+		$cs->registerCssFile($this->getAssetsUrl().'/js/locals/bootstrap-datetimepicker.zh-CN.js');
+		
+		$defaultOptions = array(
+	        language=> 'zh-CN',
+	        weekStart=>1,
+	        todayBtn=> 1,
+			autoclose=>1,
+			todayHighlight=>1,
+			startView=>2,
+			forceParse=>0,
+	        showMeridian=>1
+	    );
+	    
+	    $options = array_merge($defaultOptions, $options);
+		
+		$this->registerPlugin(self::PLUGIN_DATETIMEPICKER, $selector, $options);
 	}
 
 	/**

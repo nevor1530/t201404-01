@@ -12,7 +12,6 @@
  * @property integer $recommendation
  * @property integer $category_id
  * @property integer $time_length
- * @property integer $sequence
  * @property string $publish_time
  * @property integer $status
  *
@@ -45,12 +44,12 @@ class ExamPaperModel extends CActiveRecord
 		// will receive user inputs.
 		return array(
 			array('subject_id, name', 'required'),
-			array('subject_id, score, recommendation, category_id, time_length, sequence, status', 'numerical', 'integerOnly'=>true),
+			array('subject_id, score, recommendation, category_id, time_length, status', 'numerical', 'integerOnly'=>true),
 			array('name, short_name', 'length', 'max'=>45),
 			array('publish_time', 'safe'),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('exam_paper_id, subject_id, name, short_name, score, recommendation, category_id, time_length, sequence, publish_time, status', 'safe', 'on'=>'search'),
+			array('exam_paper_id, subject_id, name, short_name, score, recommendation, category_id, time_length, publish_time, status', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -83,7 +82,7 @@ class ExamPaperModel extends CActiveRecord
 			'score' => '总分',
 			'recommendation' => '推荐值',
 			'category_id' => '分类ID',
-			'time_length' => '答卷时间',
+			'time_length' => '答卷时间(分钟)',
 			'publish_time' => '试卷年份',
 			'status' => '状态',
 		);
@@ -115,7 +114,6 @@ class ExamPaperModel extends CActiveRecord
 		$criteria->compare('recommendation',$this->recommendation);
 		$criteria->compare('category_id',$this->category_id);
 		$criteria->compare('time_length',$this->time_length);
-		$criteria->compare('sequence',$this->sequence);
 		$criteria->compare('publish_time',$this->publish_time,true);
 		$criteria->compare('status',$this->status);
 

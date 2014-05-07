@@ -36,7 +36,7 @@ class ExamBankModel extends CActiveRecord
 			array('name', 'required'),
 			array('price', 'numerical'),
 			array('name', 'length', 'max'=>45),
-			array('icon', 'file', 'types' => 'jpg,jpeg,gif,png'),
+			array('icon', 'file', 'types' => 'jpg,jpeg,gif,png', 'allowEmpty'=>true),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
 			array('exam_bank_id, name, price', 'safe', 'on'=>'search'),

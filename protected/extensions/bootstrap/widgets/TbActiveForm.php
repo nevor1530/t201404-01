@@ -185,6 +185,13 @@ class TbActiveForm extends CActiveForm
 	{
 		return $this->inputRow(TbInput::TYPE_TEXT, $model, $attribute, null, $htmlOptions);
 	}
+	
+	public function dateTimePickerRow($model, $attribute, $date, $htmlOptions = array()){
+		$name = CHtml::resolveName($model, $attribute);
+		$id = CHtml::getIdByName($name);
+		Yii::app()->bootstrap->registerDateTimePicker('.'.$id);
+		return $this->input(TbInput::TYPE_DATETIMEPICKER, $model, $attribute, null, $htmlOptions);
+	}
 
 	/**
 	 * Renders a text area input row.
@@ -256,6 +263,23 @@ class TbActiveForm extends CActiveForm
 	public function radioButtonList($model, $attribute, $data, $htmlOptions = array())
 	{
 		return $this->inputsList(false, $model, $attribute, $data, $htmlOptions);
+	}
+	
+	public function datetimepickerField($model,$attribute,$htmlOptions=array()){
+		$dateFormat = isset($htmlOptions['date-format']) ? $htmlOptions['date-format'] : 'yyyy MM dd';
+		$inputName = CHtml::resolveName($model, $attribute);
+		$inputId = isset($htmlOptions['link-field']) ? $htmlOptions['link-field'] : CHtml::resolveIdByName($inputName);
+		$linkFormat = isset($htmlOptions['link-format']) ? $htmlOptions['link-format'] : 'yyyy-mm-dd';
+		$size = isset($htmlOptions['size']) ? $htmlOptions['size'] : 16;
+		
+		return <<< END
+<div class="input-append date $inputId" data-date="" data-date-format="$dateFormat" data-link-field="$inputId" data-link-format="$linkFormat">
+    <input size="$size" type="text" value="$model->$attribute" readonly>
+    <span class="add-on"><i class="icon-remove"></i></span>
+	<span class="add-on"><i class="icon-th"></i></span>
+</div>
+<input type="hidden" id="$inputId" value="$model->$attribute" />
+END;
 	}
 
 	/**
@@ -497,6 +521,7 @@ class TbActiveForm extends CActiveForm
 		));
 		return ob_get_clean();
 	}
+	
 
 	/**
 	 * Returns the input widget class name suitable for the form.
