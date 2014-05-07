@@ -9,6 +9,14 @@ class FileUtil {
 		return @mkdir($dir, $mode);
 	}
 	
+	public static function generateUniqueFilename($dir, $ext = "") {
+		$filename = date('Ymdhis').rand(100,999) . "." . $ext;
+		while (file_exists($dir . $filename)) {
+			$filename = date('Ymdhis').rand(100,999) . "." . $ext;
+		}
+		return $filename;
+	}
+	
 	// TODO: delete file
 	public static function deleteFile($filePath) {
 		

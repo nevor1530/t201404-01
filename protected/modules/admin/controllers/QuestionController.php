@@ -2,6 +2,15 @@
 
 class QuestionController extends AdminController
 {
+	public static $questionTypes = array (	
+		'1' => '单选',
+		'2' => '多选',
+		'3' => '不定项',
+		'4' => '填空',
+		'5' => '判断',
+		'6' => '材料',
+	);
+	
 	public function filters()
 	{
 		return array(
@@ -25,11 +34,23 @@ class QuestionController extends AdminController
 	
 	public function actionCreateChoiceQuestion($subject_id) {
 		$choiceQuestionModel=new ChoiceQuestionForm;
-		
+		$choiceQuestionTypes = array_slice(self::$questionTypes, 0, 3);
 		$this->render('create_choice_question', array(
 			'subject_id' => $subject_id,
 			'choiceQuestionModel' => $choiceQuestionModel,
 			'examPaperListData'=>$this->getExamPaperListData($subject_id),
+			'choiceQuestionTypes' => $choiceQuestionTypes,
+		));
+	}
+	
+	public function actionCreateTrueOrFalseQuestion($subject_id) {
+		$trueOrFalseQuestionModel=new TrueOrFalseQuestionForm;
+		$questionAnswerOptions = array('1' => '√', '2' => 'X');
+		$this->render('create_true_false_question', array(
+			'subject_id' => $subject_id,
+			'trueOrFalseQuestionModel' => $trueOrFalseQuestionModel,
+			'examPaperListData'=>$this->getExamPaperListData($subject_id),
+			'questionAnswerOptions'=>$questionAnswerOptions,
 		));
 	}
 	
@@ -38,6 +59,5 @@ class QuestionController extends AdminController
 		$examPaperListData = CHtml::listData($examPaperModel, 'exam_paper_id', 'name');
 		return $examPaperListData;
 	}
-	
 	
 }
