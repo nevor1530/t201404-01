@@ -24,7 +24,6 @@ $('.search-form form').submit(function(){
 <h1>题库管理</h1>
 
 <?php 
-$iconDirPath = ExamBankController::ICON_DIR_PATH;
 $this->widget('bootstrap.widgets.TbGridView',array(
 	'id'=>'exam-bank-model-grid',
 	'dataProvider'=>$model->search(),
@@ -36,7 +35,7 @@ $this->widget('bootstrap.widgets.TbGridView',array(
 		
 		array(  
             'type'=>'raw',
-            'value'=> 'CHtml::image(Yii::app()->baseUrl ."/data/icon/examBank/" . $data->icon, "", array("width"=>"200px" ,"height"=>"200px"))',
+            'value'=> 'CHtml::image(Yii::app()->baseUrl ."/" . Constants::$EXAM_BANK_ICON_DIR_PATH . $data->icon, "", array("width"=>"200px" ,"height"=>"200px"))',
             'header'=>'题库图标',  
 		),
 		  

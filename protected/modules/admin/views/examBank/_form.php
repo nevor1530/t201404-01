@@ -12,7 +12,7 @@
 
 	<?php echo $form->textFieldRow($model,'price',array('class'=>'span5')); ?>
 	
-	<?php echo $form->labelEx($model, 'icon'); echo $form->fileField($model,'icon',array('class'=>'span5'));?>
+	<?php echo $form->fileFieldRow($model,'icon',array('class'=>'span5'));?>
 
 	<div class="form-actions">
 		<?php $this->widget('bootstrap.widgets.TbButton', array(

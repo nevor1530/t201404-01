@@ -18,7 +18,7 @@ $this->menu=array(
 		
 		array(  
             'type'=>'raw',
-            'value'=> 'CHtml::image(Yii::app()->baseUrl ."/data/icon/examBank/" . $data->icon, "", array("width"=>"200px" ,"height"=>"200px"))',
+            'value'=> 'CHtml::image(Yii::app()->baseUrl ."/" . Constants::$EXAM_BANK_ICON_DIR_PATH . $data->icon, "", array("width"=>"60px" ,"height"=>"60px"))',
             'header'=>'题库图标',  
 		),
 		

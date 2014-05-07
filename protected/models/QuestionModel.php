@@ -72,8 +72,8 @@ class QuestionModel extends CActiveRecord
 	{
 		return array(
 			'question_id' => 'Question',
-			'exam_paper_id' => 'Exam Paper',
-			'question_type_id' => 'Question Type',
+			'exam_paper_id' => '所属试卷',
+			'question_type_id' => '题目类型',
 			'material_id' => 'Material',
 			'index' => 'Index',
 			'is_multiple' => 'Is Multiple',

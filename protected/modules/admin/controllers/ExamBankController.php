@@ -2,7 +2,6 @@
 
 class ExamBankController extends AdminController
 {
-	const ICON_DIR_PATH = 'data/icon/examBank/';
 	
 	/**
 	 * Creates a new model.
@@ -21,8 +20,8 @@ class ExamBankController extends AdminController
 			$model->icon=CUploadedFile::getInstance($model,'icon');
 			if($model->save()) {
 				$fileName = $_FILES['ExamBankModel']['name']['icon']; 
-				FileUtil::mkdirs(self::ICON_DIR_PATH);
-				$model->icon->saveAs(self::ICON_DIR_PATH . $fileName);
+				FileUtil::mkdirs(Constants::$EXAM_BANK_ICON_DIR_PATH);
+				$model->icon->saveAs(Constants::$EXAM_BANK_ICON_DIR_PATH . $fileName);
 				NavUtil::navChanged();
 			}
 			
@@ -52,8 +51,8 @@ class ExamBankController extends AdminController
 			$model->icon=CUploadedFile::getInstance($model,'icon');
 			if($model->save()) {
 				$fileName = $_FILES['ExamBankModel']['name']['icon']; 
-				FileUtil::mkdirs(self::ICON_DIR_PATH);
-				$model->icon->saveAs(self::ICON_DIR_PATH . $fileName);
+				FileUtil::mkdirs(Constants::$EXAM_BANK_ICON_DIR_PATH);
+				$model->icon->saveAs(Constants::$EXAM_BANK_ICON_DIR_PATH . $fileName);
 				NavUtil::navChanged();
 			}
 
