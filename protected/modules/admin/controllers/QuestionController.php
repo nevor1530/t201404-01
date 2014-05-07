@@ -43,11 +43,21 @@ class QuestionController extends AdminController
 		));
 	}
 	
+	public function actionCreateTrueOrFalseQuestion($subject_id) {
+		$trueOrFalseQuestionModel=new TrueOrFalseQuestionForm;
+		$questionAnswerOptions = array('1' => '√', '2' => 'X');
+		$this->render('create_true_false_question', array(
+			'subject_id' => $subject_id,
+			'trueOrFalseQuestionModel' => $trueOrFalseQuestionModel,
+			'examPaperListData'=>$this->getExamPaperListData($subject_id),
+			'questionAnswerOptions'=>$questionAnswerOptions,
+		));
+	}
+	
 	private function getExamPaperListData($subject_id) {
 		$examPaperModel=ExamPaperModel::model()->findAll('subject_id=:subject_id', array(':subject_id' => $subject_id));
 		$examPaperListData = CHtml::listData($examPaperModel, 'exam_paper_id', 'name');
 		return $examPaperListData;
 	}
-	
 	
 }

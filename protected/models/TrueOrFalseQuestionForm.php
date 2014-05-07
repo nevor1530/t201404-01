@@ -1,16 +1,14 @@
 <?php
 /**
- * ChoiceQuestionForm class.
- * ChoiceQuestionForm is the data structure for keeping
- * choice question form data. It is used by the 'createChoiceQuestion' action of 'QuestionController'.
+ * TrueOrFalseQuestionForm class.
+ * TrueOrFalseQuestionForm is the data structure for keeping
+ * true or false question form data. It is used by the 'createTrueOrFalseQuestion' action of 'QuestionController'.
  */
-class ChoiceQuestionForm extends CFormModel
+class TrueOrFalseQuestionForm extends CFormModel
 {
 	public $examPaper;
 	public $questionNumber;
-	public $questionType;
 	public $content;
-	public $questionOptions;
 	public $answer;
 
 	/**
@@ -21,7 +19,7 @@ class ChoiceQuestionForm extends CFormModel
 	public function rules()
 	{
 		return array(
-			array('questionType, content, questionAnswerOptions, answer', 'required'),
+			array('content, answer', 'required'),
 		);
 	}
 
@@ -33,9 +31,7 @@ class ChoiceQuestionForm extends CFormModel
 		return array(
 			'examPaper' => '所属试卷',
 			'questionNumber' => '试卷中题号',
-			'questionType' => '题型',
 			'content' => '题干',
-			'questionAnswerOptions' => '选项',
 			'answer' => '正确答案',
 		);
 	}
