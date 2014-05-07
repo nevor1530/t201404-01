@@ -17,11 +17,8 @@ class ExamBankController extends AdminController
 		if(isset($_POST['ExamBankModel']))
 		{
 			$model->attributes=$_POST['ExamBankModel'];
-			$model->icon=CUploadedFile::getInstance($model,'icon');
+			$this->saveExamBankIcon($model);
 			if($model->save()) {
-				$fileName = $_FILES['ExamBankModel']['name']['icon']; 
-				FileUtil::mkdirs(Constants::$EXAM_BANK_ICON_DIR_PATH);
-				$model->icon->saveAs(Constants::$EXAM_BANK_ICON_DIR_PATH . $fileName);
 				NavUtil::navChanged();
 			}
 			
@@ -48,11 +45,8 @@ class ExamBankController extends AdminController
 		if(isset($_POST['ExamBankModel']))
 		{
 			$model->attributes=$_POST['ExamBankModel'];
-			$model->icon=CUploadedFile::getInstance($model,'icon');
+			$this->saveExamBankIcon($model);
 			if($model->save()) {
-				$fileName = $_FILES['ExamBankModel']['name']['icon']; 
-				FileUtil::mkdirs(Constants::$EXAM_BANK_ICON_DIR_PATH);
-				$model->icon->saveAs(Constants::$EXAM_BANK_ICON_DIR_PATH . $fileName);
 				NavUtil::navChanged();
 			}
 
@@ -103,5 +97,16 @@ class ExamBankController extends AdminController
 		if($model===null)
 			throw new CHttpException(404,'The requested page does not exist.');
 		return $model;
+	}
+	
+	private function saveExamBankIcon($examBankModel) {
+		$examBankModel->icon=CUploadedFile::getInstance($examBankModel, 'icon');
+		$iconDirPath = Constants::$EXAM_BANK_ICON_DIR_PATH;
+		FileUtil::mkdirs($iconDirPath);
+
+		$iconExt = $examBankModel->icon->getExtensionName();
+		$filename = FileUtil::generateUniqueFilename($iconDirPath, $iconExt);
+		$examBankModel->icon->saveAs($iconDirPath. $filename);
+		$examBankModel->icon=$filename;
 	}
 }
