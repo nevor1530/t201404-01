@@ -100,12 +100,14 @@ class ExamBankController extends AdminController
 	
 	private function saveExamBankIcon($examBankModel) {
 		$examBankModel->icon=CUploadedFile::getInstance($examBankModel, 'icon');
-		$iconDirPath = Constants::$EXAM_BANK_ICON_DIR_PATH;
-		FileUtil::mkdirs($iconDirPath);
-
-		$iconExt = $examBankModel->icon->getExtensionName();
-		$filename = FileUtil::generateUniqueFilename($iconDirPath, $iconExt);
-		$examBankModel->icon->saveAs($iconDirPath. $filename);
-		$examBankModel->icon=$filename;
+		if ($examBankModel->icon != null) {
+			$iconDirPath = Constants::$EXAM_BANK_ICON_DIR_PATH;
+			FileUtil::mkdirs($iconDirPath);
+	
+			$iconExt = $examBankModel->icon->getExtensionName();
+			$filename = FileUtil::generateUniqueFilename($iconDirPath, $iconExt);
+			$examBankModel->icon->saveAs($iconDirPath. $filename);
+			$examBankModel->icon=$filename;
+		}
 	}
 }

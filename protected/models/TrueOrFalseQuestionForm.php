@@ -13,13 +13,12 @@ class TrueOrFalseQuestionForm extends CFormModel
 
 	/**
 	 * Declares the validation rules.
-	 * The rules state that username and password are required,
-	 * and password needs to be authenticated.
 	 */
 	public function rules()
 	{
 		return array(
 			array('content, answer', 'required'),
+			array('examPaper, questionNumber', 'safe'),
 		);
 	}
 
@@ -35,5 +34,5 @@ class TrueOrFalseQuestionForm extends CFormModel
 			'answer' => '正确答案',
 		);
 	}
-
+	
 }
