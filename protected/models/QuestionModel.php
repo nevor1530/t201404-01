@@ -40,10 +40,10 @@ class QuestionModel extends CActiveRecord
 		// will receive user inputs.
 		return array(
 			array('exam_paper_id, index, answer', 'required'),
-			array('exam_paper_id, question_type_id, material_id, index, is_multiple, answer', 'numerical', 'integerOnly'=>true),
+			array('exam_paper_id, question_block_id, material_id, index, is_multiple, answer, question_type', 'numerical', 'integerOnly'=>true),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('question_id, exam_paper_id, question_type_id, material_id, index, is_multiple, answer', 'safe', 'on'=>'search'),
+			array('question_id, exam_paper_id, question_block_id, material_id, index, is_multiple, answer, question_type', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -56,7 +56,7 @@ class QuestionModel extends CActiveRecord
 		// class name for the relations automatically generated below.
 		return array(
 			'material' => array(self::BELONGS_TO, 'Material', 'material_id'),
-			'questionType' => array(self::BELONGS_TO, 'QuestionType', 'question_type_id'),
+			'questionBlock' => array(self::BELONGS_TO, 'QuestionBlock', 'question_block_id'),
 			'examPaper' => array(self::BELONGS_TO, 'ExamPaper', 'exam_paper_id'),
 			'questionAnswerOptions' => array(self::HAS_MANY, 'QuestionAnswerOption', 'question_id'),
 			'questionExamPoints' => array(self::HAS_MANY, 'QuestionExamPoint', 'question_id'),
@@ -72,12 +72,13 @@ class QuestionModel extends CActiveRecord
 	{
 		return array(
 			'question_id' => 'Question',
-			'exam_paper_id' => '所属试卷',
-			'question_type_id' => '题目类型',
+			'exam_paper_id' => 'exam_paper_id',
+			'question_block_id' => 'question_block_id',
 			'material_id' => 'Material',
 			'index' => 'Index',
 			'is_multiple' => 'Is Multiple',
 			'answer' => 'Answer',
+			'question_type' => 'question_type'
 		);
 	}
 
@@ -101,11 +102,12 @@ class QuestionModel extends CActiveRecord
 
 		$criteria->compare('question_id',$this->question_id);
 		$criteria->compare('exam_paper_id',$this->exam_paper_id);
-		$criteria->compare('question_type_id',$this->question_type_id);
+		$criteria->compare('question_block_id',$this->question_block_id);
 		$criteria->compare('material_id',$this->material_id);
 		$criteria->compare('index',$this->index);
 		$criteria->compare('is_multiple',$this->is_multiple);
 		$criteria->compare('answer',$this->answer);
+		$criteria->compare('question_type',$this->question_type);
 
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,

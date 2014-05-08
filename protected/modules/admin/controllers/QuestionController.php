@@ -81,7 +81,8 @@ class QuestionController extends AdminController
 				if ($MaterialModel->validate() && $MaterialModel->save()) {
 					$questionModel = new QuestionModel();
 					$questionModel->exam_paper_id = ($trueOrFalseQuestionForm->examPaper != null) ? $trueOrFalseQuestionForm->examPaper : 0;
-					$questionModel->question_type_id = 5;
+					$questionModel->question_block_id = 0;
+					$questionModel->question_type = 5;
 					$questionModel->material_id = $MaterialModel->material_id;
 					$questionModel->index = ($trueOrFalseQuestionForm->questionNumber != null) ? $trueOrFalseQuestionForm->questionNumber : 0;
 					$questionModel->is_multiple = 0;
