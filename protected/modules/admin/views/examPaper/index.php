@@ -5,8 +5,6 @@ $this->breadcrumbs=array(
 	'试卷管理'
 );
 
-include($this->module->viewPath.'/common/subject_side_nav.php');
-
 $this->menu=array(
 	array('label'=>'创建试卷','url'=>array('create', 'subject_id'=>$subjectModel->primaryKey)),
 );
@@ -19,14 +17,41 @@ $this->menu=array(
 	'dataProvider'=>$model->search(),
 	'filter'=>$model,
 	'columns'=>array(
-		'name',
-		'publish_time',
 		array(
+			'class'=>'NDataLinkColumn',
+			'name'=>'name',
+			'urlExpression'=>'Yii::app()->createUrl("/admin/examPaper/view", array("id"=>$data->primaryKey))',
+		),
+		'name',
+		array(
+			'class'=>'CDataColumn',
+			'name'=>'publish_time',
+			'type'=>'date',
+		),
+		array(
+			'class'=>'ExamPaperStatusColumn',
 			'name'=>'status',
-			'filter'=>array(0=>'未录完', 1=>'未发布', 2=>'已发布'),
+			'mapData'=>array(0=>'未录完', 1=>'未发布', 2=>'已发布')
 		),
 		array(
 			'class'=>'bootstrap.widgets.TbButtonColumn',
+			'header'=>'操作',
+			'template'=>'{question} {block} {update} {delete}',
+			'buttons'=>array(
+				'question' => array(
+					'label'=>'题目管理',
+					'url'=>'Yii::app()->controller->createUrl("/admin/subject/create",array("exam_bank_id"=>$data->primaryKey))',
+					'icon'=>'th',
+				),
+				'block' => array(
+					'label'=>'模块管理',
+					'url'=>'Yii::app()->controller->createUrl("/admin/subject/create",array("exam_bank_id"=>$data->primaryKey))',
+					'icon'=>'th-large',
+				),
+			),
+			'htmlOptions'=>array(
+				'style'=>'width: 70px',
+			),
 		),
 	),
 )); ?>

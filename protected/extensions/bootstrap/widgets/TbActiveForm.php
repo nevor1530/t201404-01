@@ -266,19 +266,20 @@ class TbActiveForm extends CActiveForm
 	}
 	
 	public function datetimepickerField($model,$attribute,$htmlOptions=array()){
+		$valueDateFormat = isset($htmlOptions['valueDateFormat']) ? $htmlOptions['valueDateFormat'] : 'Y-m-d';
 		$dateFormat = isset($htmlOptions['date-format']) ? $htmlOptions['date-format'] : 'yyyy-mm-dd';
 		$inputName = CHtml::resolveName($model, $attribute);
 		$inputId = isset($htmlOptions['link-field']) ? $htmlOptions['link-field'] : CHtml::getIdByName($inputName);
 		$linkFormat = isset($htmlOptions['link-format']) ? $htmlOptions['link-format'] : 'yyyy-mm-dd';
 		$size = isset($htmlOptions['size']) ? $htmlOptions['size'] : 16;
-		$value = $model->$attribute;
+		$value = date($valueDateFormat, strtotime($model->$attribute));
 		return <<< END
 <div class="input-append date $inputId" data-date="" data-date-format="$dateFormat" data-link-field="$inputId" data-link-format="$linkFormat">
     <input size="$size" type="text" value="$value" readonly>
     <span class="add-on"><i class="icon-remove"></i></span>
 	<span class="add-on"><i class="icon-th"></i></span>
 </div>
-<input type="hidden" id="$inputId" value="$value" name="$inputId"/>
+<input type="hidden" id="$inputId" value="$value" name="$inputName"/>
 END;
 	}
 

@@ -2,6 +2,14 @@
 
 class ExamPaperController extends AdminController
 {
+	public function filters()
+	{
+		return array(
+			'accessControl', // perform access control for CRUD operations
+			'postOnly + delete, publish, cancel', // we only allow deletion via POST request
+		);
+	}
+	
 	/**
 	 * Displays a particular model.
 	 * @param integer $id the ID of the model to be displayed
@@ -63,6 +71,7 @@ class ExamPaperController extends AdminController
 
 		$this->render('update',array(
 			'model'=>$model,
+			'subjectModel'=>$model->subject,
 		));
 	}
 
@@ -103,6 +112,24 @@ class ExamPaperController extends AdminController
 			'model'=>$model,
 			'subjectModel'=>$subjectModel,
 		));
+	}
+	
+	/**
+	 * 发布试卷
+	 */
+	public function actionPublish($id){
+		$model = $this->loadModel($id);
+		$model->status = ExamPaperModel::STATUS_PUBLISHED;
+		$model->save();
+	}
+	
+	/**
+	 * 取消发布试卷
+	 */
+	public function actionCancel($id){
+		$model = $this->loadModel($id);
+		$model->status = ExamPaperModel::STATUS_UNPUBLISHED;
+		$model->save();
 	}
 
 	/**

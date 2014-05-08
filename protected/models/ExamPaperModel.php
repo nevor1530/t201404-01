@@ -25,6 +25,10 @@
  */
 class ExamPaperModel extends CActiveRecord
 {
+	const STATUS_UNCOMPLETE = 0;
+	const STATUS_UNPUBLISHED = 1;
+	const STATUS_PUBLISHED = 2;
+	
 	public $_question_number = null;
 	
 	/**
@@ -61,12 +65,12 @@ class ExamPaperModel extends CActiveRecord
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
-			'category' => array(self::BELONGS_TO, 'Category', 'category_id'),
-			'subject' => array(self::BELONGS_TO, 'Subject', 'subject_id'),
-			'examPaperInstances' => array(self::HAS_MANY, 'ExamPaperInstance', 'exam_paper_id'),
-			'paperRecommendations' => array(self::HAS_MANY, 'PaperRecommendation', 'examp_paper_id'),
-			'questions' => array(self::HAS_MANY, 'Question', 'exam_paper_id'),
-			'questionTypes' => array(self::HAS_MANY, 'QuestionType', 'examp_paper_id'),
+			'category' => array(self::BELONGS_TO, 'CategoryModel', 'category_id'),
+			'subject' => array(self::BELONGS_TO, 'SubjectModel', 'subject_id'),
+			'examPaperInstances' => array(self::HAS_MANY, 'ExamPaperInstanceModel', 'exam_paper_id'),
+			'paperRecommendations' => array(self::HAS_MANY, 'PaperRecommendationModel', 'examp_paper_id'),
+			'questions' => array(self::HAS_MANY, 'QuestionModel', 'exam_paper_id'),
+			'questionTypes' => array(self::HAS_MANY, 'QuestionTypeModel', 'examp_paper_id'),
 		);
 	}
 

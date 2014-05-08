@@ -1,18 +1,15 @@
 <?php
 $this->breadcrumbs=array(
-	'Exam Paper Models'=>array('index'),
-	$model->name=>array('view','id'=>$model->exam_paper_id),
-	'Update',
+	$subjectModel->examBank->name=>array('/admin'),
+	$subjectModel->name=>array('/admin/subject/view', 'id'=>$subjectModel->subject_id),
+	'试卷管理'=>array('/admin/examPaper/index', 'subject_id'=>$subjectModel->primaryKey),
+	'更新试卷'
 );
 
 $this->menu=array(
-	array('label'=>'List ExamPaperModel','url'=>array('index')),
-	array('label'=>'Create ExamPaperModel','url'=>array('create')),
-	array('label'=>'View ExamPaperModel','url'=>array('view','id'=>$model->exam_paper_id)),
-	array('label'=>'Manage ExamPaperModel','url'=>array('admin')),
 );
 ?>
 
-<h1>Update ExamPaperModel <?php echo $model->exam_paper_id; ?></h1>
+<h1>更新试卷  <?php echo $model->name; ?></h1>
 
 <?php echo $this->renderPartial('_form',array('model'=>$model)); ?>

@@ -20,6 +20,7 @@ return array(
 	'import'=>array(
 		'application.models.*',
 		'application.components.*',
+		'application.components.gridcolumns.*',
 		'application.services.*',
 	),
 
@@ -91,6 +92,10 @@ return array(
 				*/
 			),
 		),
+		'format'=>array(
+			'class'=>'CFormatter',
+			'dateFormat'=>'Y-m-d',
+		)
 	),
 
 	// application-level parameters that can be accessed
