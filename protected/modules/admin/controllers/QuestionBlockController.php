@@ -1,25 +1,22 @@
 <?php
 
-class ExamPaperController extends AdminController
+class QuestionBlockController extends Controller
 {
 	public function filters()
 	{
 		return array(
 			'accessControl', // perform access control for CRUD operations
-			'postOnly + delete, publish, cancel', // we only allow deletion via POST request
 		);
 	}
-	
+
 	/**
 	 * Displays a particular model.
 	 * @param integer $id the ID of the model to be displayed
 	 */
 	public function actionView($id)
 	{
-		$model = $this->loadModel($id);
 		$this->render('view',array(
-			'model'=>$model,
-			'subjectModel'=>$model->subject,
+			'model'=>$this->loadModel($id),
 		));
 	}
 
@@ -27,28 +24,22 @@ class ExamPaperController extends AdminController
 	 * Creates a new model.
 	 * If creation is successful, the browser will be redirected to the 'view' page.
 	 */
-	public function actionCreate($subject_id)
+	public function actionCreate()
 	{
-		$model=new ExamPaperModel;
-		$subjectModel=SubjectModel::model()->findByPk($subject_id);
-		if($subjectModel===null)
-			throw new CHttpException(404,'The requested page does not exist.');
-			
-		$model->subject_id = $subject_id;
+		$model=new QuestionBlockModel;
 
 		// Uncomment the following line if AJAX validation is needed
-		$this->performAjaxValidation($model);
+		// $this->performAjaxValidation($model);
 
-		if(isset($_POST['ExamPaperModel']))
+		if(isset($_POST['QuestionBlockModel']))
 		{
-			$model->attributes=$_POST['ExamPaperModel'];
+			$model->attributes=$_POST['QuestionBlockModel'];
 			if($model->save())
-				$this->redirect(array('view','id'=>$model->exam_paper_id));
+				$this->redirect(array('view','id'=>$model->question_block_id));
 		}
 
 		$this->render('create',array(
 			'model'=>$model,
-			'subjectModel'=>$subjectModel,
 		));
 	}
 
@@ -64,16 +55,15 @@ class ExamPaperController extends AdminController
 		// Uncomment the following line if AJAX validation is needed
 		// $this->performAjaxValidation($model);
 
-		if(isset($_POST['ExamPaperModel']))
+		if(isset($_POST['QuestionBlockModel']))
 		{
-			$model->attributes=$_POST['ExamPaperModel'];
+			$model->attributes=$_POST['QuestionBlockModel'];
 			if($model->save())
-				$this->redirect(array('view','id'=>$model->exam_paper_id));
+				$this->redirect(array('view','id'=>$model->question_block_id));
 		}
 
 		$this->render('update',array(
 			'model'=>$model,
-			'subjectModel'=>$model->subject,
 		));
 	}
 
@@ -97,41 +87,25 @@ class ExamPaperController extends AdminController
 			throw new CHttpException(400,'Invalid request. Please do not repeat this request again.');
 	}
 
-	public function actionIndex($subject_id	)
+	/**
+	 * Manages all models.
+	 */
+	public function actionIndex($exam_paper_id)
 	{
-		$res = array();
-		
-		$subjectModel=SubjectModel::model()->findByPk($subject_id);
-		if($subjectModel===null)
+		$examPaperModel = ExamPaperModel::model()->findByPk($exam_paper_id);
+		if (!$examPaperModel){
 			throw new CHttpException(404,'The requested page does not exist.');
-			
-		$model=new ExamPaperModel('search');
+		}
+		
+		$model=new QuestionBlockModel('search');
 		$model->unsetAttributes();  // clear any default values
-		if(isset($_GET['ExamPaperModel']))
-			$model->attributes=$_GET['ExamPaperModel'];
+		if(isset($_GET['QuestionBlockModel']))
+			$model->attributes=$_GET['QuestionBlockModel'];
 
-		$this->render('index',array(
+		$this->render('admin',array(
 			'model'=>$model,
-			'subjectModel'=>$subjectModel,
+			'examPaperModel'=>$examPaperModel,
 		));
-	}
-	
-	/**
-	 * 发布试卷
-	 */
-	public function actionPublish($id){
-		$model = $this->loadModel($id);
-		$model->status = ExamPaperModel::STATUS_PUBLISHED;
-		$model->save();
-	}
-	
-	/**
-	 * 取消发布试卷
-	 */
-	public function actionCancel($id){
-		$model = $this->loadModel($id);
-		$model->status = ExamPaperModel::STATUS_UNPUBLISHED;
-		$model->save();
 	}
 
 	/**
@@ -141,7 +115,7 @@ class ExamPaperController extends AdminController
 	 */
 	public function loadModel($id)
 	{
-		$model=ExamPaperModel::model()->findByPk($id);
+		$model=QuestionBlockModel::model()->findByPk($id);
 		if($model===null)
 			throw new CHttpException(404,'The requested page does not exist.');
 		return $model;
@@ -153,7 +127,7 @@ class ExamPaperController extends AdminController
 	 */
 	protected function performAjaxValidation($model)
 	{
-		if(isset($_POST['ajax']) && $_POST['ajax']==='exam-paper-model-form')
+		if(isset($_POST['ajax']) && $_POST['ajax']==='question-block-model-form')
 		{
 			echo CActiveForm::validate($model);
 			Yii::app()->end();

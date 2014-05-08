@@ -45,7 +45,7 @@ $this->menu=array(
 				),
 				'block' => array(
 					'label'=>'模块管理',
-					'url'=>'Yii::app()->controller->createUrl("/admin/subject/create",array("exam_bank_id"=>$data->primaryKey))',
+					'url'=>'Yii::app()->controller->createUrl("/admin/questionBlock/index",array("exam_paper_id"=>$data->primaryKey))',
 					'icon'=>'th-large',
 				),
 			),

@@ -1,7 +1,11 @@
 <?php
+$paperName = $model->short_name ? $model->short_name : $model->name;
+
 $this->breadcrumbs=array(
-	'Exam Paper Models'=>array('index'),
-	$model->name,
+	$subjectModel->examBank->name=>array('/admin'),
+	$subjectModel->name=>array('/admin/subject/view', 'id'=>$subjectModel->subject_id),
+	'试卷管理'=>array('/admin/examPaper/index', 'subject_id'=>$subjectModel->primaryKey),
+	$paperName,
 );
 
 $this->menu=array(

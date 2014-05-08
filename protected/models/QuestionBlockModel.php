@@ -1,22 +1,31 @@
 <?php
 
 /**
- * This is the model class for table "question_type".
+ * This is the model class for table "question_block".
  *
- * The followings are the available columns in table 'question_type':
- * @property integer $question_type_id
- * @property string $front_end_name
- * @property string $back_end_name
+ * The followings are the available columns in table 'question_block':
+ * @property integer $question_block_id
+ * @property string $name
  * @property string $description
+ * @property integer $exam_paper_id
+ * @property string $time_length
+ * @property integer $question_number
+ * @property integer $score
+ * @property integer $score_rule
+ * @property integer $sequence
+ *
+ * The followings are the available model relations:
+ * @property Question[] $questions
+ * @property ExamPaper $exampPaper
  */
-class QuestionTypeModel extends CActiveRecord
+class QuestionBlockModel extends CActiveRecord
 {
 	/**
 	 * @return string the associated database table name
 	 */
 	public function tableName()
 	{
-		return 'question_type';
+		return 'question_block';
 	}
 
 	/**
@@ -27,12 +36,14 @@ class QuestionTypeModel extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('front_end_name, back_end_name', 'required'),
-			array('front_end_name, back_end_name', 'length', 'max'=>40),
+			array('name, exam_paper_id, question_number', 'required'),
+			array('exam_paper_id, question_number, score, score_rule, sequence', 'numerical', 'integerOnly'=>true),
+			array('name', 'length', 'max'=>40),
 			array('description', 'length', 'max'=>500),
+			array('time_length', 'length', 'max'=>10),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('question_type_id, front_end_name, back_end_name, description', 'safe', 'on'=>'search'),
+			array('question_block_id, name, description, exam_paper_id, time_length, question_number, score, score_rule, sequence', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -44,6 +55,8 @@ class QuestionTypeModel extends CActiveRecord
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
+			'questions' => array(self::HAS_MANY, 'Question', 'question_block_id'),
+			'exampPaper' => array(self::BELONGS_TO, 'ExamPaper', 'exam_paper_id'),
 		);
 	}
 
@@ -53,10 +66,15 @@ class QuestionTypeModel extends CActiveRecord
 	public function attributeLabels()
 	{
 		return array(
-			'question_type_id' => 'Question Type',
-			'front_end_name' => 'Front End Name',
-			'back_end_name' => 'Back End Name',
+			'question_block_id' => 'Question Block',
+			'name' => 'Name',
 			'description' => 'Description',
+			'exam_paper_id' => 'Exam Paper',
+			'time_length' => 'Time Length',
+			'question_number' => 'Question Number',
+			'score' => 'Score',
+			'score_rule' => 'Score Rule',
+			'sequence' => 'Sequence',
 		);
 	}
 
@@ -78,10 +96,15 @@ class QuestionTypeModel extends CActiveRecord
 
 		$criteria=new CDbCriteria;
 
-		$criteria->compare('question_type_id',$this->question_type_id);
-		$criteria->compare('front_end_name',$this->front_end_name,true);
-		$criteria->compare('back_end_name',$this->back_end_name,true);
+		$criteria->compare('question_block_id',$this->question_block_id);
+		$criteria->compare('name',$this->name,true);
 		$criteria->compare('description',$this->description,true);
+		$criteria->compare('exam_paper_id',$this->exam_paper_id);
+		$criteria->compare('time_length',$this->time_length,true);
+		$criteria->compare('question_number',$this->question_number);
+		$criteria->compare('score',$this->score);
+		$criteria->compare('score_rule',$this->score_rule);
+		$criteria->compare('sequence',$this->sequence);
 
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
@@ -92,7 +115,7 @@ class QuestionTypeModel extends CActiveRecord
 	 * Returns the static model of the specified AR class.
 	 * Please note that you should have this exact method in all your CActiveRecord descendants!
 	 * @param string $className active record class name.
-	 * @return QuestionTypeModel the static model class
+	 * @return QuestionBlockModel the static model class
 	 */
 	public static function model($className=__CLASS__)
 	{
