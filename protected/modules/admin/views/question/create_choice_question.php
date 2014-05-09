@@ -45,7 +45,6 @@ $this->breadcrumbs=array(
 	
 	<div class="row" style="padding-left:30px;padding-top:20px">
 		<div style="width:90px">
-			<input type="button" style="float:right" value="确定" onclick="saveAnswerOption()"></input>
 			<?php echo $form->labelEx($choiceQuestionModel, 'questionAnswerOptions'); ?>
 		</div>
 		<?php $this->widget('umeditor.widgets.UMeditorField', array(
@@ -54,21 +53,19 @@ $this->breadcrumbs=array(
 			'width' => '800px',
 			'height' => '150px'
 		)); ?>
+		<div>
+			<button class="btn btn-info"  type="button" style="margin-top:10px" onclick="saveAnswerOption()">保存选项</button>
+			<button class="btn btn-info"  type="button" style="margin-top:10px;margin-left:20px" onclick="deleteAllAnswerOptions()">删除所有选项</button>
+		</div>
 	</div>
 	
-	<div id="questionAnswerOptions" class="row" style="padding-left:30px;padding-top:20px">
-		<div id="questionAnswerOption1" name="ChoiceQuestionForm[questionAnswerOption1]">
-			<div style="float:left">A.</div>
-			<div id="questionAnswerOption122"><p>狭义的人际传播，可以包括人类的一切信息交流活动。</p><div>
-		</div>
-		<div id="questionAnswerOption2" name="ChoiceQuestionForm[questionAnswerOption2]">
-			<div style="float:left">B.</div>
-			<div><p>狭义的人际传播，可以包括人类的一切信息交流活动。</p><div>
-		</div>
+	<div id="answerOptions" class="row" style="padding-left:30px;padding-top:20px">
 	</div>
 	
 	<div class="row" style="padding-left:30px;padding-top:20px">
 		<?php echo $form->labelEx($choiceQuestionModel, 'answer'); ?>
+		<div id="correctAnswer">
+		</div>
 	</div>
 	
 	<div class="form-actions">
@@ -83,11 +80,62 @@ $this->breadcrumbs=array(
 </div><!-- search-form -->
 
 <script type="text/javascript">
+function createAnswerOptionDiv(number, content) {
+	var parentDiv = $('<div></div>'); 
+	parentDiv.attr('id','questionAnswerOption' + number);
+	parentDiv.attr('name', 'ChoiceQuestionForm[answerOption' + number + ']'); 
+	
+	var numberDiv = $('<div></div>');
+	numberDiv.css('float', 'left');
+	numberDiv.html(String.fromCharCode(number + 65) + '. ');
+	parentDiv.append(numberDiv);
+	
+	var contentDiv = $('<div></div>');
+	contentDiv[0].innerHTML = content;
+	parentDiv.append(contentDiv);
+	
+	return parentDiv;
+}
+
+function createCorrectAnswerDiv(answerOptionIndex) {
+	$('#correctAnswer').empty();
+	for (var i = 0; i <= answerOptionIndex; i++) {
+		var parentElement = $('<label></label>'); 
+		parentElement.addClass('radio');
+		parentElement.addClass('inline');
+		parentElement.css('margin-right', '10px');
+
+		$('<input />', {type:"radio", name:"ChoiceQuestionForm[answer]", val:answerOptionIndex}).appendTo(parentElement);
+
+		var label = $('<label></label>'); 	
+		label.html(String.fromCharCode(i + 65));
+		parentElement.append(label);
+
+		$('#correctAnswer').append(parentElement);
+	}
+}
+
 var answerOptionUM = UM.getEditor('ChoiceQuestionForm_questionAnswerOptions');
 var answerOptionCount = 0;
 function saveAnswerOption() {
 	var content = answerOptionUM.getContent();
-	$("#questionAnswerOption122").html(content);
+	content.replace(/(^\s*)|(\s*$)/g, "");
+	if (content.length <= 0) {
+		return;
+	}
+	
+	var answerOptionDiv = createAnswerOptionDiv(answerOptionCount, content);
+	$('#answerOptions').append(answerOptionDiv);
+	createCorrectAnswerDiv(answerOptionCount);
+	answerOptionCount++;
+	answerOptionUM.setContent("");
+}
+
+
+function deleteAllAnswerOptions() {
+	answerOptionCount = 0;
+	$('#answerOptions').empty();
+	$('#correctAnswer').empty();
 }
 </script>
 
