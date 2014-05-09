@@ -9,7 +9,7 @@
 
 	<?php echo $form->textFieldRow($model,'name',array('class'=>'span5','maxlength'=>40)); ?>
 
-	<?php echo $form->textFieldRow($model,'description',array('class'=>'span5','maxlength'=>500)); ?>
+	<?php echo $form->textAreaRow($model,'description',array('class'=>'span5','maxlength'=>500)); ?>
 
 	<?php echo $form->hiddenField($model,'exam_paper_id'); ?>
 

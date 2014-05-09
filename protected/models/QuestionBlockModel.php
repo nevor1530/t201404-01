@@ -56,7 +56,7 @@ class QuestionBlockModel extends CActiveRecord
 		// class name for the relations automatically generated below.
 		return array(
 			'questions' => array(self::HAS_MANY, 'Question', 'question_block_id'),
-			'exampPaper' => array(self::BELONGS_TO, 'ExamPaper', 'exam_paper_id'),
+			'examPaper' => array(self::BELONGS_TO, 'ExamPaperModel', 'exam_paper_id'),
 		);
 	}
 
@@ -68,7 +68,7 @@ class QuestionBlockModel extends CActiveRecord
 		return array(
 			'name' => '模块名称',
 			'description' => '描述',
-			'time_length' => '时间',
+			'time_length' => '时间(分钟)',
 			'question_number' => '题目数',
 			'score' => '模块总分',
 			'score_rule' => '计分方式',
@@ -102,6 +102,7 @@ class QuestionBlockModel extends CActiveRecord
 		$criteria->compare('score',$this->score);
 		$criteria->compare('score_rule',$this->score_rule);
 		$criteria->compare('sequence',$this->sequence);
+		$criteria->order = 'sequence';
 
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
@@ -125,7 +126,7 @@ class QuestionBlockModel extends CActiveRecord
 			$sql = 'select max(sequence) as sequence from '.$this->getTableSchema()->rawName.' where exam_paper_id='.$this->exam_paper_id;
 			$result = self::model()->findBySql($sql);
 			if ($result){
-				$this->order = $result->order + 1;
+				$this->sequence = $result->sequence + 1;
 			}
 		}
 		return parent::beforeSave ();

@@ -68,11 +68,13 @@ class QuestionBlockController extends AdminController
 		{
 			$model->attributes=$_POST['QuestionBlockModel'];
 			if($model->save())
-				$this->redirect(array('view','id'=>$model->question_block_id));
+				$this->redirect(array('index','exam_paper_id'=>$model->exam_paper_id));
 		}
 
 		$this->render('update',array(
 			'model'=>$model,
+			'examPaperModel'=>$model->examPaper,
+			'subjectModel'=>$model->examPaper->subject,
 		));
 	}
 
@@ -116,6 +118,42 @@ class QuestionBlockController extends AdminController
 			'examPaperModel'=>$examPaperModel,
 			'subjectModel'=>$examPaperModel->subject,
 		));
+	}
+	
+	public function actionMove($id, $direction){
+		$model = $this->loadModel($id);
+		$criteria = new CDbCriteria();
+		$criteria->limit = 1;
+		$criteria->addCondition('exam_paper_id='.$model->exam_paper_id);
+		if ($direction === 'up') {
+			$criteria->order = 'sequence desc';
+			$criteria->addCondition('sequence<'.$model->sequence);
+			$anotherModel = QuestionBlockModel::model()->find($criteria);
+			if (!$anotherModel){
+				echo json_encode(array('status'=>1, 'errMsg'=>'当前位置已是首位，不能再上移'));
+				Yii::app()->end();
+			} else {
+				$model->sequence--;
+				$anotherModel->sequence++;
+				$model->save();
+				$anotherModel->save();
+			}
+		} elseif ($direction === 'down') {
+			$criteria->order = 'sequence asc';
+			$criteria->addCondition('sequence>'.$model->sequence);
+			$anotherModel = QuestionBlockModel::model()->find($criteria);
+			if (!$anotherModel){
+				echo json_encode(array('status'=>1, 'errMsg'=>'当前位置已是末尾，不能再下移'));
+				Yii::app()->end();
+			} else {
+				$model->sequence++;
+				$anotherModel->sequence--;
+				$model->save();
+				$anotherModel->save();
+			}
+		}
+		echo json_encode(array('status'=>0));
+		Yii::app()->end();
 	}
 
 	/**

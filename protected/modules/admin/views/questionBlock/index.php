@@ -17,7 +17,7 @@ $this->menu=array(
 Yii::app()->clientScript->registerCoreScript('jquery');
 
 $moveScript = <<< 'END'
-	e.preventDefault();
+function(){
 	$this = $(this);
 	$.post($this.attr("href"), function(data){
 		if (data.status === 0){
@@ -26,12 +26,14 @@ $moveScript = <<< 'END'
 			alert(data.errMsg);
 		}
 	}, "json");
+	return false;
+}
 END;
 
 $this->widget('bootstrap.widgets.TbGridView',array(
 	'id'=>'question-block-model-grid',
 	'dataProvider'=>$model->search(),
-	'filter'=>$model,
+	'enableSorting'=>false,
 	'columns'=>array(
 		'name',
 		'time_length',
@@ -40,7 +42,7 @@ $this->widget('bootstrap.widgets.TbGridView',array(
 		array(
 			'class'=>'bootstrap.widgets.TbButtonColumn',
 			'header'=>'操作',
-			'template'=>'｛up} {down} {update} {delete}',
+			'template'=>'{up} {down} {update} {delete}',
 			'buttons'=>array(
 				'up' => array(
 					'label'=>'上移',
@@ -54,6 +56,9 @@ $this->widget('bootstrap.widgets.TbGridView',array(
 					'icon'=>'arrow-down',
 					'click'=>$moveScript,
 				),
+			),
+			'htmlOptions'=>array(
+				'style'=>'width: 70px;',
 			),
 		),
 	),
