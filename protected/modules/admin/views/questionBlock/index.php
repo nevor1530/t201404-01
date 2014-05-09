@@ -1,60 +1,60 @@
 <?php
 $this->breadcrumbs=array(
-	'Question Block Models'=>array('index'),
-	'Manage',
+	$subjectModel->examBank->name=>array('/admin'),
+	$subjectModel->name=>array('/admin/subject/view', 'id'=>$subjectModel->subject_id),
+	$examPaperModel->name=>array('/admin/examPaper/index', 'subject_id'=>$subjectModel->primaryKey),
+	'模块管理',
 );
 
 $this->menu=array(
-	array('label'=>'List QuestionBlockModel','url'=>array('index')),
-	array('label'=>'Create QuestionBlockModel','url'=>array('create')),
+	array('label'=>'创建模块','url'=>array('create', 'exam_paper_id'=>$examPaperModel->primaryKey)),
 );
-
-Yii::app()->clientScript->registerScript('search', "
-$('.search-button').click(function(){
-	$('.search-form').toggle();
-	return false;
-});
-$('.search-form form').submit(function(){
-	$.fn.yiiGridView.update('question-block-model-grid', {
-		data: $(this).serialize()
-	});
-	return false;
-});
-");
 ?>
 
-<h1>Manage Question Block Models</h1>
+<h2>试卷 <?php echo $examPaperModel->name; ?> 模块管理</h2>
 
-<p>
-You may optionally enter a comparison operator (<b>&lt;</b>, <b>&lt;=</b>, <b>&gt;</b>, <b>&gt;=</b>, <b>&lt;&gt;</b>
-or <b>=</b>) at the beginning of each of your search values to specify how the comparison should be done.
-</p>
+<?php 
+Yii::app()->clientScript->registerCoreScript('jquery');
 
-<?php echo CHtml::link('Advanced Search','#',array('class'=>'search-button btn')); ?>
-<div class="search-form" style="display:none">
-<?php $this->renderPartial('_search',array(
-	'model'=>$model,
-)); ?>
-</div><!-- search-form -->
+$moveScript = <<< 'END'
+	e.preventDefault();
+	$this = $(this);
+	$.post($this.attr("href"), function(data){
+		if (data.status === 0){
+			location.reload();
+		} else {
+			alert(data.errMsg);
+		}
+	}, "json");
+END;
 
-<?php $this->widget('bootstrap.widgets.TbGridView',array(
+$this->widget('bootstrap.widgets.TbGridView',array(
 	'id'=>'question-block-model-grid',
 	'dataProvider'=>$model->search(),
 	'filter'=>$model,
 	'columns'=>array(
-		'question_block_id',
 		'name',
-		'description',
-		'examp_paper_id',
 		'time_length',
 		'question_number',
-		/*
 		'score',
-		'score_rule',
-		'sequence',
-		*/
 		array(
 			'class'=>'bootstrap.widgets.TbButtonColumn',
+			'header'=>'操作',
+			'template'=>'｛up} {down} {update} {delete}',
+			'buttons'=>array(
+				'up' => array(
+					'label'=>'上移',
+					'url'=>'Yii::app()->controller->createUrl("/admin/questionBlock/move",array("direction"=>"up","id"=>$data->primaryKey, "exam_paper_id"=>$_GET["exam_paper_id"]))',
+					'icon'=>'arrow-up',
+					'click'=>$moveScript,
+				),
+				'down' => array(
+					'label'=>'下移',
+					'url'=>'Yii::app()->controller->createUrl("/admin/questionBlock/move",array("direction"=>"down","id"=>$data->primaryKey, "exam_paper_id"=>$_GET["exam_paper_id"]))',
+					'icon'=>'arrow-down',
+					'click'=>$moveScript,
+				),
+			),
 		),
 	),
 )); ?>

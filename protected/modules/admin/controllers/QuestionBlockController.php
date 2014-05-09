@@ -1,6 +1,6 @@
 <?php
 
-class QuestionBlockController extends Controller
+class QuestionBlockController extends AdminController
 {
 	public function filters()
 	{
@@ -24,8 +24,13 @@ class QuestionBlockController extends Controller
 	 * Creates a new model.
 	 * If creation is successful, the browser will be redirected to the 'view' page.
 	 */
-	public function actionCreate()
+	public function actionCreate($exam_paper_id)
 	{
+		$examPaperModel = ExamPaperModel::model()->findByPk($exam_paper_id);
+		if (!$examPaperModel){
+			throw new CHttpException(404,'The requested page does not exist.');
+		}
+		
 		$model=new QuestionBlockModel;
 
 		// Uncomment the following line if AJAX validation is needed
@@ -35,11 +40,15 @@ class QuestionBlockController extends Controller
 		{
 			$model->attributes=$_POST['QuestionBlockModel'];
 			if($model->save())
-				$this->redirect(array('view','id'=>$model->question_block_id));
+				$this->redirect(array('index','exam_paper_id'=>$exam_paper_id));
 		}
-
+		
+		$model->exam_paper_id = $exam_paper_id;
+		
 		$this->render('create',array(
 			'model'=>$model,
+			'examPaperModel'=>$examPaperModel,
+			'subjectModel'=>$examPaperModel->subject,
 		));
 	}
 
@@ -102,9 +111,10 @@ class QuestionBlockController extends Controller
 		if(isset($_GET['QuestionBlockModel']))
 			$model->attributes=$_GET['QuestionBlockModel'];
 
-		$this->render('admin',array(
+		$this->render('index',array(
 			'model'=>$model,
 			'examPaperModel'=>$examPaperModel,
+			'subjectModel'=>$examPaperModel->subject,
 		));
 	}
 

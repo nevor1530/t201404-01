@@ -10,7 +10,6 @@ $this->menu=array(
 										'linkOptions'=>array(
 															'id'=>'create-top-point')
 									),
-	array('label'=>'Manage ExamPointModel','url'=>array('admin')),
 );
 
 $baseUrl=$this->module->assetsUrl;

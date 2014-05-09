@@ -3,7 +3,7 @@
 	'enableAjaxValidation'=>false,
 )); ?>
 
-	<p class="help-block">Fields with <span class="required">*</span> are required.</p>
+	<p class="help-block">带<span class="required">*</span>为必填项目</p>
 
 	<?php echo $form->errorSummary($model); ?>
 

@@ -36,7 +36,7 @@ class QuestionBlockModel extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('name, exam_paper_id, question_number', 'required'),
+			array('name, exam_paper_id, question_number, time_length, score, score_rule', 'required'),
 			array('exam_paper_id, question_number, score, score_rule, sequence', 'numerical', 'integerOnly'=>true),
 			array('name', 'length', 'max'=>40),
 			array('description', 'length', 'max'=>500),
@@ -66,15 +66,12 @@ class QuestionBlockModel extends CActiveRecord
 	public function attributeLabels()
 	{
 		return array(
-			'question_block_id' => 'Question Block',
-			'name' => 'Name',
-			'description' => 'Description',
-			'exam_paper_id' => 'Exam Paper',
-			'time_length' => 'Time Length',
-			'question_number' => 'Question Number',
-			'score' => 'Score',
-			'score_rule' => 'Score Rule',
-			'sequence' => 'Sequence',
+			'name' => '模块名称',
+			'description' => '描述',
+			'time_length' => '时间',
+			'question_number' => '题目数',
+			'score' => '模块总分',
+			'score_rule' => '计分方式',
 		);
 	}
 
@@ -120,5 +117,17 @@ class QuestionBlockModel extends CActiveRecord
 	public static function model($className=__CLASS__)
 	{
 		return parent::model($className);
+	}
+	
+	public function beforeSave() {
+		$metaData = $this->getMetaData ();
+		if ($this->getIsNewRecord ()) {
+			$sql = 'select max(sequence) as sequence from '.$this->getTableSchema()->rawName.' where exam_paper_id='.$this->exam_paper_id;
+			$result = self::model()->findBySql($sql);
+			if ($result){
+				$this->order = $result->order + 1;
+			}
+		}
+		return parent::beforeSave ();
 	}
 }
