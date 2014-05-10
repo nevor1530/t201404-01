@@ -65,6 +65,13 @@ class QuestionController extends AdminController
 				);
 			}
 			
+			$questionExamPoints = $record->questionExamPoints;
+			foreach ($questionExamPoints as $questionExamPoint) {
+				$examPointId = $questionExamPoint['exam_point_id'];
+				$examPointModel = ExamPointModel::model()->findByPk($examPointId);
+				$question['questionExamPoints'][] = $examPointModel['name'];
+			}
+			
 			$questionList[] = $question;
 		}
 		
@@ -137,16 +144,24 @@ class QuestionController extends AdminController
 								$questionAnswerOptionModel->question_id = $questionModel->question_id;
 								$questionAnswerOptionModel->index = $answerOptionIndex;
 								$questionAnswerOptionModel->description = $answerOptionDescription;
-								$questionAnswerOptionModel->validate();
-								$questionAnswerOptionModel->save();
+								if ($questionAnswerOptionModel->validate()) {
+									$questionAnswerOptionModel->save();
+								}
 							}
 						}
-						
 					}
 					
 					//save question exam point
 					foreach ($choiceQuestionForm->examPoints as $key => $examPointId) {
+						$questionExamPointModel = new QuestionExamPointModel;
+						$questionExamPointModel->question_id = $questionModel->question_id;
+						$questionExamPointModel->exam_point_id = $examPointId;
+						if ($questionExamPointModel->validate()) {
+							$questionExamPointModel->save();
+						}
 					}
+					
+					$this->redirect('', $result);
 				}
 			}
 		}
