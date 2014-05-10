@@ -103,7 +103,11 @@ class ExamPointController extends AdminController
 		{
 			$model->attributes=$_POST['ExamPointModel'];
 			if($model->save()){
-				
+				echo json_encode(array('status'=>0));
+				Yii::app()->end();
+			} else {
+				echo json_encode(array('status'=>1, 'errMsg'=>CHtml::errorSummary($model)));
+				Yii::app()->end();
 			}
 		}
 	}

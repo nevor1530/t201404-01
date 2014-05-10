@@ -4,19 +4,26 @@
 	'enableAjaxValidation'=>true,
 	'clientOptions' => array(  
                         'validateOnSubmit' => true,  
-                        'afterValidate'=>'js:function(form,data,hasError){  
-					                        if(!hasError){  
-					                                $.ajax({  
-					                                        "type":"POST",  
-					                                        "url":$("#exam-point-model-form").attr("action"),  
-					                                        "data":$("#exam-point-model-form").serialize(),  
-					                                        "success":function(data){
-					                                        	location.reload();
-					                                        },  
-					                                          
-													});
-					                        }
-					                      }', 
+                        'afterValidate'=> <<< END
+js:function(form,data,hasError){  
+    if(!hasError){  
+            $.ajax({  
+                    "type":"POST",  
+                    "url":$("#exam-point-model-form").attr("action"),  
+                    "data":$("#exam-point-model-form").serialize(),  
+                    "success":function(data){
+                    	if (data.status === 0){
+                    		location.reload();
+                    	} else {
+                    		alert(data.errMsg);
+                    	}
+                    },
+                    "dataType":"json" 
+			});
+    }
+}
+END
+,
                     ), 
 )); ?>
 

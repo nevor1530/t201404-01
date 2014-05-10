@@ -15,6 +15,7 @@ $this->menu=array(
 <?php $this->widget('bootstrap.widgets.TbGridView',array(
 	'id'=>'exam-paper-model-grid',
 	'dataProvider'=>$model->search(),
+	'type'=>array('hover', 'striped'),
 	'filter'=>$model,
 	'columns'=>array(
 		array(

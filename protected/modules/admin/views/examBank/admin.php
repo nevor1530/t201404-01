@@ -28,14 +28,14 @@ $this->widget('bootstrap.widgets.TbGridView',array(
 	'id'=>'exam-bank-model-grid',
 	'dataProvider'=>$model->search(),
 	'filter'=>$model,
+	'type'=>array('hover', 'striped'),
 	'columns'=>array(
 		'exam_bank_id',
 		'name',
 		'price',
-		
 		array(  
             'type'=>'raw',
-            'value'=> 'CHtml::image(Yii::app()->baseUrl ."/" . Constants::$EXAM_BANK_ICON_DIR_PATH . $data->icon, "", array("width"=>"200px" ,"height"=>"200px"))',
+            'value'=> 'CHtml::image(Yii::app()->baseUrl ."/" . Constants::$EXAM_BANK_ICON_DIR_PATH . $data->icon, "", array("width"=>"60px" ,"height"=>"60px"))',
             'header'=>'题库图标',  
 		),
 		  
