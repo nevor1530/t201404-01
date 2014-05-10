@@ -2,14 +2,10 @@
 
 class QuestionController extends AdminController
 {
-	public static $questionTypes = array (	
-		'1' => '单选',
-		'2' => '多选',
-		'3' => '不定项',
-		'4' => '填空',
-		'5' => '判断',
-		'6' => '材料',
-	);
+	public static $single_choice_type = 0;
+	public static $multiple_choice_type = 1;
+	public static $true_false_type = 2;
+	public static $material_type = 3;
 	
 	public function filters()
 	{
@@ -31,11 +27,54 @@ class QuestionController extends AdminController
 			$questionModel->attributes=$_GET['QuestionModel'];
 		}
 
+		$criteria = new CDbCriteria();    
+		$count = QuestionModel::model()->count($criteria);    
+		$pager = new CPagination($count);    
+		$pager->pageSize = 3;             
+		$pager->applyLimit($criteria);    
+		$records = QuestionModel::model()->findAll($criteria);  
+		  
+		$questionList = array();
+		foreach ($records as $record) {
+			$question = array();
+			$question['content'] = $record->questionExtra->title;
+			if ($record->question_type == self::$single_choice_type || $record->question_type == self::$multiple_choice_type) {
+				$answers = explode('|', $record->answer);
+				for ($i = 0; $i < count($answers); $i++) {
+					$answers[$i] = chr($answers[$i] + 65);
+				}
+
+				$question['answer'] = implode(",  ", $answers);
+				$questionAnswerOptions = $record->questionAnswerOptions;
+				foreach ($questionAnswerOptions as $questionAnswerOption) {
+					$question['answerOptions'][] = array(
+						'index' => chr($questionAnswerOption->attributes['index'] + 65),
+						'description' => $questionAnswerOption->attributes['description'],
+					);
+				}
+			}  else if ($record->question_type == self::$true_false_type) {
+				$question['answer'] = ($record->answer == 0) ? '正确' : '错误';
+				$question['answerOptions'][] = array(
+					'index' => 'A',
+					'description' => '正确',
+				);
+				
+				$question['answerOptions'][] = array(
+					'index' => 'B',
+					'description' => '错误',
+				);
+			}
+			
+			$questionList[] = $question;
+		}
+		
 		$this->render('index', array(
 			'subject_id' => $subject_id,
 			'subjectModel' => $subjectModel,
 			'questionModel'=>$questionModel,
 			'examPaperListData'=>$this->getExamPaperListData($subject_id),
+			'pages'=>$pager,
+			'questionList'=>$questionList,
 		));
 	}	
 	
@@ -44,16 +83,75 @@ class QuestionController extends AdminController
 		if($subjectModel===null) {
 			throw new CHttpException(404,'The requested page does not exist.');
 		}
-			
-		$choiceQuestionModel=new ChoiceQuestionForm;
-		$choiceQuestionTypes = array_slice(self::$questionTypes, 0, 3);
-		$this->render('create_choice_question', array(
+		$choiceQuestionForm=new ChoiceQuestionForm;
+		$choiceQuestionTypes = array (	
+			self::$single_choice_type => '单选',
+			self::$multiple_choice_type => '多选',
+		);
+		$choiceQuestionForm->questionType = self::$single_choice_type;
+		
+		$criteria = new CDbCriteria();
+		$criteria->condition = 'subject_id = ' . $subject_id;  
+		$examPointListData = array();
+		$this->genExamPointListData(ExamPointModel::model()->top()->findAll($criteria), $examPointListData, 0);
+		
+		$result = array(
 			'subject_id' => $subject_id,
 			'subjectModel' => $subjectModel,
-			'choiceQuestionModel' => $choiceQuestionModel,
+			'choiceQuestionForm' => $choiceQuestionForm,
 			'examPaperListData'=>$this->getExamPaperListData($subject_id),
 			'choiceQuestionTypes' => $choiceQuestionTypes,
-		));
+			'examPointListData' => $examPointListData,
+		);
+		
+		if(isset($_POST['ChoiceQuestionForm'])) {
+			$choiceQuestionForm->attributes = $_POST['ChoiceQuestionForm'];
+			if ($choiceQuestionForm->validate()) {
+				// save question
+				$questionModel = new QuestionModel;
+				$questionModel->exam_paper_id = ($choiceQuestionForm->examPaper != null) ? $choiceQuestionForm->examPaper : 0;
+				$questionModel->question_block_id = 0;
+				$questionModel->question_type = $choiceQuestionForm->questionType;
+				$questionModel->index = ($choiceQuestionForm->questionNumber != null) ? $choiceQuestionForm->questionNumber : 0;
+				if ($choiceQuestionForm->questionType == self::$single_choice_type) {
+					$questionModel->answer = $choiceQuestionForm->answer;
+				} else if ($choiceQuestionForm->questionType == self::$multiple_choice_type) {
+					$questionModel->answer = implode("|", $choiceQuestionForm->answer);
+				}
+				
+				if ($questionModel->validate() && $questionModel->save()) {
+					// save question title
+					$questionExtraModel = new QuestionExtraModel;
+					$questionExtraModel->question_id = $questionModel->question_id;
+					$questionExtraModel->title = $choiceQuestionForm->content;
+					
+					if ($questionExtraModel->validate() && $questionExtraModel->save()) {
+						// save answer options
+						$keys = array_keys($_POST['ChoiceQuestionForm']);
+						foreach ($keys as $key) {
+							if (strpos($key, 'answerOption') === 0) {
+								$answerOptionIndex = str_replace('answerOption', '', $key);
+								$answerOptionDescription = $_POST['ChoiceQuestionForm'][$key];
+					
+								$questionAnswerOptionModel = new QuestionAnswerOptionModel;
+								$questionAnswerOptionModel->question_id = $questionModel->question_id;
+								$questionAnswerOptionModel->index = $answerOptionIndex;
+								$questionAnswerOptionModel->description = $answerOptionDescription;
+								$questionAnswerOptionModel->validate();
+								$questionAnswerOptionModel->save();
+							}
+						}
+						
+					}
+					
+					//save question exam point
+					foreach ($choiceQuestionForm->examPoints as $key => $examPointId) {
+					}
+				}
+			}
+		}
+		
+		$this->render('create_choice_question', $result);
 	}
 	
 	public function actionCreateTrueOrFalseQuestion($subject_id) {
@@ -62,7 +160,7 @@ class QuestionController extends AdminController
 		if($subjectModel===null) {
 			throw new CHttpException(404,'The requested page does not exist.');
 		}
-		$questionAnswerOptions = array('1' => '√', '2' => 'X');
+		$questionAnswerOptions = array('0' => '√', '1' => 'X');
 	
 		$result = array(
 			'subject_id' => $subject_id,
@@ -75,26 +173,25 @@ class QuestionController extends AdminController
 		if(isset($_POST['TrueOrFalseQuestionForm'])) {
 			$trueOrFalseQuestionForm->attributes=$_POST['TrueOrFalseQuestionForm'];
 			if ($trueOrFalseQuestionForm->validate()) {
-				$MaterialModel = new MaterialModel;
-				$MaterialModel->content = $trueOrFalseQuestionForm->content;
+				$questionModel = new QuestionModel;
+				$questionModel->exam_paper_id = ($trueOrFalseQuestionForm->examPaper != null) ? $trueOrFalseQuestionForm->examPaper : 0;
+				$questionModel->question_block_id = 0;
+				$questionModel->question_type = self::$true_false_type;
+				$questionModel->material_id = $MaterialModel->material_id;
+				$questionModel->index = ($trueOrFalseQuestionForm->questionNumber != null) ? $trueOrFalseQuestionForm->questionNumber : 0;
+				$questionModel->answer = $trueOrFalseQuestionForm->answer;
+		
+				if ($questionModel->validate() && $questionModel->save()) {
+					$questionExtraModel = new QuestionExtraModel;
+					$questionExtraModel->question_id = $questionModel->question_id;
+					$questionExtraModel->title = $trueOrFalseQuestionForm->content;
 				
-				if ($MaterialModel->validate() && $MaterialModel->save()) {
-					$questionModel = new QuestionModel();
-					$questionModel->exam_paper_id = ($trueOrFalseQuestionForm->examPaper != null) ? $trueOrFalseQuestionForm->examPaper : 0;
-					$questionModel->question_block_id = 0;
-					$questionModel->question_type = 5;
-					$questionModel->material_id = $MaterialModel->material_id;
-					$questionModel->index = ($trueOrFalseQuestionForm->questionNumber != null) ? $trueOrFalseQuestionForm->questionNumber : 0;
-					$questionModel->is_multiple = 0;
-					$questionModel->answer = $trueOrFalseQuestionForm->answer;
-			
-					if ($questionModel->validate() && $questionModel->save()) {
+					if ($questionExtraModel->validate() && $questionExtraModel->save()) {
 						$this->redirect('', $result);
 					}
 				}
 			}
 		}
-		
 		
 		$this->render('create_true_false_question', $result);
 	}
@@ -103,6 +200,20 @@ class QuestionController extends AdminController
 		$examPaperModel=ExamPaperModel::model()->findAll('subject_id=:subject_id', array(':subject_id' => $subject_id));
 		$examPaperListData = CHtml::listData($examPaperModel, 'exam_paper_id', 'name');
 		return $examPaperListData;
+	}
+	
+	private function genExamPointListData($models, &$result, $level) {
+		$prefix = '';
+		for ($i = 0; $i < $level; $i++) {
+			$prefix .= '----';
+		}
+		
+		foreach($models as $model) {
+			$result[$model->exam_point_id] = $prefix . $model->name;
+			if (!empty($model->subExamPoints)){
+				 $this->genExamPointListData($model->subExamPoints, $result, $level + 1);
+			}
+		}
 	}
 	
 }

@@ -131,7 +131,7 @@ class ExamPointTreeView extends CWidget{
 					
 						$visibleId = 'is-visible-'.($model->primaryKey);
 						$html.=CHtml::tag('label', array('class'=>'pull-right exam_point_visible'), '', false);
-							$html.=CHtml::checkBox($visibleId, $model->visible, array('id'=>$visibleId, 'data-id'=>$model->primaryKey));
+							$html.=CHtml::checkBox($visibleId, ord($model->visible), array('id'=>$visibleId, 'data-id'=>$model->primaryKey));
 							$html.='前台是否显示';
 						$html.=CHtml::closeTag('label');
 					$html.=CHtml::closeTag('div');

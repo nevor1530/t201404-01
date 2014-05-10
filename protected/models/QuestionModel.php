@@ -40,10 +40,10 @@ class QuestionModel extends CActiveRecord
 		// will receive user inputs.
 		return array(
 			array('exam_paper_id, index, answer', 'required'),
-			array('exam_paper_id, question_block_id, material_id, index, is_multiple, answer, question_type', 'numerical', 'integerOnly'=>true),
+			array('exam_paper_id, question_block_id, material_id, index, question_type', 'numerical', 'integerOnly'=>true),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('question_id, exam_paper_id, question_block_id, material_id, index, is_multiple, answer, question_type', 'safe', 'on'=>'search'),
+			array('question_id, exam_paper_id, question_block_id, material_id, index, answer, question_type', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -55,13 +55,13 @@ class QuestionModel extends CActiveRecord
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
-			'material' => array(self::BELONGS_TO, 'Material', 'material_id'),
-			'questionBlock' => array(self::BELONGS_TO, 'QuestionBlock', 'question_block_id'),
-			'examPaper' => array(self::BELONGS_TO, 'ExamPaper', 'exam_paper_id'),
-			'questionAnswerOptions' => array(self::HAS_MANY, 'QuestionAnswerOption', 'question_id'),
-			'questionExamPoints' => array(self::HAS_MANY, 'QuestionExamPoint', 'question_id'),
-			'questionExtra' => array(self::HAS_ONE, 'QuestionExtra', 'question_id'),
-			'questionInstances' => array(self::HAS_MANY, 'QuestionInstance', 'question_id'),
+			'material' => array(self::BELONGS_TO, 'MaterialModel', 'material_id'),
+			'questionBlock' => array(self::BELONGS_TO, 'QuestionBlockModel', 'question_block_id'),
+			'examPaper' => array(self::BELONGS_TO, 'ExamPaperModel', 'exam_paper_id'),
+			'questionAnswerOptions' => array(self::HAS_MANY, 'QuestionAnswerOptionModel', 'question_id'),
+			'questionExamPoints' => array(self::HAS_MANY, 'QuestionExamPointModel', 'question_id'),
+			'questionExtra' => array(self::HAS_ONE, 'QuestionExtraModel', 'question_id'),
+			'questionInstances' => array(self::HAS_MANY, 'QuestionInstanceModel', 'question_id'),
 		);
 	}
 
@@ -76,7 +76,6 @@ class QuestionModel extends CActiveRecord
 			'question_block_id' => 'question_block_id',
 			'material_id' => 'Material',
 			'index' => 'Index',
-			'is_multiple' => 'Is Multiple',
 			'answer' => 'Answer',
 			'question_type' => 'question_type'
 		);
@@ -105,9 +104,9 @@ class QuestionModel extends CActiveRecord
 		$criteria->compare('question_block_id',$this->question_block_id);
 		$criteria->compare('material_id',$this->material_id);
 		$criteria->compare('index',$this->index);
-		$criteria->compare('is_multiple',$this->is_multiple);
 		$criteria->compare('answer',$this->answer);
 		$criteria->compare('question_type',$this->question_type);
+		$criteria->order = 'exam_paper_id,question_block_id,`index`';
 
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,

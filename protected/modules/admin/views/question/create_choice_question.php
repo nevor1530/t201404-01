@@ -15,28 +15,27 @@ $this->breadcrumbs=array(
 		'clientOptions'=>array(
 			'validateOnSubmit'=>true,
 		),
-	)); 
+	));
 ?>
-
-<div class="wide form">
+	
 	<div class="row" style="padding-left:30px;padding-top:20px">
-		<?php  echo $form->dropDownListRow($choiceQuestionModel, 'examPaper', $examPaperListData, array('class'=>'span5', 'empty'=>'全部')); ?>
+		<?php  echo $form->dropDownListRow($choiceQuestionForm, 'examPaper', $examPaperListData, array('class'=>'span5', 'empty'=>'全部')); ?>
 	</div>
 	
 	<div class="row" style="padding-left:30px;padding-top:20px">
-		<?php echo $form->labelEx($choiceQuestionModel, 'questionNumber'); ?>
-		<?php echo $form->textField($choiceQuestionModel, 'questionNumber'); ?>
-		<?php echo $form->error($choiceQuestionModel, 'questionNumber'); ?>
+		<?php echo $form->labelEx($choiceQuestionForm, 'questionNumber'); ?>
+		<?php echo $form->textField($choiceQuestionForm, 'questionNumber'); ?>
+		<?php echo $form->error($choiceQuestionForm, 'questionNumber'); ?>
 	</div>
 	
 	<div>
-		<?php echo $form->radioButtonListInlineRow($choiceQuestionModel, 'questionType', $choiceQuestionTypes); ?>
+		<?php echo $form->radioButtonListInlineRow($choiceQuestionForm, 'questionType', $choiceQuestionTypes); ?>
 	</div>
 	
 	<div class="row" style="padding-left:30px;padding-top:20px">
-		<?php echo $form->labelEx($choiceQuestionModel, 'content'); ?>
+		<?php echo $form->labelEx($choiceQuestionForm, 'content'); ?>
 		<?php $this->widget('umeditor.widgets.UMeditorField', array(
-			'model'=>$choiceQuestionModel,
+			'model'=>$choiceQuestionForm,
 			'name'=>'content',
 			'width' => '800px',
 			'height' => '150px'
@@ -45,17 +44,17 @@ $this->breadcrumbs=array(
 	
 	<div class="row" style="padding-left:30px;padding-top:20px">
 		<div style="width:90px">
-			<?php echo $form->labelEx($choiceQuestionModel, 'questionAnswerOptions'); ?>
+			<?php echo $form->labelEx($choiceQuestionForm, 'questionAnswerOptions'); ?>
 		</div>
 		<?php $this->widget('umeditor.widgets.UMeditorField', array(
-			'model'=>$choiceQuestionModel,
+			'model'=>$choiceQuestionForm,
 			'name'=>'questionAnswerOptions',
 			'width' => '800px',
 			'height' => '150px'
 		)); ?>
 		<div>
-			<button class="btn btn-info"  type="button" style="margin-top:10px" onclick="saveAnswerOption()">保存选项</button>
-			<button class="btn btn-info"  type="button" style="margin-top:10px;margin-left:20px" onclick="deleteAllAnswerOptions()">删除所有选项</button>
+			<button class="btn"  type="button" style="margin-top:10px" onclick="saveAnswerOption()">保存选项</button>
+			<button id="delete_options_btn" class="btn"  type="button" style="display:none;margin-top:10px;margin-left:20px" onclick="deleteAllAnswerOptions()">删除所有选项</button>
 		</div>
 	</div>
 	
@@ -63,9 +62,16 @@ $this->breadcrumbs=array(
 	</div>
 	
 	<div class="row" style="padding-left:30px;padding-top:20px">
-		<?php echo $form->labelEx($choiceQuestionModel, 'answer'); ?>
+		<?php echo $form->labelEx($choiceQuestionForm, 'answer'); ?>
 		<div id="correctAnswer">
 		</div>
+	</div>
+	
+	<div class="row" style="padding-left:30px;padding-top:20px">
+		<?php  echo $form->dropDownListRow($choiceQuestionForm, 'examPoints', $examPointListData, array('class'=>'span5','multiple'=>true)); ?>
+	</div>
+	
+	<div id="hiddenField">
 	</div>
 	
 	<div class="form-actions">
@@ -77,7 +83,6 @@ $this->breadcrumbs=array(
 	</div>
 	
 <?php $this->endWidget(); ?>
-</div><!-- search-form -->
 
 <script type="text/javascript">
 function createAnswerOptionDiv(number, content) {
@@ -99,19 +104,40 @@ function createAnswerOptionDiv(number, content) {
 
 function createCorrectAnswerDiv(answerOptionIndex) {
 	$('#correctAnswer').empty();
-	for (var i = 0; i <= answerOptionIndex; i++) {
-		var parentElement = $('<label></label>'); 
-		parentElement.addClass('radio');
-		parentElement.addClass('inline');
-		parentElement.css('margin-right', '10px');
-
-		$('<input />', {type:"radio", name:"ChoiceQuestionForm[answer]", val:answerOptionIndex}).appendTo(parentElement);
-
-		var label = $('<label></label>'); 	
-		label.html(String.fromCharCode(i + 65));
-		parentElement.append(label);
-
-		$('#correctAnswer').append(parentElement);
+	
+	var questionType = $('input[type="radio"][name="ChoiceQuestionForm[questionType]"]:checked').val();
+	
+	// single choice type
+	if (questionType == 0) {
+		for (var i = 0; i <= answerOptionIndex; i++) {
+			var parentElement = $('<label></label>'); 
+			parentElement.addClass('radio');
+			parentElement.addClass('inline');
+			parentElement.css('margin-right', '10px');
+	
+			$('<input />', {type:"radio", name:"ChoiceQuestionForm[answer]", val:i}).appendTo(parentElement);
+	
+			var label = $('<label></label>'); 	
+			label.html(String.fromCharCode(i + 65));
+			parentElement.append(label);
+	
+			$('#correctAnswer').append(parentElement);
+		}
+	} else {
+		for (var i = 0; i <= answerOptionIndex; i++) {
+			var parentElement = $('<label></label>'); 
+			parentElement.addClass('checkbox');
+			parentElement.addClass('inline');
+			parentElement.css('margin-right', '10px');
+	
+			$('<input />', {type:"checkbox", name:"ChoiceQuestionForm[answer][]", val:i}).appendTo(parentElement);
+	
+			var label = $('<label></label>'); 	
+			label.html(String.fromCharCode(i + 65));
+			parentElement.append(label);
+	
+			$('#correctAnswer').append(parentElement);
+		}
 	}
 }
 
@@ -127,15 +153,22 @@ function saveAnswerOption() {
 	var answerOptionDiv = createAnswerOptionDiv(answerOptionCount, content);
 	$('#answerOptions').append(answerOptionDiv);
 	createCorrectAnswerDiv(answerOptionCount);
-	answerOptionCount++;
 	answerOptionUM.setContent("");
+	$('<input />', {type:'hidden', name:'ChoiceQuestionForm[answerOption' + answerOptionCount + ']', val: content}).appendTo('#choice-question-form');
+	$('#delete_options_btn').show();
+	answerOptionCount++;
 }
 
+$('input[type="radio"][name="ChoiceQuestionForm[questionType]"]').click(function() {
+	createCorrectAnswerDiv(answerOptionCount - 1);
+});
 
 function deleteAllAnswerOptions() {
 	answerOptionCount = 0;
 	$('#answerOptions').empty();
 	$('#correctAnswer').empty();
+	$('#delete_options_btn').hide();
+	$('#hiddenField').empty();
 }
 </script>
 

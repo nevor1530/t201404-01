@@ -29,11 +29,11 @@ class QuestionAnswerOptionModel extends CActiveRecord
 		// will receive user inputs.
 		return array(
 			array('question_id, index', 'required'),
-			array('question_id, is_image, index', 'numerical', 'integerOnly'=>true),
+			array('question_id, index', 'numerical', 'integerOnly'=>true),
 			array('description', 'length', 'max'=>500),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('question_answer_option_id, question_id, description, is_image, index', 'safe', 'on'=>'search'),
+			array('question_answer_option_id, question_id, description, index', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -57,7 +57,6 @@ class QuestionAnswerOptionModel extends CActiveRecord
 			'question_answer_option_id' => 'Question Answer Option',
 			'question_id' => 'Question',
 			'description' => 'Description',
-			'is_image' => 'Is Image',
 			'index' => 'Index',
 		);
 	}
@@ -83,7 +82,6 @@ class QuestionAnswerOptionModel extends CActiveRecord
 		$criteria->compare('question_answer_option_id',$this->question_answer_option_id);
 		$criteria->compare('question_id',$this->question_id);
 		$criteria->compare('description',$this->description,true);
-		$criteria->compare('is_image',$this->is_image);
 		$criteria->compare('index',$this->index);
 
 		return new CActiveDataProvider($this, array(

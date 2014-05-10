@@ -12,6 +12,8 @@ class ChoiceQuestionForm extends CFormModel
 	public $content;
 	public $questionAnswerOptions;
 	public $answer;
+	public $examPoints;
+	public $analysis;
 
 	/**
 	 * Declares the validation rules.
@@ -19,7 +21,10 @@ class ChoiceQuestionForm extends CFormModel
 	public function rules()
 	{
 		return array(
-			array('questionType, content, questionAnswerOptions, answer', 'required'),
+			array('questionType, content, answer', 'required'),
+			array('examPaper', 'numerical', 'integerOnly'=>true),
+			array('questionNumber', 'numerical', 'integerOnly'=>true),
+			array('examPaper, questionNumber, examPoints, analysis', 'safe'),
 		);
 	}
 
@@ -35,6 +40,8 @@ class ChoiceQuestionForm extends CFormModel
 			'content' => '题干',
 			'questionAnswerOptions' => '选项',
 			'answer' => '正确答案',
+			'examPoints' => '考点',
+			'analysis' => '解析'
 		);
 	}
 
