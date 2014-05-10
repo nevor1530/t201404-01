@@ -36,6 +36,9 @@ return array(
 				'bootstrap.gii'
 			)
 		),
+		'umeditor'=>array(
+			'class'=>'umeditor.UMeditorModule',
+		),
 	),
 
 	// application components
