@@ -89,7 +89,7 @@ Yii::app()->getClientScript()->registerScriptFile($baseUrl.'/js/admin.js');
 			e.preventDefault();
 			$this = $(this);
 			if (confirm("确定删除考点 "+$this.attr('data-name')+" 及其子考点吗？")){
-				$.post($(this).attr('href'), function(){
+				$.post($(this).attr('href'), {ajax:1}, function(){
 					location.reload();
 				})
 			}
