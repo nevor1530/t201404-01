@@ -20,6 +20,14 @@
  */
 class QuestionBlockModel extends CActiveRecord
 {
+	const SCORE_RULE_NORMAL = 1;
+	const SCORE_RULE_MULTI = 2;
+	
+	public static $SCORE_RULE_MAP = array(
+		self::SCORE_RULE_NORMAL => '普通计分（按照对错计分）',
+		self::SCORE_RULE_MULTI => '多选题计分',
+	);
+	
 	/**
 	 * @return string the associated database table name
 	 */

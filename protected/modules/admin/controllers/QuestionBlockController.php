@@ -39,8 +39,12 @@ class QuestionBlockController extends AdminController
 		if(isset($_POST['QuestionBlockModel']))
 		{
 			$model->attributes=$_POST['QuestionBlockModel'];
-			if($model->save())
+			if($model->save()){
+				// set uncomplete status of this exam paper
+				$examPaperModel->status = ExamPaperModel::STATUS_UNCOMPLETE;
+				$examPaperModel->save();
 				$this->redirect(array('index','exam_paper_id'=>$exam_paper_id));
+			}
 		}
 		
 		$model->exam_paper_id = $exam_paper_id;

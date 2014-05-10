@@ -39,6 +39,7 @@ $this->widget('bootstrap.widgets.TbGridView',array(
 		'time_length',
 		'question_number',
 		'score',
+		'description',
 		array(
 			'class'=>'bootstrap.widgets.TbButtonColumn',
 			'header'=>'操作',

@@ -18,14 +18,14 @@
 	<?php echo $form->textFieldRow($model,'question_number',array('class'=>'span5')); ?>
 
 	<?php echo $form->textFieldRow($model,'score',array('class'=>'span5')); ?>
-
-	<?php echo $form->textFieldRow($model,'score_rule',array('class'=>'span5')); ?>
+	
+	<?php echo $form->dropDownListRow($model, 'score_rule', QuestionBlockModel::$SCORE_RULE_MAP, array('class'=>'span5'));?>
 
 	<div class="form-actions">
 		<?php $this->widget('bootstrap.widgets.TbButton', array(
 			'buttonType'=>'submit',
 			'type'=>'primary',
-			'label'=>$model->isNewRecord ? 'Create' : 'Save',
+			'label'=>$model->isNewRecord ? '创建' : '更新',
 		)); ?>
 	</div>
 

@@ -143,4 +143,16 @@ class ExamPaperModel extends CActiveRecord
 		}
 		return $this->_question_number;
 	}
+	
+	protected function beforeDelete()
+	{
+		$questionBlockModels = $this->questionBlocks;
+		if ($questionBlockModels){
+			foreach($questionBlockModels as $questionBlockModel){
+				$questionBlockModel->delete();
+			}
+		}
+			
+		return parent::beforeDelete();
+	}
 }
