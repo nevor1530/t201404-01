@@ -38,6 +38,7 @@ class QuestionController extends AdminController
 		foreach ($records as $record) {
 			$question = array();
 			$question['content'] = $record->questionExtra->title;
+			$question['analysis'] = $record->questionExtra->analysis;
 			if ($record->question_type == self::$single_choice_type || $record->question_type == self::$multiple_choice_type) {
 				$answers = explode('|', $record->answer);
 				for ($i = 0; $i < count($answers); $i++) {
@@ -131,6 +132,7 @@ class QuestionController extends AdminController
 					$questionExtraModel = new QuestionExtraModel;
 					$questionExtraModel->question_id = $questionModel->question_id;
 					$questionExtraModel->title = $choiceQuestionForm->content;
+					$questionExtraModel->analysis = $choiceQuestionForm->analysis;
 					
 					if ($questionExtraModel->validate() && $questionExtraModel->save()) {
 						// save answer options

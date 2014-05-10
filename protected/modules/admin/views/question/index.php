@@ -19,7 +19,7 @@ $('.search-button').click(function(){
 ");
 ?>
 
-<?php echo CHtml::link('Advanced Search','#',array('class'=>'search-button btn')); ?>
+<?php echo CHtml::link('高级搜索','#',array('class'=>'search-button btn')); ?>
 <div class="search-form" style="display:none">
 <?php $this->renderPartial('_search',array(
 	'model'=>$questionModel,
@@ -28,14 +28,14 @@ $('.search-button').click(function(){
 </div><!-- search-form -->
 
 <?php foreach ($questionList as $question) { ?>
-	<div style="margin-top:20px; border-top:dashed 1px #000;">
+	<div style="margin-top:40px; padding-top:10px; border-top:dashed 1px #000;background-color:#EEEEEE;">
 		<div class="row" style="padding-left:30px;padding-top:10px">
-			<div style="width:40px;float:left">题干   </div>
+			<div style="width:40px;float:left">题干:  </div>
 			<div><?php echo $question['content'];?></div>
 		</div>
 		
 		<div class="row" style="padding-left:30px;padding-top:10px">
-			<div style="padding-bottom:10px;">选项   </div>
+			<div style="padding-bottom:10px;">选项：  </div>
 			<div>
 				<?php foreach ($question['answerOptions'] as $answerOption) {?>
 					<div style="float:left"><?php echo $answerOption['index'] . ". "?></div>
@@ -47,6 +47,13 @@ $('.search-button').click(function(){
 		<div class="row" style="padding-left:30px;padding-top:10px">
 			正确答案：<?php echo $question['answer']; ?>
 		</div>
+		
+		<?php if (isset($question['analysis'])) { ?> 
+			<div class="row" style="padding-left:30px;padding-top:10px">
+				<div style="width:40px;float:left">解析:</div>
+				<div><?php echo $question['analysis'];?></div>
+			</div>
+		<?php } ?>
 		
 		<?php if (isset($question['questionExamPoints'])) { ?> 
 		<div class="row" style="padding-left:30px;padding-top:10px">

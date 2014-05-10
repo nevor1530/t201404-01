@@ -71,6 +71,16 @@ $this->breadcrumbs=array(
 		<?php  echo $form->dropDownListRow($choiceQuestionForm, 'examPoints', $examPointListData, array('class'=>'span5','multiple'=>true)); ?>
 	</div>
 	
+	<div class="row" style="padding-left:30px;padding-top:20px">
+		<?php echo $form->labelEx($choiceQuestionForm, 'analysis'); ?>
+		<?php $this->widget('umeditor.widgets.UMeditorField', array(
+			'model'=>$choiceQuestionForm,
+			'name'=>'analysis',
+			'width' => '800px',
+			'height' => '150px'
+		)); ?>
+	</div>
+	
 	<div id="hiddenField">
 	</div>
 	
