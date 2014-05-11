@@ -1,0 +1,69 @@
+<?php
+$this->breadcrumbs=array(
+	$subjectModel->examBank->name=>array('/admin'),
+	$subjectModel->name=>array('/admin/subject/view', 'id'=>$subjectModel->subject_id),
+	'试题管理' => array('/admin/question/index', 'subject_id'=>$subject_id),
+	'材料题管理',
+);
+
+$this->menu=array(
+	array('label'=>'添加选择题','url'=>array('createChoiceQuestion', 'subject_id'=>$subject_id, 'material_id' => $material_id)),
+	array('label'=>'添加判断题','url'=>array('createTrueOrFalseQuestion', 'subject_id'=>$subject_id, 'material_id' => $material_id)),
+);
+
+?>
+
+<div style="margin-bottom:20px;">
+	<div class="row" style="padding-left:30px;padding-top:20px">
+		<div style="font-size:20px;margin-bottom:10px;">材料预览：</div>
+		<div><?php echo $materialContent ?></div>
+	</div>
+</div>
+
+<?php foreach ($questionList as $question) { ?>
+<div style="margin-bottom:40px;">
+	<div style="margin-bottom:5px;">
+		<a style="margin-right:20px"><?php echo '#' . $question['id'] ?></a>
+		<a class="pull-right" href="javascript:if(confirm('确认删除该题目吗？'))location='<?php echo Yii::app()->createUrl("/admin/question/deleteQuestion", array("subject_id"=> $subject_id,"question_id"=>$question['id'], "material_id" => $material_id));?>'">删除</a>
+		<span style="margin-left:5px;margin-right:5px" class="pull-right">|</span>
+		<a class="pull-right" style="margin-right:5px">编辑题目</a>
+	</div>
+	<div style="padding:0 0 10px 10px; border-top:dashed 1px #000;background-color:#EEEEEE;">
+		<div class="row" style="padding-left:30px;padding-top:10px">
+			<div style="width:40px;float:left">题干:  </div>
+			<div><?php echo $question['content'];?></div>
+		</div>
+		
+		<div class="row" style="padding-left:30px;padding-top:10px">
+			<div style="padding-bottom:10px;">选项：  </div>
+			<div>
+				<?php foreach ($question['answerOptions'] as $answerOption) {?>
+					<div style="float:left"><?php echo $answerOption['index'] . ". "?></div>
+					<div><?php echo $answerOption['description'];?></div>
+				<?php }?>
+			</div>
+		</div>
+		
+		<div class="row" style="padding-left:30px;padding-top:10px">
+			正确答案：<?php echo $question['answer']; ?>
+		</div>
+		
+		<?php if (isset($question['analysis'])) { ?> 
+			<div class="row" style="padding-left:30px;padding-top:10px">
+				<div style="width:40px;float:left">解析:</div>
+				<div><?php echo $question['analysis'];?></div>
+			</div>
+		<?php } ?>
+		
+		<?php if (isset($question['questionExamPoints'])) { ?> 
+		<div class="row" style="padding-left:30px;padding-top:10px">
+			考点：
+			<?php foreach ($question['questionExamPoints'] as $questionExamPoint) {?>
+				<span style="padding:2px 30px;background-color:#BBBBBB;margin-right:20px"><?php echo $questionExamPoint; ?></span>
+			<?php } ?>
+		</div>
+		<?php } ?>
+		
+	</div>
+</div>
+<?php } ?>

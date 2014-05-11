@@ -28,53 +28,28 @@ class QuestionController extends AdminController
 		}
 
 		$criteria = new CDbCriteria();    
+		$criteria->order = 'exam_paper_id, question_block_id, material_id, `index`';
 		$count = QuestionModel::model()->count($criteria);    
 		$pager = new CPagination($count);    
-		$pager->pageSize = 3;             
+		$pager->pageSize = 10;             
 		$pager->applyLimit($criteria);    
 		$records = QuestionModel::model()->findAll($criteria);  
 		  
 		$questionList = array();
+		$materialIdList = array();
 		foreach ($records as $record) {
-			$question = array();
-			$question['id'] = $record->question_id;
-			$question['content'] = $record->questionExtra->title;
-			$question['analysis'] = $record->questionExtra->analysis;
-			if ($record->question_type == self::$single_choice_type || $record->question_type == self::$multiple_choice_type) {
-				$answers = explode('|', $record->answer);
-				for ($i = 0; $i < count($answers); $i++) {
-					$answers[$i] = chr($answers[$i] + 65);
+			$question = $this->convertQuestionModel2Array($record);
+			$material_id = $record->material_id;
+			if ($material_id != 0) {
+				$materialModel = MaterialModel::model()->findByPk($material_id);
+				if ($materialModel != null) {
+					$question['material_id'] = $material_id;
+					$question['material_content'] = $materialModel->content;
+					$questionList[] = $question;
 				}
-
-				$question['answer'] = implode(",  ", $answers);
-				$questionAnswerOptions = $record->questionAnswerOptions;
-				foreach ($questionAnswerOptions as $questionAnswerOption) {
-					$question['answerOptions'][] = array(
-						'index' => chr($questionAnswerOption->attributes['index'] + 65),
-						'description' => $questionAnswerOption->attributes['description'],
-					);
-				}
-			}  else if ($record->question_type == self::$true_false_type) {
-				$question['answer'] = ($record->answer == 0) ? '正确' : '错误';
-				$question['answerOptions'][] = array(
-					'index' => 'A',
-					'description' => '正确',
-				);
-				
-				$question['answerOptions'][] = array(
-					'index' => 'B',
-					'description' => '错误',
-				);
+			} else {
+				$questionList[] = $question;
 			}
-			
-			$questionExamPoints = $record->questionExamPoints;
-			foreach ($questionExamPoints as $questionExamPoint) {
-				$examPointId = $questionExamPoint['exam_point_id'];
-				$examPointModel = ExamPointModel::model()->findByPk($examPointId);
-				$question['questionExamPoints'][] = $examPointModel['name'];
-			}
-			
-			$questionList[] = $question;
 		}
 		
 		$this->render('index', array(
@@ -87,7 +62,7 @@ class QuestionController extends AdminController
 		));
 	}	
 	
-	public function actionCreateChoiceQuestion($subject_id) {
+	public function actionCreateChoiceQuestion($subject_id, $material_id=0) {
 		$subjectModel=SubjectModel::model()->findByPk($subject_id);
 		if($subjectModel===null) {
 			throw new CHttpException(404,'The requested page does not exist.');
@@ -106,6 +81,7 @@ class QuestionController extends AdminController
 		
 		$result = array(
 			'subject_id' => $subject_id,
+			'material_id' => $material_id,
 			'subjectModel' => $subjectModel,
 			'choiceQuestionForm' => $choiceQuestionForm,
 			'examPaperListData'=>$this->getExamPaperListData($subject_id),
@@ -120,6 +96,7 @@ class QuestionController extends AdminController
 				$questionModel = new QuestionModel;
 				$questionModel->exam_paper_id = ($choiceQuestionForm->examPaper != null) ? $choiceQuestionForm->examPaper : 0;
 				$questionModel->question_block_id = 0;
+				$questionModel->material_id=$material_id;
 				$questionModel->question_type = $choiceQuestionForm->questionType;
 				$questionModel->index = ($choiceQuestionForm->questionNumber != null) ? $choiceQuestionForm->questionNumber : 0;
 				if ($choiceQuestionForm->questionType == self::$single_choice_type) {
@@ -166,7 +143,11 @@ class QuestionController extends AdminController
 						}
 					}
 					
-					$this->redirect('', $result);
+					if ($material_id != 0) {
+						$this->redirect(array('viewMaterialQuestion', 'subject_id' => $subject_id, 'material_id' => $material_id));
+					} else {
+						$this->redirect('', $result);
+					}
 				}
 			}
 		}
@@ -174,7 +155,7 @@ class QuestionController extends AdminController
 		$this->render('create_choice_question', $result);
 	}
 	
-	public function actionCreateTrueOrFalseQuestion($subject_id) {
+	public function actionCreateTrueOrFalseQuestion($subject_id,$material_id=0) {
 		$trueOrFalseQuestionForm = new TrueOrFalseQuestionForm;
 		$subjectModel=SubjectModel::model()->findByPk($subject_id);
 		if($subjectModel===null) {
@@ -189,6 +170,7 @@ class QuestionController extends AdminController
 		
 		$result = array(
 			'subject_id' => $subject_id,
+			'material_id' => $material_id,
 			'subjectModel' => $subjectModel,
 			'trueOrFalseQuestionForm' => $trueOrFalseQuestionForm,
 			'examPaperListData'=>$this->getExamPaperListData($subject_id),
@@ -203,7 +185,7 @@ class QuestionController extends AdminController
 				$questionModel->exam_paper_id = ($trueOrFalseQuestionForm->examPaper != null) ? $trueOrFalseQuestionForm->examPaper : 0;
 				$questionModel->question_block_id = 0;
 				$questionModel->question_type = self::$true_false_type;
-				$questionModel->material_id = $MaterialModel->material_id;
+				$questionModel->material_id = $material_id;
 				$questionModel->index = ($trueOrFalseQuestionForm->questionNumber != null) ? $trueOrFalseQuestionForm->questionNumber : 0;
 				$questionModel->answer = $trueOrFalseQuestionForm->answer;
 		
@@ -229,7 +211,11 @@ class QuestionController extends AdminController
 						}
 					}
 					
-					$this->redirect('', $result);
+					if ($material_id != 0) {
+						$this->redirect(array('viewMaterialQuestion', 'subject_id' => $subject_id, 'material_id' => $material_id));
+					} else {
+						$this->redirect('', $result);
+					}
 				}
 			}
 		}
@@ -238,15 +224,119 @@ class QuestionController extends AdminController
 	}
 	
 	public function actionCreateMaterialQuestion($subject_id) {
+		$materialQuestionForm = new MaterialQuestionForm;
+		$subjectModel=SubjectModel::model()->findByPk($subject_id);
+		if($subjectModel===null) {
+			throw new CHttpException(404,'The requested page does not exist.');
+		}
+	
+		$result = array(
+			'subject_id' => $subject_id,
+			'subjectModel' => $subjectModel,
+			'materialQuestionForm' => $materialQuestionForm,
+			'examPaperListData'=>$this->getExamPaperListData($subject_id),
+		);
 		
+		if(isset($_POST['MaterialQuestionForm'])) {
+			$materialQuestionForm->attributes=$_POST['MaterialQuestionForm'];
+			if ($materialQuestionForm->validate()) {
+				$materialModel = new MaterialModel;
+				$materialModel->content = $materialQuestionForm->content;
+				$materialModel->save();
+				$material_id = $materialModel->material_id;
+				$this->redirect(array('viewMaterialQuestion', 'subject_id' => $subject_id, 'material_id' => $material_id));
+			}
+		}
+					
+		$this->render('create_material_question', $result);
 	}
 	
-	public function actionDeleteQuestion($subject_id, $question_id) {
+	public function actionViewMaterialQuestion($subject_id, $material_id) {
+		$subjectModel=SubjectModel::model()->findByPk($subject_id);
+		if($subjectModel===null) {
+			throw new CHttpException(404,'The requested page does not exist.');
+		}
+		
+		$materialModel = MaterialModel::model()->findByPk($material_id);
+		if ($materialModel === null) {
+			throw new CHttpException(404,'The requested page does not exist.');
+		}
+		
+		$criteria = new CDbCriteria();
+		$criteria->condition = 'material_id = ' . $material_id;
+		$records = QuestionModel::model()->findAll($criteria);  
+		  
+		$questionList = array();
+		$materialIdList = array();
+		foreach ($records as $record) {
+			$question = $this->convertQuestionModel2Array($record);
+			$questionList[] = $question;
+		}  
+		
+		$result = array(
+			'subject_id' => $subject_id,
+			'material_id' => $material_id,
+			'subjectModel' => $subjectModel,
+			'materialContent' => $materialModel->content,
+			'questionList' => $questionList,
+		);
+		
+		$this->render('view_material_question', $result);
+	}
+	
+	public function actionDeleteQuestion($subject_id, $question_id, $material_id = 0) {
 		QuestionExtraModel::model()->deleteAll('question_id='.$question_id);
 		QuestionExamPointModel::model()->deleteAll('question_id='.$question_id);
 		QuestionAnswerOptionModel::model()->deleteAll('question_id='.$question_id);
 		QuestionModel::model()->deleteByPk($question_id);
-		$this->redirect(array('index', 'subject_id' => $subject_id));
+		
+		if ($material_id != 0) {
+			$this->redirect(array('viewMaterialQuestion', 'subject_id' => $subject_id, 'material_id' => $material_id));
+		} else {
+			$this->redirect(array('index', 'subject_id' => $subject_id));
+		}
+	}
+	
+	private function convertQuestionModel2Array($questionModel) {
+		$question = array();
+		$question['id'] = $questionModel->question_id;
+		$question['content'] = $questionModel->questionExtra->title;
+		$question['analysis'] = $questionModel->questionExtra->analysis;
+		if ($questionModel->question_type == self::$single_choice_type || $record->question_type == self::$multiple_choice_type) {
+			$answers = explode('|', $questionModel->answer);
+			for ($i = 0; $i < count($answers); $i++) {
+				$answers[$i] = chr($answers[$i] + 65);
+			}
+
+			$question['answer'] = implode(",  ", $answers);
+			$questionAnswerOptions = $questionModel->questionAnswerOptions;
+			foreach ($questionAnswerOptions as $questionAnswerOption) {
+				$question['answerOptions'][] = array(
+					'index' => chr($questionAnswerOption->attributes['index'] + 65),
+					'description' => $questionAnswerOption->attributes['description'],
+				);
+			}
+		}  else if ($questionModel->question_type == self::$true_false_type) {
+			$question['answer'] = ($questionModel->answer == 0) ? '正确' : '错误';
+			$question['answerOptions'][] = array(
+				'index' => 'A',
+				'description' => '正确',
+			);
+			
+			$question['answerOptions'][] = array(
+				'index' => 'B',
+				'description' => '错误',
+			);
+		}
+		
+		$questionExamPoints = $questionModel->questionExamPoints;
+		foreach ($questionExamPoints as $questionExamPoint) {
+			$examPointId = $questionExamPoint['exam_point_id'];
+			$examPointModel = ExamPointModel::model()->findByPk($examPointId);
+			$question['questionExamPoints'][] = $examPointModel['name'];
+		}
+		
+		return $question;
 	}
 	
 	private function getExamPaperListData($subject_id) {
