@@ -28,10 +28,10 @@ class QuestionController extends AdminController
 		}
 
 		$criteria = new CDbCriteria();    
-		$criteria->order = 'exam_paper_id, question_block_id, material_id, `index`';
+		$criteria->order = 'exam_paper_id, material_id, question_id desc';
 		$count = QuestionModel::model()->count($criteria);    
 		$pager = new CPagination($count);    
-		$pager->pageSize = 10;             
+		$pager->pageSize = 4;             
 		$pager->applyLimit($criteria);    
 		$records = QuestionModel::model()->findAll($criteria);  
 		  
@@ -60,6 +60,8 @@ class QuestionController extends AdminController
 			'pages'=>$pager,
 			'questionList'=>$questionList,
 		));
+		
+		
 	}	
 	
 	public function actionCreateChoiceQuestion($subject_id, $material_id=0) {
@@ -95,10 +97,9 @@ class QuestionController extends AdminController
 				// save question
 				$questionModel = new QuestionModel;
 				$questionModel->exam_paper_id = ($choiceQuestionForm->examPaper != null) ? $choiceQuestionForm->examPaper : 0;
-				$questionModel->question_block_id = 0;
-				$questionModel->material_id=$material_id;
+				$questionModel->material_id = $material_id;
+				$questionModel->subject_id = $subject_id;
 				$questionModel->question_type = $choiceQuestionForm->questionType;
-				$questionModel->index = ($choiceQuestionForm->questionNumber != null) ? $choiceQuestionForm->questionNumber : 0;
 				if ($choiceQuestionForm->questionType == self::$single_choice_type) {
 					$questionModel->answer = $choiceQuestionForm->answer;
 				} else if ($choiceQuestionForm->questionType == self::$multiple_choice_type) {
@@ -183,10 +184,9 @@ class QuestionController extends AdminController
 			if ($trueOrFalseQuestionForm->validate()) {
 				$questionModel = new QuestionModel;
 				$questionModel->exam_paper_id = ($trueOrFalseQuestionForm->examPaper != null) ? $trueOrFalseQuestionForm->examPaper : 0;
-				$questionModel->question_block_id = 0;
-				$questionModel->question_type = self::$true_false_type;
+				$questionModel->subject_id = $subject_id;
 				$questionModel->material_id = $material_id;
-				$questionModel->index = ($trueOrFalseQuestionForm->questionNumber != null) ? $trueOrFalseQuestionForm->questionNumber : 0;
+				$questionModel->question_type = self::$true_false_type;
 				$questionModel->answer = $trueOrFalseQuestionForm->answer;
 		
 				if ($questionModel->validate() && $questionModel->save()) {
@@ -284,17 +284,31 @@ class QuestionController extends AdminController
 		$this->render('view_material_question', $result);
 	}
 	
-	public function actionDeleteQuestion($subject_id, $question_id, $material_id = 0) {
-		QuestionExtraModel::model()->deleteAll('question_id='.$question_id);
-		QuestionExamPointModel::model()->deleteAll('question_id='.$question_id);
-		QuestionAnswerOptionModel::model()->deleteAll('question_id='.$question_id);
-		QuestionModel::model()->deleteByPk($question_id);
+	public function actionDeleteQuestion($subject_id, $question_id = 0, $material_id = 0) {
+		if ($question_id != 0) {
+			$this->deleteQuestion($question_id);
+		} else if ($material_id != 0) {
+			MaterialModel::model()->deleteByPk($material_id);
+			$questions = QuestionModel::model()->findAll('material_id=:material_id', array(':material_id' => $material_id));
+			if ($questions != null && count($questions) > 0) {
+				foreach ($questions as $question) {
+					$this->deleteQuestion($question->question_id);
+				}
+			}
+		}
 		
-		if ($material_id != 0) {
+		if ($material_id != 0 && $question_id != 0) {
 			$this->redirect(array('viewMaterialQuestion', 'subject_id' => $subject_id, 'material_id' => $material_id));
 		} else {
 			$this->redirect(array('index', 'subject_id' => $subject_id));
 		}
+	}
+	
+	private function deleteQuestion($question_id) {
+		QuestionExtraModel::model()->deleteAll('question_id='.$question_id);
+		QuestionExamPointModel::model()->deleteAll('question_id='.$question_id);
+		QuestionAnswerOptionModel::model()->deleteAll('question_id='.$question_id);
+		QuestionModel::model()->deleteByPk($question_id);
 	}
 	
 	private function convertQuestionModel2Array($questionModel) {
@@ -302,7 +316,7 @@ class QuestionController extends AdminController
 		$question['id'] = $questionModel->question_id;
 		$question['content'] = $questionModel->questionExtra->title;
 		$question['analysis'] = $questionModel->questionExtra->analysis;
-		if ($questionModel->question_type == self::$single_choice_type || $record->question_type == self::$multiple_choice_type) {
+		if ($questionModel->question_type == self::$single_choice_type || $questionModel->question_type == self::$multiple_choice_type) {
 			$answers = explode('|', $questionModel->answer);
 			for ($i = 0; $i < count($answers); $i++) {
 				$answers[$i] = chr($answers[$i] + 65);

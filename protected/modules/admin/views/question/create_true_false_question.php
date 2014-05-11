@@ -30,12 +30,6 @@ $this->breadcrumbs = $breadcrumbs;
 	</div>
 	
 	<div class="row" style="padding-left:30px;padding-top:20px">
-		<?php echo $form->labelEx($trueOrFalseQuestionForm, 'questionNumber'); ?>
-		<?php echo $form->textField($trueOrFalseQuestionForm, 'questionNumber'); ?>
-		<?php echo $form->error($trueOrFalseQuestionForm, 'questionNumber'); ?>
-	</div>
-	
-	<div class="row" style="padding-left:30px;padding-top:20px">
 		<?php echo $form->labelEx($trueOrFalseQuestionForm, 'content'); ?>
 		<?php $this->widget('umeditor.widgets.UMeditorField', array(
 			'model'=>$trueOrFalseQuestionForm,

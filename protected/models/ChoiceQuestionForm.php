@@ -7,7 +7,6 @@
 class ChoiceQuestionForm extends CFormModel
 {
 	public $examPaper;
-	public $questionNumber;
 	public $questionType;
 	public $content;
 	public $questionAnswerOptions;
@@ -23,8 +22,7 @@ class ChoiceQuestionForm extends CFormModel
 		return array(
 			array('questionType, content, answer', 'required'),
 			array('examPaper', 'numerical', 'integerOnly'=>true),
-			array('questionNumber', 'numerical', 'integerOnly'=>true),
-			array('examPaper, questionNumber, examPoints, analysis', 'safe'),
+			array('examPaper, examPoints, analysis', 'safe'),
 		);
 	}
 
@@ -35,7 +33,6 @@ class ChoiceQuestionForm extends CFormModel
 	{
 		return array(
 			'examPaper' => '所属试卷',
-			'questionNumber' => '试卷中题号',
 			'questionType' => '题型',
 			'content' => '题干',
 			'questionAnswerOptions' => '选项',

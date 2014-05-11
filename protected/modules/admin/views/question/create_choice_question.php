@@ -29,12 +29,6 @@ $this->breadcrumbs = $breadcrumbs;
 	</div>
 	
 	<div class="row" style="padding-left:30px;padding-top:20px">
-		<?php echo $form->labelEx($choiceQuestionForm, 'questionNumber'); ?>
-		<?php echo $form->textField($choiceQuestionForm, 'questionNumber'); ?>
-		<?php echo $form->error($choiceQuestionForm, 'questionNumber'); ?>
-	</div>
-	
-	<div>
 		<?php echo $form->radioButtonListInlineRow($choiceQuestionForm, 'questionType', $choiceQuestionTypes); ?>
 	</div>
 	

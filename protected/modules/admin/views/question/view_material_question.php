@@ -14,10 +14,13 @@ $this->menu=array(
 ?>
 
 <div style="margin-bottom:20px;">
-	<div class="row" style="padding-left:30px;padding-top:20px">
-		<div style="font-size:20px;margin-bottom:10px;">材料预览：</div>
-		<div><?php echo $materialContent ?></div>
+	<div style="margin-bottom:5px;">
+		<span style="font-size:20px;">材料预览：</span>
+		<a class="pull-right" href="javascript:if(confirm('确认删除该题目吗？'))location='<?php echo Yii::app()->createUrl("/admin/question/deleteQuestion", array("subject_id"=> $subjectModel->subject_id,"material_id"=>$question['material_id']));?>'">删除</a>
+		<span style="margin-left:5px;margin-right:5px" class="pull-right">|</span>
+		<a class="pull-right" style="margin-right:5px">编辑材料</a>
 	</div>
+	<div style="margin-top:10px;border-top:dashed 1px #000;"><?php echo $materialContent ?></div>
 </div>
 
 <?php foreach ($questionList as $question) { ?>

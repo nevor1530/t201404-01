@@ -39,11 +39,11 @@ class QuestionModel extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('exam_paper_id, index, answer', 'required'),
-			array('exam_paper_id, question_block_id, material_id, index, question_type', 'numerical', 'integerOnly'=>true),
+			array('exam_paper_id, answer', 'required'),
+			array('exam_paper_id, material_id, question_type, subject_id', 'numerical', 'integerOnly'=>true),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('question_id, exam_paper_id, question_block_id, material_id, index, answer, question_type', 'safe', 'on'=>'search'),
+			array('question_id, exam_paper_id, material_id, answer, question_type, subject_id', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -72,12 +72,11 @@ class QuestionModel extends CActiveRecord
 	{
 		return array(
 			'question_id' => 'Question',
+			'subject_id' => 'subject_id',
 			'exam_paper_id' => 'exam_paper_id',
-			'question_block_id' => 'question_block_id',
 			'material_id' => 'Material',
-			'index' => 'Index',
 			'answer' => 'Answer',
-			'question_type' => 'question_type'
+			'question_type' => 'question_type',
 		);
 	}
 
@@ -101,12 +100,11 @@ class QuestionModel extends CActiveRecord
 
 		$criteria->compare('question_id',$this->question_id);
 		$criteria->compare('exam_paper_id',$this->exam_paper_id);
-		$criteria->compare('question_block_id',$this->question_block_id);
 		$criteria->compare('material_id',$this->material_id);
-		$criteria->compare('index',$this->index);
 		$criteria->compare('answer',$this->answer);
 		$criteria->compare('question_type',$this->question_type);
-		$criteria->order = 'exam_paper_id,question_block_id,`index`';
+		$criteria->compare('subject_id',$this->subject_id);
+		$criteria->order = 'exam_paper_id desc';
 
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
