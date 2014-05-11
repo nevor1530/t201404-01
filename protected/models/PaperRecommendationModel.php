@@ -7,15 +7,17 @@
  * @property integer $paper_recommendation_id
  * @property integer $subject_id
  * @property integer $exam_paper_id
- * @property integer $order
+ * @property integer $sequence
  * @property double $difficuty
- *
- * The followings are the available model relations:
- * @property Subject $subject
- * @property ExamPaper $exampPaper
  */
 class PaperRecommendationModel extends CActiveRecord
 {
+	public static $DIFFICUTY_MAP = array(
+		'0.1'=>0.1,	'0.2'=>0.2,	'0.3'=>0.3,	'0.4'=>0.4,	'0.5'=>0.5,	'0.6'=>0.6,	'0.7'=>0.7,
+		'0.8'=>0.8,	'0.9'=>0.9,	'1.0'=>1.0);
+	
+	private $_examPaperName;
+	
 	/**
 	 * @return string the associated database table name
 	 */
@@ -33,11 +35,11 @@ class PaperRecommendationModel extends CActiveRecord
 		// will receive user inputs.
 		return array(
 			array('subject_id, exam_paper_id', 'required'),
-			array('subject_id, exam_paper_id, order', 'numerical', 'integerOnly'=>true),
+			array('subject_id, exam_paper_id, sequence', 'numerical', 'integerOnly'=>true),
 			array('difficuty', 'numerical'),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('paper_recommendation_id, subject_id, exam_paper_id, order, difficuty', 'safe', 'on'=>'search'),
+			array('paper_recommendation_id, subject_id, exam_paper_id, sequence, difficuty, examPaperName', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -49,8 +51,8 @@ class PaperRecommendationModel extends CActiveRecord
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
-			'subject' => array(self::BELONGS_TO, 'Subject', 'subject_id'),
-			'exampPaper' => array(self::BELONGS_TO, 'ExamPaper', 'exam_paper_id'),
+			'examPaper'=>array(self::BELONGS_TO, 'ExamPaperModel', 'exam_paper_id'),
+			'subject'=>array(self::BELONGS_TO, 'SubjectModel', 'subject_id'),
 		);
 	}
 
@@ -60,11 +62,9 @@ class PaperRecommendationModel extends CActiveRecord
 	public function attributeLabels()
 	{
 		return array(
-			'paper_recommendation_id' => 'Paper Recommendation',
-			'subject_id' => 'Subject',
-			'exam_paper_id' => 'Examp Paper',
-			'order' => 'Order',
-			'difficuty' => 'Difficuty',
+			'difficuty' => '难度值',
+			'exam_paper_id' => '试卷',
+			'examPaperName' => '试卷名称',
 		);
 	}
 
@@ -87,13 +87,21 @@ class PaperRecommendationModel extends CActiveRecord
 		$criteria=new CDbCriteria;
 
 		$criteria->compare('paper_recommendation_id',$this->paper_recommendation_id);
-		$criteria->compare('subject_id',$this->subject_id);
+		$criteria->compare('t.subject_id',$this->subject_id);
 		$criteria->compare('exam_paper_id',$this->exam_paper_id);
-		$criteria->compare('order',$this->order);
+		$criteria->compare('sequence',$this->sequence);
 		$criteria->compare('difficuty',$this->difficuty);
+		$criteria->compare('examPaper.name', $this->_examPaperName, true);
+		$criteria->with = 'examPaper';
 
+		$sort = new CSort();
+		$sort->attributes = array(
+			'difficuty' => array('asc'=>'t.difficuty', 'desc'=>'t.difficuty desc'),
+			'examPaperName' => array('asc'=>'examPaper.name', 'desc'=>'examPaper.name desc')
+		);
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
+			'sort'=>$sort,
 		));
 	}
 
@@ -106,5 +114,28 @@ class PaperRecommendationModel extends CActiveRecord
 	public static function model($className=__CLASS__)
 	{
 		return parent::model($className);
+	}
+	
+	public function beforeSave() {
+		$metaData = $this->getMetaData ();
+		if ($this->getIsNewRecord ()) {
+			$sql = 'select max(sequence) as sequence from '.$this->getTableSchema()->rawName.' where subject_id='.$this->subject_id;
+			$result = self::model()->findBySql($sql);
+			if ($result){
+				$this->sequence = $result->sequence + 1;
+			}
+		}
+		return parent::beforeSave ();
+	}
+	
+	public function getExamPaperName(){
+		if ($this->_examPaperName === null && $this->examPaper !== null){
+			$this->_examPaperName = $this->examPaper->name;
+		}
+		return $this->_examPaperName;
+	}
+	
+	public function setExamPapername($value){
+		$this->_examPaperName = $value;
 	}
 }

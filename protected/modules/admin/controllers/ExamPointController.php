@@ -19,7 +19,7 @@ class ExamPointController extends AdminController
 			throw new CHttpException(404,'The requested page does not exist.');
 
 		$res['subjectModel']=$subjectModel;
-		$res['data'] = $this->genTreeData(ExamPointModel::model()->top()->findAll());
+		$res['data'] = $this->genTreeData(ExamPointModel::model()->top()->findAll('subject_id='.$subject_id));
 		$res['examPointModel'] = new ExamPointModel();	// 让index页面加载ajax form需要的js文件
 		$res['examPointModel']->subject_id = htmlspecialchars($subject_id);
 		$this->render('index', $res);
