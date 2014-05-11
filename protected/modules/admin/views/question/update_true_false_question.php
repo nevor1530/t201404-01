@@ -9,7 +9,7 @@ if ($material_id != null && $material_id != 0) {
 	$breadcrumbs['编辑材料题'] = array('/admin/question/viewMaterialQuestion', 'subject_id'=>$subject_id, 'material_id' => $material_id);
 }
 
-$breadcrumbs[] = '添加判断题';
+$breadcrumbs[] = '更新判断题';
 $this->breadcrumbs = $breadcrumbs;
 ?>
 
@@ -19,5 +19,5 @@ echo $this->renderPartial('_true_false_question_form', array(
 	'questionAnswerOptions' => $questionAnswerOptions,
 	'examPointListData' => $examPointListData,
 	'examPaperListData' => $examPaperListData,
-	'isNewRecord' => true
+	'isNewRecord' => false
 )); ?>
