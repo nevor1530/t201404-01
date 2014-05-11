@@ -10,6 +10,8 @@ class TrueOrFalseQuestionForm extends CFormModel
 	public $questionNumber;
 	public $content;
 	public $answer;
+	public $examPoints;
+	public $analysis;
 
 	/**
 	 * Declares the validation rules.
@@ -18,7 +20,7 @@ class TrueOrFalseQuestionForm extends CFormModel
 	{
 		return array(
 			array('content, answer', 'required'),
-			array('examPaper, questionNumber', 'safe'),
+			array('examPaper, questionNumber, examPoints, analysis', 'safe'),
 		);
 	}
 
@@ -32,6 +34,8 @@ class TrueOrFalseQuestionForm extends CFormModel
 			'questionNumber' => '试卷中题号',
 			'content' => '题干',
 			'answer' => '正确答案',
+			'examPoints' => '考点',
+			'analysis' => '解析'
 		);
 	}
 	

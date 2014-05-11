@@ -43,6 +43,20 @@ $this->breadcrumbs=array(
 		<?php echo $form->radioButtonListInlineRow($trueOrFalseQuestionForm, 'answer', $questionAnswerOptions); ?>
 	</div>
 	
+	<div class="row" style="padding-left:30px;padding-top:20px">
+		<?php  echo $form->dropDownListRow($trueOrFalseQuestionForm, 'examPoints', $examPointListData, array('class'=>'span5','multiple'=>true)); ?>
+	</div>
+	
+	<div class="row" style="padding-left:30px;padding-top:20px">
+		<?php echo $form->labelEx($trueOrFalseQuestionForm, 'analysis'); ?>
+		<?php $this->widget('umeditor.widgets.UMeditorField', array(
+			'model'=>$trueOrFalseQuestionForm,
+			'name'=>'analysis',
+			'width' => '800px',
+			'height' => '150px'
+		)); ?>
+	</div>
+	
 	<div class="form-actions">
 	<?php $this->widget('bootstrap.widgets.TbButton', array(
 		'buttonType'=>'submit',

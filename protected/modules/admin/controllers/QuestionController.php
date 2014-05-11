@@ -37,6 +37,7 @@ class QuestionController extends AdminController
 		$questionList = array();
 		foreach ($records as $record) {
 			$question = array();
+			$question['id'] = $record->question_id;
 			$question['content'] = $record->questionExtra->title;
 			$question['analysis'] = $record->questionExtra->analysis;
 			if ($record->question_type == self::$single_choice_type || $record->question_type == self::$multiple_choice_type) {
@@ -154,12 +155,14 @@ class QuestionController extends AdminController
 					}
 					
 					//save question exam point
-					foreach ($choiceQuestionForm->examPoints as $key => $examPointId) {
-						$questionExamPointModel = new QuestionExamPointModel;
-						$questionExamPointModel->question_id = $questionModel->question_id;
-						$questionExamPointModel->exam_point_id = $examPointId;
-						if ($questionExamPointModel->validate()) {
-							$questionExamPointModel->save();
+					if ($choiceQuestionForm->examPoints != null) {
+						foreach ($choiceQuestionForm->examPoints as $key => $examPointId) {
+							$questionExamPointModel = new QuestionExamPointModel;
+							$questionExamPointModel->question_id = $questionModel->question_id;
+							$questionExamPointModel->exam_point_id = $examPointId;
+							if ($questionExamPointModel->validate()) {
+								$questionExamPointModel->save();
+							}
 						}
 					}
 					
@@ -179,12 +182,18 @@ class QuestionController extends AdminController
 		}
 		$questionAnswerOptions = array('0' => '√', '1' => 'X');
 	
+		$criteria = new CDbCriteria();
+		$criteria->condition = 'subject_id = ' . $subject_id;  
+		$examPointListData = array();
+		$this->genExamPointListData(ExamPointModel::model()->top()->findAll($criteria), $examPointListData, 0);
+		
 		$result = array(
 			'subject_id' => $subject_id,
 			'subjectModel' => $subjectModel,
 			'trueOrFalseQuestionForm' => $trueOrFalseQuestionForm,
 			'examPaperListData'=>$this->getExamPaperListData($subject_id),
 			'questionAnswerOptions'=>$questionAnswerOptions,
+			'examPointListData' => $examPointListData,
 		);
 			
 		if(isset($_POST['TrueOrFalseQuestionForm'])) {
@@ -202,15 +211,42 @@ class QuestionController extends AdminController
 					$questionExtraModel = new QuestionExtraModel;
 					$questionExtraModel->question_id = $questionModel->question_id;
 					$questionExtraModel->title = $trueOrFalseQuestionForm->content;
+					$questionExtraModel->analysis = $trueOrFalseQuestionForm->analysis;
 				
-					if ($questionExtraModel->validate() && $questionExtraModel->save()) {
-						$this->redirect('', $result);
+					if ($questionExtraModel->validate()) {
+						$questionExtraModel->save();
 					}
+					
+					//save question exam point
+					if ($trueOrFalseQuestionForm->examPoints != null) {
+						foreach ($trueOrFalseQuestionForm->examPoints as $key => $examPointId) {
+							$questionExamPointModel = new QuestionExamPointModel;
+							$questionExamPointModel->question_id = $questionModel->question_id;
+							$questionExamPointModel->exam_point_id = $examPointId;
+							if ($questionExamPointModel->validate()) {
+								$questionExamPointModel->save();
+							}
+						}
+					}
+					
+					$this->redirect('', $result);
 				}
 			}
 		}
 		
 		$this->render('create_true_false_question', $result);
+	}
+	
+	public function actionCreateMaterialQuestion($subject_id) {
+		
+	}
+	
+	public function actionDeleteQuestion($subject_id, $question_id) {
+		QuestionExtraModel::model()->deleteAll('question_id='.$question_id);
+		QuestionExamPointModel::model()->deleteAll('question_id='.$question_id);
+		QuestionAnswerOptionModel::model()->deleteAll('question_id='.$question_id);
+		QuestionModel::model()->deleteByPk($question_id);
+		$this->redirect(array('index', 'subject_id' => $subject_id));
 	}
 	
 	private function getExamPaperListData($subject_id) {
