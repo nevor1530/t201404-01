@@ -25,7 +25,7 @@ class TbGridView extends CGridView
 	 * @var string|array the table type.
 	 * Valid values are 'striped', 'bordered' and/or 'condensed'.
 	 */
-	public $type;
+	public $type = array(self::TYPE_STRIPED, self::TYPE_HOVER);
 	/**
 	 * @var string the CSS class name for the pager container. Defaults to 'pagination'.
 	 */

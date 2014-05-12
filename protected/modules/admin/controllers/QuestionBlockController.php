@@ -126,38 +126,7 @@ class QuestionBlockController extends AdminController
 	
 	public function actionMove($id, $direction){
 		$model = $this->loadModel($id);
-		$criteria = new CDbCriteria();
-		$criteria->limit = 1;
-		$criteria->addCondition('exam_paper_id='.$model->exam_paper_id);
-		if ($direction === 'up') {
-			$criteria->order = 'sequence desc';
-			$criteria->addCondition('sequence<'.$model->sequence);
-			$anotherModel = QuestionBlockModel::model()->find($criteria);
-			if (!$anotherModel){
-				echo json_encode(array('status'=>1, 'errMsg'=>'当前位置已是首位，不能再上移'));
-				Yii::app()->end();
-			} else {
-				$model->sequence--;
-				$anotherModel->sequence++;
-				$model->save();
-				$anotherModel->save();
-			}
-		} elseif ($direction === 'down') {
-			$criteria->order = 'sequence asc';
-			$criteria->addCondition('sequence>'.$model->sequence);
-			$anotherModel = QuestionBlockModel::model()->find($criteria);
-			if (!$anotherModel){
-				echo json_encode(array('status'=>1, 'errMsg'=>'当前位置已是末尾，不能再下移'));
-				Yii::app()->end();
-			} else {
-				$model->sequence++;
-				$anotherModel->sequence--;
-				$model->save();
-				$anotherModel->save();
-			}
-		}
-		echo json_encode(array('status'=>0));
-		Yii::app()->end();
+		return parent::_actionMove($model, $direction, 'exam_paper_id='.$model->exam_paper_id);
 	}
 
 	/**

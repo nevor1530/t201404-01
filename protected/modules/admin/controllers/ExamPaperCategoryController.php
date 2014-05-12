@@ -1,25 +1,15 @@
 <?php
 
-class ExamPaperController extends AdminController
+class ExamPaperCategoryController extends AdminController
 {
-	public function filters()
-	{
-		return array(
-			'accessControl', // perform access control for CRUD operations
-			'postOnly + delete, publish, cancel', // we only allow deletion via POST request
-		);
-	}
-	
 	/**
 	 * Displays a particular model.
 	 * @param integer $id the ID of the model to be displayed
 	 */
 	public function actionView($id)
 	{
-		$model = $this->loadModel($id);
 		$this->render('view',array(
-			'model'=>$model,
-			'subjectModel'=>$model->subject,
+			'model'=>$this->loadModel($id),
 		));
 	}
 
@@ -27,28 +17,39 @@ class ExamPaperController extends AdminController
 	 * Creates a new model.
 	 * If creation is successful, the browser will be redirected to the 'view' page.
 	 */
-	public function actionCreate($subject_id)
+	public function actionCreate($category_id)
 	{
-		$model=new ExamPaperModel;
-		$subjectModel=SubjectModel::model()->findByPk($subject_id);
-		if($subjectModel===null)
+		$categoryModel=CategoryModel::model()->findByPk($category_id);
+		if($categoryModel===null)
 			throw new CHttpException(404,'The requested page does not exist.');
 			
-		$model->subject_id = $subject_id;
+		$model=new ExamPaperCategoryModel;
 
 		// Uncomment the following line if AJAX validation is needed
-		$this->performAjaxValidation($model);
+		// $this->performAjaxValidation($model);
 
-		if(isset($_POST['ExamPaperModel']))
+		// get exam papers
+		$criteria = new CDbCriteria();
+		$criteria->compare('t.subject_id', $categoryModel->subject_id);
+		$criteria->join = 'LEFT JOIN exam_paper_category ON exam_paper_category.exam_paper_id=t.exam_paper_id';
+		$criteria->addCondition('exam_paper_category.exam_paper_category_id is NULL');
+		$criteria->compare('is_real', 1);
+		
+		$examPaperModels = ExamPaperModel::model()->findAll($criteria);
+
+		if(isset($_POST['ExamPaperCategoryModel']))
 		{
-			$model->attributes=$_POST['ExamPaperModel'];
+			$model->attributes=$_POST['ExamPaperCategoryModel'];
 			if($model->save())
-				$this->redirect(array('index','subject_id'=>$subject_id));
+				$this->redirect(array('index','category_id'=>$category_id));
 		}
 
+		$model->category_id = $category_id;
 		$this->render('create',array(
 			'model'=>$model,
-			'subjectModel'=>$subjectModel,
+			'subjectModel'=>$categoryModel->subject,
+			'categoryModel'=>$categoryModel,
+			'examPaperModels'=>$examPaperModels,
 		));
 	}
 
@@ -64,9 +65,9 @@ class ExamPaperController extends AdminController
 		// Uncomment the following line if AJAX validation is needed
 		// $this->performAjaxValidation($model);
 
-		if(isset($_POST['ExamPaperModel']))
+		if(isset($_POST['ExamPaperCategoryModel']))
 		{
-			$model->attributes=$_POST['ExamPaperModel'];
+			$model->attributes=$_POST['ExamPaperCategoryModel'];
 			if($model->save())
 				$this->redirect(array('index','subject_id'=>$model->subject_id));
 		}
@@ -97,42 +98,34 @@ class ExamPaperController extends AdminController
 			throw new CHttpException(400,'Invalid request. Please do not repeat this request again.');
 	}
 
-	public function actionIndex($subject_id	)
+
+	/**
+	 * Manages all models.
+	 */
+	public function actionIndex($category_id)
 	{
-		$res = array();
-		
-		$subjectModel=SubjectModel::model()->findByPk($subject_id);
-		if($subjectModel===null)
+		$categoryModel=CategoryModel::model()->findByPk($category_id);
+		if($categoryModel===null)
 			throw new CHttpException(404,'The requested page does not exist.');
 			
-		$model=new ExamPaperModel('search');
+		$subjectModel = $categoryModel->subject;
+			
+		$model=new ExamPaperCategoryModel('search');
 		$model->unsetAttributes();  // clear any default values
-		$model->subject_id = $subject_id;
-		if(isset($_GET['ExamPaperModel']))
-			$model->attributes=$_GET['ExamPaperModel'];
+		$model->category_id = $category_id;
+		if(isset($_GET['ExamPaperCategoryModel']))
+			$model->attributes=$_GET['ExamPaperCategoryModel'];
 
 		$this->render('index',array(
 			'model'=>$model,
 			'subjectModel'=>$subjectModel,
+			'categoryModel'=>$categoryModel,
 		));
 	}
 	
-	/**
-	 * 发布试卷
-	 */
-	public function actionPublish($id){
+	public function actionMove($id, $direction){
 		$model = $this->loadModel($id);
-		$model->status = ExamPaperModel::STATUS_PUBLISHED;
-		$model->save();
-	}
-	
-	/**
-	 * 取消发布试卷
-	 */
-	public function actionCancel($id){
-		$model = $this->loadModel($id);
-		$model->status = ExamPaperModel::STATUS_UNPUBLISHED;
-		$model->save();
+		return parent::_actionMove($model, $direction, array('category_id='.$model->category_id));
 	}
 
 	/**
@@ -142,7 +135,7 @@ class ExamPaperController extends AdminController
 	 */
 	public function loadModel($id)
 	{
-		$model=ExamPaperModel::model()->findByPk($id);
+		$model=ExamPaperCategoryModel::model()->findByPk($id);
 		if($model===null)
 			throw new CHttpException(404,'The requested page does not exist.');
 		return $model;
@@ -154,7 +147,7 @@ class ExamPaperController extends AdminController
 	 */
 	protected function performAjaxValidation($model)
 	{
-		if(isset($_POST['ajax']) && $_POST['ajax']==='exam-paper-model-form')
+		if(isset($_POST['ajax']) && $_POST['ajax']==='exam-paper-category-model-form')
 		{
 			echo CActiveForm::validate($model);
 			Yii::app()->end();

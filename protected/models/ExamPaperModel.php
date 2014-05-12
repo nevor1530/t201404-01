@@ -14,20 +14,19 @@
  * @property integer $time_length
  * @property string $publish_time
  * @property integer $status
+ * @property integer $is_real
  *
  * The followings are the available model relations:
- * @property Category $category
- * @property Subject $subject
- * @property ExamPaperInstance[] $examPaperInstances
- * @property PaperRecommendation[] $paperRecommendations
- * @property Question[] $questions
- * @property QuestionType[] $questionTypes
+ * @property ExamPaperQuestion[] $examPaperQuestions
+ * @property Material[] $materials
  */
 class ExamPaperModel extends CActiveRecord
 {
 	const STATUS_UNCOMPLETE = 0;
 	const STATUS_UNPUBLISHED = 1;
 	const STATUS_PUBLISHED = 2;
+	
+	public static $IS_REAL_MAP = array('0'=>'否', '1'=>'是');
 	
 	public $_question_number = null;
 	
@@ -48,12 +47,12 @@ class ExamPaperModel extends CActiveRecord
 		// will receive user inputs.
 		return array(
 			array('subject_id, name', 'required'),
-			array('subject_id, score, recommendation, category_id, time_length, status', 'numerical', 'integerOnly'=>true),
+			array('subject_id, score, recommendation, category_id, time_length, status, is_real', 'numerical', 'integerOnly'=>true),
 			array('name, short_name', 'length', 'max'=>45),
 			array('publish_time', 'safe'),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('exam_paper_id, subject_id, name, short_name, score, recommendation, category_id, time_length, publish_time, status', 'safe', 'on'=>'search'),
+			array('exam_paper_id, subject_id, name, short_name, score, recommendation, category_id, time_length, publish_time, status, is_real', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -71,6 +70,17 @@ class ExamPaperModel extends CActiveRecord
 			'paperRecommendations' => array(self::HAS_MANY, 'PaperRecommendationModel', 'examp_paper_id'),
 			'questions' => array(self::HAS_MANY, 'QuestionModel', 'exam_paper_id'),
 			'questionTypes' => array(self::HAS_MANY, 'QuestionTypeModel', 'examp_paper_id'),
+			'examPaperQuestions' => array(self::HAS_MANY, 'ExamPaperQuestionModel', 'exam_paper_id'),
+			'materials' => array(self::HAS_MANY, 'MaterialModel', 'exam_paper_id'),
+		);
+	}
+	
+	public function scopes()
+	{
+		return array(
+			'real'=>array(
+				'condition'=>'is_real=1',
+			),
 		);
 	}
 
@@ -80,7 +90,6 @@ class ExamPaperModel extends CActiveRecord
 	public function attributeLabels()
 	{
 		return array(
-			'exam_paper_id' => 'ID',
 			'name' => '试卷名称',
 			'short_name' => '简称',
 			'score' => '总分',
@@ -89,6 +98,7 @@ class ExamPaperModel extends CActiveRecord
 			'time_length' => '答卷时间(分钟)',
 			'publish_time' => '试卷年份',
 			'status' => '状态',
+			'is_real'=> '是否真卷',
 		);
 	}
 
@@ -120,6 +130,7 @@ class ExamPaperModel extends CActiveRecord
 		$criteria->compare('time_length',$this->time_length);
 		$criteria->compare('publish_time',$this->publish_time,true);
 		$criteria->compare('status',$this->status);
+		$criteria->compare('is_real',$this->is_real);
 
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
@@ -130,7 +141,7 @@ class ExamPaperModel extends CActiveRecord
 	 * Returns the static model of the specified AR class.
 	 * Please note that you should have this exact method in all your CActiveRecord descendants!
 	 * @param string $className active record class name.
-	 * @return ExamPaperModel the static model class
+	 * @return ExamPaperModel2 the static model class
 	 */
 	public static function model($className=__CLASS__)
 	{

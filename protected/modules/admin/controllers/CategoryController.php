@@ -1,51 +1,30 @@
 <?php
 
-class ExamPaperController extends AdminController
+class CategoryController extends AdminController
 {
-	public function filters()
-	{
-		return array(
-			'accessControl', // perform access control for CRUD operations
-			'postOnly + delete, publish, cancel', // we only allow deletion via POST request
-		);
-	}
-	
-	/**
-	 * Displays a particular model.
-	 * @param integer $id the ID of the model to be displayed
-	 */
-	public function actionView($id)
-	{
-		$model = $this->loadModel($id);
-		$this->render('view',array(
-			'model'=>$model,
-			'subjectModel'=>$model->subject,
-		));
-	}
-
 	/**
 	 * Creates a new model.
 	 * If creation is successful, the browser will be redirected to the 'view' page.
 	 */
 	public function actionCreate($subject_id)
 	{
-		$model=new ExamPaperModel;
 		$subjectModel=SubjectModel::model()->findByPk($subject_id);
 		if($subjectModel===null)
 			throw new CHttpException(404,'The requested page does not exist.');
 			
-		$model->subject_id = $subject_id;
+		$model=new CategoryModel;
 
 		// Uncomment the following line if AJAX validation is needed
-		$this->performAjaxValidation($model);
+		// $this->performAjaxValidation($model);
 
-		if(isset($_POST['ExamPaperModel']))
+		if(isset($_POST['CategoryModel']))
 		{
-			$model->attributes=$_POST['ExamPaperModel'];
+			$model->attributes=$_POST['CategoryModel'];
 			if($model->save())
 				$this->redirect(array('index','subject_id'=>$subject_id));
 		}
 
+		$model->subject_id = $subject_id;
 		$this->render('create',array(
 			'model'=>$model,
 			'subjectModel'=>$subjectModel,
@@ -64,16 +43,15 @@ class ExamPaperController extends AdminController
 		// Uncomment the following line if AJAX validation is needed
 		// $this->performAjaxValidation($model);
 
-		if(isset($_POST['ExamPaperModel']))
+		if(isset($_POST['CategoryModel']))
 		{
-			$model->attributes=$_POST['ExamPaperModel'];
+			$model->attributes=$_POST['CategoryModel'];
 			if($model->save())
 				$this->redirect(array('index','subject_id'=>$model->subject_id));
 		}
 
 		$this->render('update',array(
 			'model'=>$model,
-			'subjectModel'=>$model->subject,
 		));
 	}
 
@@ -97,42 +75,24 @@ class ExamPaperController extends AdminController
 			throw new CHttpException(400,'Invalid request. Please do not repeat this request again.');
 	}
 
-	public function actionIndex($subject_id	)
+	/**
+	 * Manages all models.
+	 */
+	public function actionIndex($subject_id)
 	{
-		$res = array();
-		
 		$subjectModel=SubjectModel::model()->findByPk($subject_id);
 		if($subjectModel===null)
 			throw new CHttpException(404,'The requested page does not exist.');
 			
-		$model=new ExamPaperModel('search');
+		$model=new CategoryModel('search');
 		$model->unsetAttributes();  // clear any default values
-		$model->subject_id = $subject_id;
-		if(isset($_GET['ExamPaperModel']))
-			$model->attributes=$_GET['ExamPaperModel'];
+		if(isset($_GET['CategoryModel']))
+			$model->attributes=$_GET['CategoryModel'];
 
 		$this->render('index',array(
 			'model'=>$model,
 			'subjectModel'=>$subjectModel,
 		));
-	}
-	
-	/**
-	 * 发布试卷
-	 */
-	public function actionPublish($id){
-		$model = $this->loadModel($id);
-		$model->status = ExamPaperModel::STATUS_PUBLISHED;
-		$model->save();
-	}
-	
-	/**
-	 * 取消发布试卷
-	 */
-	public function actionCancel($id){
-		$model = $this->loadModel($id);
-		$model->status = ExamPaperModel::STATUS_UNPUBLISHED;
-		$model->save();
 	}
 
 	/**
@@ -142,7 +102,7 @@ class ExamPaperController extends AdminController
 	 */
 	public function loadModel($id)
 	{
-		$model=ExamPaperModel::model()->findByPk($id);
+		$model=CategoryModel::model()->findByPk($id);
 		if($model===null)
 			throw new CHttpException(404,'The requested page does not exist.');
 		return $model;
@@ -154,7 +114,7 @@ class ExamPaperController extends AdminController
 	 */
 	protected function performAjaxValidation($model)
 	{
-		if(isset($_POST['ajax']) && $_POST['ajax']==='exam-paper-model-form')
+		if(isset($_POST['ajax']) && $_POST['ajax']==='category-model-form')
 		{
 			echo CActiveForm::validate($model);
 			Yii::app()->end();

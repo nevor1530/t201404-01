@@ -21,13 +21,18 @@ $this->menu=array(
 		array(
 			'class'=>'NDataLinkColumn',
 			'name'=>'name',
-			'urlExpression'=>'Yii::app()->createUrl("/admin/examPaper/view", array("id"=>$data->primaryKey))',
+			'urlExpression'=>'Yii::app()->createUrl("/admin/examPaper/update", array("id"=>$data->primaryKey))',
 		),
 		'name',
 		array(
 			'class'=>'CDataColumn',
 			'name'=>'publish_time',
 			'type'=>'date',
+		),
+		array(
+			'class'=>'application.components.gridcolumns.MapColumn',
+			'name'=>'is_real',
+			'mapData'=>ExamPaperModel::$IS_REAL_MAP,
 		),
 		array(
 			'class'=>'ExamPaperStatusColumn',

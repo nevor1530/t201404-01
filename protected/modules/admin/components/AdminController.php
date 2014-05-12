@@ -87,4 +87,42 @@ class AdminController extends Controller
 			Yii::app()->end();
 		}
 	}
+	
+	protected function _actionMove($model, $direction, $groupConditions=array(), $sequenceField='sequence'){
+		$criteria = new CDbCriteria();
+		$criteria->limit = 1;
+		
+		$criteria->addCondition($groupConditions);
+		if ($direction === 'up') {
+			$criteria->order = $sequenceField.' desc';
+			$criteria->addCondition($sequenceField.'<'.$model->$sequenceField);
+			$anotherModel = $model->find($criteria);
+			if (!$anotherModel){
+				echo json_encode(array('status'=>1, 'errMsg'=>'当前位置已是首位，不能再上移'));
+				Yii::app()->end();
+			} else {
+				$swap = $model->$sequenceField;
+				$model->$sequenceField = $anotherModel->$sequenceField;
+				$anotherModel->$sequenceField = $swap;
+				$model->save();
+				$anotherModel->save();
+			}
+		} elseif ($direction === 'down') {
+			$criteria->order = $sequenceField.' asc';
+			$criteria->addCondition($sequenceField.'>'.$model->$sequenceField);
+			$anotherModel = $model->find($criteria);
+			if (!$anotherModel){
+				echo json_encode(array('status'=>1, 'errMsg'=>'当前位置已是末尾，不能再下移'));
+				Yii::app()->end();
+			} else {
+				$swap = $model->$sequenceField;
+				$model->$sequenceField = $anotherModel->$sequenceField;
+				$anotherModel->$sequenceField = $swap;
+				$model->save();
+				$anotherModel->save();
+			}
+		}
+		echo json_encode(array('status'=>0));
+		Yii::app()->end();
+	}
 }

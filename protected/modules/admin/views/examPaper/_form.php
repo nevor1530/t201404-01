@@ -21,6 +21,8 @@ $form=$this->beginWidget('bootstrap.widgets.TbActiveForm',array(
 	<?php echo $form->textFieldRow($model,'recommendation',array('class'=>'span5')); ?>
 
 	<?php echo $form->textFieldRow($model,'time_length',array('class'=>'span5')); ?>
+	
+	<?php echo $form->radioButtonListInlineRow($model, 'is_real', ExamPaperModel::$IS_REAL_MAP); ?>
 
 	<div class="form-actions">
 		<?php $this->widget('bootstrap.widgets.TbButton', array(

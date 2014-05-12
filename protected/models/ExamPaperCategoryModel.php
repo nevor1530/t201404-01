@@ -1,23 +1,24 @@
 <?php
 
 /**
- * This is the model class for table "category".
+ * This is the model class for table "exam_paper_category".
  *
- * The followings are the available columns in table 'category':
+ * The followings are the available columns in table 'exam_paper_category':
+ * @property integer $exam_paper_category_id
  * @property integer $category_id
- * @property string $name
- * @property integer $subject_id
+ * @property integer $exam_paper_id
+ * @property integer $sequence
  */
-class CategoryModel extends CActiveRecord
+class ExamPaperCategoryModel extends CActiveRecord
 {
-	private $_paperCount;
+	private $_examPaperName;
 	
 	/**
 	 * @return string the associated database table name
 	 */
 	public function tableName()
 	{
-		return 'category';
+		return 'exam_paper_category';
 	}
 
 	/**
@@ -28,12 +29,11 @@ class CategoryModel extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('name, subject_id', 'required'),
-			array('subject_id', 'numerical', 'integerOnly'=>true),
-			array('name', 'length', 'max'=>20),
+			array('category_id, exam_paper_id', 'required'),
+			array('category_id, exam_paper_id, sequence', 'numerical', 'integerOnly'=>true),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('category_id, name, subject_id', 'safe', 'on'=>'search'),
+			array('exam_paper_category_id, category_id, exam_paper_id, sequence', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -45,8 +45,8 @@ class CategoryModel extends CActiveRecord
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
-			'examPaperCategories'=>array(self::HAS_MANY, 'ExamPaperCategoryModel', 'category_id'),
-			'subject'=>array(self::BELONGS_TO, 'SubjectModel', 'subject_id'),
+			'category'=>array(self::BELONGS_TO, 'CategoryModel', 'category_id'),
+			'examPaper'=>array(self::BELONGS_TO, 'ExamPaperModel', 'exam_paper_id'),
 		);
 	}
 
@@ -56,8 +56,8 @@ class CategoryModel extends CActiveRecord
 	public function attributeLabels()
 	{
 		return array(
-			'name' => '分类名称',
-			'paperCount' => '试卷数量',
+			'exam_paper_id' => '试卷名称',
+			'examPaperName' => '试卷名称',
 		);
 	}
 
@@ -78,11 +78,10 @@ class CategoryModel extends CActiveRecord
 		// @todo Please modify the following code to remove attributes that should not be searched.
 
 		$criteria=new CDbCriteria;
-
-		$criteria->compare('category_id',$this->category_id);
-		$criteria->compare('name',$this->name,true);
-		$criteria->compare('subject_id',$this->subject_id);
-
+		$criteria->with = 'examPaper';
+		$criteria->compare('examPaper.name',$this->_examPaperName, true);
+		$criteria->order = 'sequence';
+		
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
 		));
@@ -92,29 +91,33 @@ class CategoryModel extends CActiveRecord
 	 * Returns the static model of the specified AR class.
 	 * Please note that you should have this exact method in all your CActiveRecord descendants!
 	 * @param string $className active record class name.
-	 * @return CategoryModel the static model class
+	 * @return ExamPaperCategoryModel the static model class
 	 */
 	public static function model($className=__CLASS__)
 	{
 		return parent::model($className);
 	}
 	
-	public function getPaperCount(){
-		if ($this->_paperCount === null && $this->category_id){
-			$count = ExamPaperCategoryModel::model()->count('category_id='.$this->category_id);
-			$this->_paperCount = $count;
+	public function getExamPaperName(){
+		if ($this->_examPaperName === null && $this->examPaper !== null){
+			$this->_examPaperName = $this->examPaper->name;
 		}
-		
-		return $this->_paperCount;
+		return $this->_examPaperName;
 	}
 	
-	protected function beforeDelete()
-	{
-		$examPaperCategoryModels = $this->examPaperCategories;
-		foreach($examPaperCategoryModels as $model){
-			$model->delete();
+	public function setExamPaperName($value){
+		$this->_examPaperName = $value;
+	}
+	
+	public function beforeSave() {
+		$metaData = $this->getMetaData ();
+		if ($this->getIsNewRecord ()) {
+			$sql = 'select max(sequence) as sequence from '.$this->getTableSchema()->rawName.' where category_id='.$this->category_id;
+			$result = self::model()->findBySql($sql);
+			if ($result){
+				$this->sequence = $result->sequence + 1;
+			}
 		}
-		
-		return parent::beforeDelete();
+		return parent::beforeSave ();
 	}
 }
