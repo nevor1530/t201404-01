@@ -16,10 +16,10 @@ $this->menu=array(
 <?php 
 Yii::app()->clientScript->registerCoreScript('jquery');
 
-$moveScript = <<< 'END'
+$moveScript = <<< END
 function(){
-	$this = $(this);
-	$.post($this.attr("href"), function(data){
+	jQthis = jQuery(this);
+	jQuery.post(jQthis.attr("href"), function(data){
 		if (data.status === 0){
 			location.reload();
 		} else {

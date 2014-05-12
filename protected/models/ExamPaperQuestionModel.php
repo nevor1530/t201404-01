@@ -1,34 +1,29 @@
 <?php
 
 /**
- * This is the model class for table "question".
+ * This is the model class for table "exam_paper_question".
  *
- * The followings are the available columns in table 'question':
- * @property integer $question_id
+ * The followings are the available columns in table 'exam_paper_question':
+ * @property integer $exam_paper_question_id
  * @property integer $exam_paper_id
- * @property integer $question_type_id
- * @property integer $material_id
- * @property integer $index
- * @property integer $is_multiple
- * @property integer $answer
+ * @property integer $question_block_id
+ * @property integer $question_id
+ * @property integer $status
+ * @property integer $sequence
  *
  * The followings are the available model relations:
- * @property Material $material
- * @property QuestionType $questionType
  * @property ExamPaper $examPaper
- * @property QuestionAnswerOption[] $questionAnswerOptions
- * @property QuestionExamPoint[] $questionExamPoints
- * @property QuestionExtra $questionExtra
- * @property QuestionInstance[] $questionInstances
+ * @property Question $question
+ * @property QuestionBlock $questionBlock
  */
-class QuestionModel extends CActiveRecord
+class ExamPaperQuestionModel extends CActiveRecord
 {
 	/**
 	 * @return string the associated database table name
 	 */
 	public function tableName()
 	{
-		return 'question';
+		return 'exam_paper_question';
 	}
 
 	/**
@@ -39,11 +34,11 @@ class QuestionModel extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('exam_paper_id, answer', 'required'),
-			array('exam_paper_id, material_id, question_type, subject_id', 'numerical', 'integerOnly'=>true),
+			array('exam_paper_id, question_block_id, question_id, sequence', 'required'),
+			array('exam_paper_id, question_block_id, question_id, status, sequence', 'numerical', 'integerOnly'=>true),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('question_id, exam_paper_id, material_id, answer, question_type, subject_id', 'safe', 'on'=>'search'),
+			array('exam_paper_question_id, exam_paper_id, question_block_id, question_id, status, sequence', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -55,14 +50,9 @@ class QuestionModel extends CActiveRecord
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
-			'material' => array(self::BELONGS_TO, 'MaterialModel', 'material_id'),
-			'questionBlock' => array(self::BELONGS_TO, 'QuestionBlockModel', 'question_block_id'),
 			'examPaper' => array(self::BELONGS_TO, 'ExamPaperModel', 'exam_paper_id'),
-			'questionAnswerOptions' => array(self::HAS_MANY, 'QuestionAnswerOptionModel', 'question_id'),
-			'questionExamPoints' => array(self::HAS_MANY, 'QuestionExamPointModel', 'question_id'),
-			'questionExtra' => array(self::HAS_ONE, 'QuestionExtraModel', 'question_id'),
-			'questionInstances' => array(self::HAS_MANY, 'QuestionInstanceModel', 'question_id'),
-			'examPaperQuestions' => array(self::HAS_MANY, 'ExamPaperQuestionModel', 'question_id'),
+			'question' => array(self::BELONGS_TO, 'QuestionModel', 'question_id'),
+			'questionBlock' => array(self::BELONGS_TO, 'QuestionBlockModel', 'question_block_id'),
 		);
 	}
 
@@ -72,12 +62,12 @@ class QuestionModel extends CActiveRecord
 	public function attributeLabels()
 	{
 		return array(
+			'exam_paper_question_id' => 'Exam Paper Question',
+			'exam_paper_id' => 'Exam Paper',
+			'question_block_id' => 'Question Block',
 			'question_id' => 'Question',
-			'subject_id' => 'subject_id',
-			'exam_paper_id' => 'exam_paper_id',
-			'material_id' => 'Material',
-			'answer' => 'Answer',
-			'question_type' => 'question_type',
+			'status' => 'Status',
+			'sequence' => 'Sequence',
 		);
 	}
 
@@ -99,13 +89,12 @@ class QuestionModel extends CActiveRecord
 
 		$criteria=new CDbCriteria;
 
-		$criteria->compare('question_id',$this->question_id);
+		$criteria->compare('exam_paper_question_id',$this->exam_paper_question_id);
 		$criteria->compare('exam_paper_id',$this->exam_paper_id);
-		$criteria->compare('material_id',$this->material_id);
-		$criteria->compare('answer',$this->answer);
-		$criteria->compare('question_type',$this->question_type);
-		$criteria->compare('subject_id',$this->subject_id);
-		$criteria->order = 'exam_paper_id desc';
+		$criteria->compare('question_block_id',$this->question_block_id);
+		$criteria->compare('question_id',$this->question_id);
+		$criteria->compare('status',$this->status);
+		$criteria->compare('sequence',$this->sequence);
 
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
@@ -116,7 +105,7 @@ class QuestionModel extends CActiveRecord
 	 * Returns the static model of the specified AR class.
 	 * Please note that you should have this exact method in all your CActiveRecord descendants!
 	 * @param string $className active record class name.
-	 * @return QuestionModel the static model class
+	 * @return ExamPaperQuestionModel the static model class
 	 */
 	public static function model($className=__CLASS__)
 	{
