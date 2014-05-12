@@ -43,19 +43,23 @@ class QuestionController extends AdminController
 
 		$criteria = new CDbCriteria();    
 		$criteria->order = 'exam_paper_id, material_id, question_id desc';
+		$hideAdvancedSearch = true;
 		if (isset($_POST['QuestionFilterForm'])) {
 			$questionFilterForm->attributes = $_POST['QuestionFilterForm'];
 			if ($questionFilterForm->questionType != null) {
 				$criteria->addCondition('question_type=' . $questionFilterForm->questionType);
+				$hideAdvancedSearch = false;
 			}
 			
 			if ($questionFilterForm->examPaper != null) {
 				$criteria->addCondition('exam_paper_id=' . $questionFilterForm->examPaper);
+				$hideAdvancedSearch = false;
 			}
 			
 			if ($questionFilterForm->examPoints != null && count($questionFilterForm->examPoints) > 0) {
-				
-				$criteria->addInCondition('question_id', array());
+				$questionIdList = $this->getQuestionIdListByExamPoints($questionFilterForm->examPoints);
+				$criteria->addInCondition('question_id', $questionIdList);
+				$hideAdvancedSearch = false;
 			}
 		}
 		
@@ -92,8 +96,23 @@ class QuestionController extends AdminController
 			'questionModel'=>$questionModel,
 			'pages'=>$pager,
 			'questionList'=>$questionList,
+			'hideAdvancedSearch' => $hideAdvancedSearch,
 		));
 	}	
+	
+	private function getQuestionIdListByExamPoints($examPoints) {
+		$criteria = new CDbCriteria();
+		$criteria->addInCondition("exam_point_id", $examPoints);
+		$result = QuestionExamPointModel::model()->findAll($criteria);	
+		
+		$questionIdList = array();
+		if ($result != null && count($result) > 0) {
+			foreach ($result as $record) {
+				$questionIdList[] = $record->question_id;
+			}
+		}
+		return $questionIdList;
+	}
 	
 	public function actionCreateChoiceQuestion($subject_id, $material_id=0) {
 		$subjectModel=SubjectModel::model()->findByPk($subject_id);
