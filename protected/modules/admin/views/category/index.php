@@ -10,7 +10,7 @@ $this->menu=array(
 );
 ?>
 
-<h2><?=$subjectModel->name?> 试卷分类</h2>
+<h2><?php echo $subjectModel->name;?> 试卷分类</h2>
 
 <?php $this->widget('bootstrap.widgets.TbGridView',array(
 	'id'=>'category-model-grid',

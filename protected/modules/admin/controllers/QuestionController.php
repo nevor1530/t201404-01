@@ -320,7 +320,9 @@ class QuestionController extends AdminController
 					
 					if ($material_id != 0) {
 						$this->redirect(array('viewMaterialQuestion', 'subject_id' => $subject_id, 'material_id' => $material_id));
-					} 
+					} else {
+						$this->redirect(array('index', 'subject_id' => $subject_id));
+					}
 				}
 			}
 		}

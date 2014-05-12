@@ -57,7 +57,7 @@ foreach ($questionList as $question) {
 		<a style="margin-right:20px"><?php echo '#' . $question['id'] ?></a>
 		<a class="pull-right" href="javascript:if(confirm('确认删除该题目吗？'))location='<?php echo Yii::app()->createUrl("/admin/question/deleteQuestion", array("subject_id"=> $subjectModel->subject_id,"question_id"=>$question['id']));?>'">删除</a>
 		<span style="margin-left:5px;margin-right:5px" class="pull-right">|</span>
-		<a class="pull-right" href="<?php echo Yii::app()->createUrl("/admin/question/updateQuestion", array("subject_id"=> $subjectModel->subject_id,"question_id"=>$question['id']));?>" style="margin-right:5px">编辑题目</a>
+		<a class="pull-right" href="<?php echo Yii::app()->createUrl("/admin/question/updateQuestion", array("subject_id"=> $subject_id,"question_id"=>$question['id']));?>" style="margin-right:5px">编辑题目</a>
 	</div>
 	<div style="padding:0 0 10px 10px; border-top:dashed 1px #000;background-color:#EEEEEE;">
 		<div class="row" style="padding-left:30px;padding-top:10px">
