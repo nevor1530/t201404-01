@@ -16,6 +16,20 @@ class QuestionController extends AdminController
 	}
 	
 	public function actionIndex($subject_id) {
+		$questionFilterForm = new QuestionFilterForm;
+		
+		$questionTypes = array (	
+			self::$single_choice_type => '单选题',
+			self::$multiple_choice_type => '多选题',
+			self::$true_false_type => '判断题',
+			self::$material_type => '材料题',
+		);
+		
+		$criteria = new CDbCriteria();
+		$criteria->condition = 'subject_id = ' . $subject_id;  
+		$examPointListData = array();
+		$this->genExamPointListData(ExamPointModel::model()->top()->findAll($criteria), $examPointListData, 0);
+		
 		$subjectModel=SubjectModel::model()->findByPk($subject_id);
 		if($subjectModel===null) {
 			throw new CHttpException(404,'The requested page does not exist.');
@@ -29,12 +43,28 @@ class QuestionController extends AdminController
 
 		$criteria = new CDbCriteria();    
 		$criteria->order = 'exam_paper_id, material_id, question_id desc';
+		if (isset($_POST['QuestionFilterForm'])) {
+			$questionFilterForm->attributes = $_POST['QuestionFilterForm'];
+			if ($questionFilterForm->questionType != null) {
+				$criteria->addCondition('question_type=' . $questionFilterForm->questionType);
+			}
+			
+			if ($questionFilterForm->examPaper != null) {
+				$criteria->addCondition('exam_paper_id=' . $questionFilterForm->examPaper);
+			}
+			
+			if ($questionFilterForm->examPoints != null && count($questionFilterForm->examPoints) > 0) {
+				
+				$criteria->addInCondition('question_id', array());
+			}
+		}
+		
 		$count = QuestionModel::model()->count($criteria);    
 		$pager = new CPagination($count);    
 		$pager->pageSize = 4;             
 		$pager->applyLimit($criteria);    
 		$records = QuestionModel::model()->findAll($criteria);  
-		  
+		
 		$questionList = array();
 		$materialIdList = array();
 		foreach ($records as $record) {
@@ -55,13 +85,14 @@ class QuestionController extends AdminController
 		$this->render('index', array(
 			'subject_id' => $subject_id,
 			'subjectModel' => $subjectModel,
-			'questionModel'=>$questionModel,
+			'questionTypes' => $questionTypes,
 			'examPaperListData'=>$this->getExamPaperListData($subject_id),
+			'examPointListData' => $examPointListData,
+			'questionFilterForm' => $questionFilterForm,
+			'questionModel'=>$questionModel,
 			'pages'=>$pager,
 			'questionList'=>$questionList,
 		));
-		
-		
 	}	
 	
 	public function actionCreateChoiceQuestion($subject_id, $material_id=0) {

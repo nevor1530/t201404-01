@@ -22,8 +22,10 @@ $('.search-button').click(function(){
 <?php echo CHtml::link('高级搜索','#',array('class'=>'search-button btn')); ?>
 <div class="search-form" style="display:none">
 <?php $this->renderPartial('_search',array(
-	'model'=>$questionModel,
+	'questionFilterForm' => $questionFilterForm,
+	'questionTypes' => $questionTypes,
 	'examPaperListData'=>$examPaperListData,
+	'examPointListData' => $examPointListData,
 )); ?>
 </div><!-- search-form -->
 
