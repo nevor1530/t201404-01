@@ -375,13 +375,16 @@ class QuestionController extends AdminController
 		}
 		$choiceQuestionForm->examPoints = $examPointIdList;
 		
+		$correctAnswers = explode("|", $choiceQuestionForm->answer);
 		$questionAnswerOptionModels = $questionModel->questionAnswerOptions;
 		if ($questionAnswerOptionModels != null && count($questionAnswerOptionModels) > 0) {
 			$questionAnswerOptions = array();
 			foreach ($questionAnswerOptionModels as $questionAnswerOptionModel) {
-				$index = $questionAnswerOptionModel->index;
-				$description = $questionAnswerOptionModel->description;
-				$questionAnswerOptions[$index] = $description;
+				$questionAnswerOptions[] = array(
+					'index' =>  $questionAnswerOptionModel->index,
+					'description' => $questionAnswerOptionModel->description,
+					'isCorrectAnswer' => in_array($questionAnswerOptionModel->index, $correctAnswers),
+				);
 			}
 		}
 		

@@ -51,11 +51,11 @@
 <div id="answerOptions" class="row" style="padding-left:30px;padding-top:20px">
 <?php 
 if ($answerOptionCount > 0) {
-	foreach ($questionAnswerOptions as $index => $description) {
+	foreach ($questionAnswerOptions as $questionAnswerOption) {
 ?>
-<div id="questionAnswerOption<?php echo $index;?>" name="ChoiceQuestionForm[answerOption<?php echo $index;?>]">
-	<div style="float:left"><?php echo chr($index + 65); ?>. </div>
-	<div><?php echo $description;?></div>
+<div id="questionAnswerOption<?php echo $index;?>" name="ChoiceQuestionForm[answerOption<?php echo $questionAnswerOption['index'];?>]">
+	<div style="float:left"><?php echo chr($questionAnswerOption['index'] + 65); ?>. </div>
+	<div><?php echo $questionAnswerOption['description'];?></div>
 </div>
 <?php }} ?>
 </div>
@@ -64,9 +64,9 @@ if ($answerOptionCount > 0) {
 <div id="hiddenField">
 <?php 
 if ($answerOptionCount > 0) {
-	foreach ($questionAnswerOptions as $index => $description) {
+	foreach ($questionAnswerOptions as $questionAnswerOption) {
 ?>
-<input type="hidden" name="ChoiceQuestionForm[answerOption<?php echo $index;?>]" value="<?php echo $description;?>">
+<input type="hidden" name="ChoiceQuestionForm[answerOption<?php echo $questionAnswerOption['index'];?>]" value="<?php echo $questionAnswerOption['description'];?>">
 <?php }}?>
 </div>
 
@@ -75,18 +75,19 @@ if ($answerOptionCount > 0) {
 	<div id="correctAnswer">
 		<?php 
 		if ($answerOptionCount > 0) {
-			foreach ($questionAnswerOptions as $index => $description) {
+			foreach ($questionAnswerOptions as $questionAnswerOption) {
+				$isCorrectAnswer = $questionAnswerOption['isCorrectAnswer'];
 				// 单选题
 				if ($choiceQuestionForm->questionType == 0) {
 		?>
 				<label class="radio inline" style="margin-right: 10px;">
-					<input type="radio" name="ChoiceQuestionForm[answer]" value="<?php echo $index;?>">
-					<label><?php echo chr($index + 65); ?></label>
+					<input <?php if ($isCorrectAnswer) echo "checked=\"checked\""?> type="radio" name="ChoiceQuestionForm[answer]" value="<?php echo $questionAnswerOption['index'];?>">
+					<label><?php echo chr($questionAnswerOption['index'] + 65); ?></label>
 				</label>
 		<?php } else { ?>
 				<label class="checkbox inline" style="margin-right: 10px;">
-					<input type="checkbox" name="ChoiceQuestionForm[answer][]" value="<?php echo $index;?>">
-					<label><?php echo chr($index + 65); ?></label>
+					<input <?php if ($isCorrectAnswer) echo "checked"?> type="checkbox" name="ChoiceQuestionForm[answer][]" value="<?php echo $questionAnswerOption['index'];?>">
+					<label><?php echo chr($questionAnswerOption['index'] + 65); ?></label>
 				</label>
 		<?php }}} ?>		
 	</div>
