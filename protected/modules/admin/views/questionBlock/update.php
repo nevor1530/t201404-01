@@ -11,6 +11,6 @@ $this->menu=array(
 );
 ?>
 
-<h2>试卷 <?=$examPaperModel->name ?> 更新模块 <?=$model->name?></h2>
+<h2>试卷 <?php echo $examPaperModel->name; ?> 更新模块 <?=$model->name?></h2>
 
 <?php echo $this->renderPartial('_form',array('model'=>$model)); ?>

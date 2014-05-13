@@ -11,6 +11,6 @@ $this->menu=array(
 );
 ?>
 
-<h1>分类 <?=$categoryModel->name?> 填加试卷</h1>
+<h1>分类 <?php echo $categoryModel->name; ?> 填加试卷</h1>
 
 <?php echo $this->renderPartial('_form', array('model'=>$model, 'examPaperModels'=>$examPaperModels)); ?>

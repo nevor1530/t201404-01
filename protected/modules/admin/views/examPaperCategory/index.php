@@ -11,7 +11,7 @@ $this->menu=array(
 );
 ?>
 
-<h3>类别<?=$categoryModel->name?>包含试卷</h3>
+<h3>类别<?php echo $categoryModel->name; ?>包含试卷</h3>
 
 <?php 
 Yii::app()->clientScript->registerCoreScript('jquery');
