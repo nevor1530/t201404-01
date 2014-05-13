@@ -57,6 +57,8 @@ foreach ($questionList as $question) {
 		<span class="pull-right">
 			<?php 
 			$htmlOptions = array('id'=>'question_'.$question['id']);
+			$htmlOptions['class'] = 'js-exam-paper-question-check';
+			$htmlOptions['data-id'] = $question['id'];
 			isset($question['is_sequenced']) && $question['is_sequenced'] && $htmlOptions['disabled'] = true;
 			echo CHtml::checkBox('', isset($question['is_chosen']) && $question['is_chosen'], $htmlOptions);?>
 			<label class="label" for="<?php echo 'question_'.$question['id'];?>">加入</label>
@@ -123,5 +125,35 @@ $this->widget('CLinkPager',array(
 	'pages' => $pages,    
 	'maxButtonCount'=>6   
 ));?>    
-</div>   
+</div>
+
+<?php 
+$exam_paper_question_options = array(
+	'ExamPaperQuestionModel[exam_paper_id]'=>$examPaperModel->primaryKey,
+);
+$exam_paper_question_options = CJavaScript::encode($exam_paper_question_options);
+$exam_paper_question_url = Yii::app()->createUrl('/admin/examPaperQuestion/operate');
+
+$exam_paper_question_script = <<< END
+jQuery(".js-exam-paper-question-check").on("change", function(){
+	var jQthis = jQuery(this);
+	var params = $exam_paper_question_options;
+	params['ExamPaperQuestionModel[question_id]'] = jQthis.data("id");
+	params['action'] = this.checked ? 'add' : 'remove';
+	jQuery.ajax({
+		url: "$exam_paper_question_url",
+		data: params,
+		dataType: 'json',
+		type: 'POST',
+		success: function(data){
+			if (data.status === 0){
+			} else {
+				alert(data.errMsg);
+				location.reload();
+			}
+		}
+	});
+});
+END;
+Yii::app()->clientScript->registerScript(__CLASS__.'#exam_paper_question', $exam_paper_question_script);?>
 

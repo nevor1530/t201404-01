@@ -2,27 +2,68 @@
 
 class ExamPaperQuestionController extends AdminController
 {
-	/**
-	 * Creates a new model.
-	 * If creation is successful, the browser will be redirected to the 'view' page.
-	 */
-	public function actionCreate()
+		public function filters()
 	{
+		return array(
+			'accessControl', // perform access control for CRUD operations
+			'postOnly + operate, sequence', // we only allow deletion via POST request
+		);
+	}
+	
+	public function actionOperate(){
+		$action = $_POST['action'];
 		$model=new ExamPaperQuestionModel;
-
-		// Uncomment the following line if AJAX validation is needed
-		// $this->performAjaxValidation($model);
-
-		if(isset($_POST['ExamPaperQuestionModel']))
-		{
-			$model->attributes=$_POST['ExamPaperQuestionModel'];
-			if($model->save())
-				$this->redirect(array('view','id'=>$model->exam_paper_question_id));
+		$model->attributes=$_POST['ExamPaperQuestionModel'];
+		$ret = array();
+		if ($action === 'add'){
+			if($model->save()){
+				$ret['status'] = 0;
+			} else {
+				$ret['status'] = 1;
+				$ret['errMsg'] = CHtml::errorSummary($model);
+			}
+		} elseif ($action === 'remove'){
+			$params = array(
+				':question_id' => $model->question_id,
+				':exam_paper_id' => $model->exam_paper_id,
+			);
+			
+			$model = ExamPaperQuestionModel::model()->find('question_id=:question_id and exam_paper_id=:exam_paper_id', $params);
+			if ($model && $model->delete()){
+				$ret['status']=0;
+			} else {
+				$ret['status'] = 1;
+				$ret['errMsg'] = '数据异常';
+			}
+		} else {
+			$ret['status'] = 1;
+			$ret['errMsg'] = '参数错ykgd';
+			echo json_encde(array('status'=>1, 'errMsg'));
 		}
-
-		$this->render('create',array(
-			'model'=>$model,
-		));
+		
+		echo json_encode($ret);
+	}
+	
+	public function actionSequence(){
+		$id = $_POST['id'];
+		$sequence = $_POST['sequence'];
+		
+		$model = $this->loadModel($id);
+		$model->setGlobalSequence($sequence);
+		// 判断序号是否有效
+		$exists = ExamPaperQuestionModel::model()->exists('exam_paper_id=:epid and sequence=:seq and question_block_id=:qbid', 
+			array(':epid'=>$model->exam_paper_id, ':seq'=>$model->sequence, ':qbid'=>$model->question_block_id)
+		);
+		if ($exists){
+			$ret = array('status'=>1, 'errMsg'=>"序号$sequence上已指定题目");
+		} else {
+			if ($model->save()){
+				$ret = array('status'=>0);
+			} else {
+				$ret = array('status'=>1, 'errMsg'=>CHtml::errorSummary($model));
+			}
+		}
+		echo json_encode($ret);
 	}
 
 	/**
@@ -101,16 +142,14 @@ class ExamPaperQuestionController extends AdminController
 		}
 		
 		$criteria = new CDbCriteria();
-		$criteria->with = 'question';
-		$criteria->addCondition('sequence=0');
+		$criteria->with = array('question', 'question.questionExtra', 'question.questionAnswerOptions');
 		$criteria->addCondition('t.exam_paper_id='.$exam_paper_id);
-		$unAssignedQuestionDataProvider = new CActiveDataProvider('ExamPaperQuestionModel', array('criteria'=>$criteria));
-//		$unAssignedQuestionModels = ExamPaperQuestionModel::model()->findAll($criteria);
+		$questionDataProvider = new CActiveDataProvider('ExamPaperQuestionModel', array('criteria'=>$criteria));
 		
 		$res['examPaperModel'] = $examPaperModel;
 		$res['paperQuestionNumber'] = $paperQuestionNumber;
 		$res['paperQuestionAssignNumber'] = $paperQuestionAssignNumber;
-		$res['unAssignedQuestionDataProvider'] = $unAssignedQuestionDataProvider;
+		$res['questionDataProvider'] = $questionDataProvider;
 		$res['subjectModel'] = $examPaperModel->subject;
 		$res['questionStatus'] = $questionStatus;
 		$res['questionBlockModels'] = $questionBlockModels;
@@ -118,7 +157,6 @@ class ExamPaperQuestionController extends AdminController
 	}
 	
 	public function actionChoose($exam_paper_id, $exam_block_id=null, $sequence=null){
-		// TODO 只考了代码，逻辑未调整
 		$examPaperModel = ExamPaperModel::model()->findByPk($exam_paper_id);
 		if (!$examPaperModel)
 			throw new CHttpException(404,'The requested page does not exist.');

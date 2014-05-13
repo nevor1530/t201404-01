@@ -22,9 +22,9 @@ $this->menu=array(
 			<div><strong><?php echo $questionBlockModel->name;?> 模块</strong></div>
 			<?php for($i=1; $i <= $questionBlockModel->question_number; $i++):?>
 				<?php if (isset($questionStatus[$questionBlockModel->primaryKey][$i])):?>
-					<button class="btn btn-mini btn-primary" type="button"><?php echo $i+$sequenceBase;?></button>
+					<button class="btn btn-mini btn-question btn-primary" type="button"><?php echo $i+$sequenceBase;?></button>
 				<?php else:?>
-					<button class="btn btn-mini" type="button"><?php echo $i+$sequenceBase;?></button>
+					<button class="btn btn-mini btn-question" type="button"><?php echo $i+$sequenceBase;?></button>
 				<?php endif;?>
 			<?php endfor;?>
 		</p>
@@ -34,17 +34,66 @@ $this->menu=array(
 
 <h4>备选题</h4>
 <?php $this->widget('bootstrap.widgets.TbListView',array(
-	'dataProvider'=>$unAssignedQuestionDataProvider,
+	'dataProvider'=>$questionDataProvider,
 	'itemView'=>'_view',
 )); ?>
 
 <?php 
-	$cssScript = <<< END
-.btn-mini {
+$cssScript = <<< END
+.exam_paper-question-item-title {
+	border-bottom: 1px dashed;
+}
+
+.btn-question {
 	width: 25px;
 	height: 25px;
 	padding: 0;
 }
+
+input.sequence-input {
+	height: 22px;
+	margin: 0;
+	padding: 0;
+	width: 50px;
+}
+
+.exam-paper-question-sequence {
+	margin-left: 40%;
+}
 END;
-	Yii::app()->clientScript->registerCss(__CLASS__."#css", $cssScript);
+
+Yii::app()->clientScript->registerCss(__CLASS__."#css", $cssScript);
 ?>
+
+<?php
+$sequenceUrl = Yii::app()->createUrl('/admin/examPaperQuestion/sequence');
+$sequenceScript = <<< END
+jQuery(".js-sequence-btn").on("click", function(){
+	jQthis = jQuery(this);
+	var input = jQthis.parent().find(".sequence-input");
+	if (!/^\d+$/.test(input.val())){
+	    alert('必须为数字');
+	}
+	
+	var url = "$sequenceUrl";
+	var data = {
+		id: input.data("id"),
+		sequence: input.val()
+	};
+	jQuery.ajax({
+		url: "$sequenceUrl",
+		data: data,
+		type: "POST",
+		dataType: 'json',
+		success: function(data){
+			if (data.status === 0){
+				location.reload();
+			} else {
+				alert(data.errMsg);
+			}
+		}
+	});
+});
+END;
+
+Yii::app()->clientScript->registerScript(__CLASS__."#sequence", $sequenceScript);

@@ -18,6 +18,11 @@
  */
 class ExamPaperQuestionModel extends CActiveRecord
 {
+	private static $_examPapers = array();	// exam_paper_id => ExamPaperModel
+	private static $_sequenceBase = array(); // block_id => number
+	
+	private $_globalSequence;
+	
 	/**
 	 * @return string the associated database table name
 	 */
@@ -34,7 +39,7 @@ class ExamPaperQuestionModel extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('exam_paper_id, question_block_id, question_id, sequence', 'required'),
+			array('exam_paper_id, question_id', 'required'),
 			array('exam_paper_id, question_block_id, question_id, status, sequence', 'numerical', 'integerOnly'=>true),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
@@ -110,5 +115,57 @@ class ExamPaperQuestionModel extends CActiveRecord
 	public static function model($className=__CLASS__)
 	{
 		return parent::model($className);
+	}
+	
+	public function getGlobalSequence(){
+		if (!$this->sequence){
+			return 0;
+		}
+		if ($this->_globalSequence === null){
+			if (!isset(self::$_sequenceBase[$this->question_block_id])){
+				$examPaperModel = $this->loadExamPaperModel($this->exam_paper_id);
+				$blockModels = $examPaperModel->questionBlocks;
+				$base = 0;
+				foreach($blockModels as $block){
+					if ($block->question_block_id === $this->question_block_id){
+						break;
+					}
+					$base += $block->question_number;
+				}
+				self::$_sequenceBase[$this->question_block_id] = $base;
+			}
+			$this->_globalSequence = self::$_sequenceBase[$this->question_block_id] + $this->sequence;
+		}
+		return $this->_globalSequence;
+	}
+	
+	private function loadExamPaperModel($exam_paper_id){
+		if (!isset(self::$_examPapers[$exam_paper_id])){
+			self::$_examPapers[$exam_paper_id] = ExamPaperModel::model()->findByPk($exam_paper_id);
+		}
+		return self::$_examPapers[$exam_paper_id];
+	}
+	
+	public function setGlobalSequence($value){
+		if ($value <= 0){
+			throw new Exception($value.' 必须大于0');
+		}
+		
+		$this->_globalSequence = $value;
+		$examPaperModel = $this->loadExamPaperModel($this->exam_paper_id);
+		$blockModels = $examPaperModel->questionBlocks;
+		foreach($blockModels as $block){
+			if ($block->question_number >= $value){
+				$this->question_block_id = $block->question_block_id;
+				$this->sequence = $value;
+				$value = 0;
+				break;
+			} else {
+				$value -= $block->question_number;
+			}
+		}
+		if ($value !== 0){
+			throw new Exception($value.' 超出题目数量');
+		}
 	}
 }

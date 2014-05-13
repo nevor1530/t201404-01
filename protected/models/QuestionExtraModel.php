@@ -53,7 +53,7 @@ class QuestionExtraModel extends CActiveRecord
 	{
 		return array(
 			'question_id' => 'Question',
-			'title' => 'Title',
+			'title' => '题干',
 			'analysis' => 'Analysis',
 		);
 	}
