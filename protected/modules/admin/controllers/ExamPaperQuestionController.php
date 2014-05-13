@@ -173,10 +173,23 @@ class ExamPaperQuestionController extends AdminController
 		$pager->applyLimit($criteria);    
 		$records = QuestionModel::model()->findAll($criteria);  
 		
+		// 当前试卷已选题目
+		$chosenQuestionModels = ExamPaperQuestionModel::model()->findAll('exam_paper_id='.$exam_paper_id);
+		$chosenQuestions = array();
+		foreach($chosenQuestionModels as $chosenQuestionModel){
+			$chosenQuestions[$chosenQuestionModel->question_id] = $chosenQuestionModel;
+		}
+		
 		$questionList = array();
 		$materialIdList = array();
 		foreach ($records as $record) {
 			$question = $this->convertQuestionModel2Array($record);
+			// 是否是被选过，是否有题号
+			if (isset($chosenQuestions[$record->question_id])){
+				$question['is_chosen'] = true;
+				$question['is_sequenced'] = $chosenQuestions[$record->question_id]->sequence;
+			}
+			
 			$material_id = $record->material_id;
 			if ($material_id != 0) {
 				$materialModel = MaterialModel::model()->findByPk($material_id);
@@ -283,7 +296,7 @@ class ExamPaperQuestionController extends AdminController
 					'description' => $questionAnswerOption->attributes['description'],
 				);
 			}
-		}  else if ($questionModel->question_type == self::$true_false_type) {
+		}  else if ($questionModel->question_type == QuestionModel::TRUE_FALSE_TYPE) {
 			$question['answer'] = ($questionModel->answer == 0) ? '正确' : '错误';
 			$question['answerOptions'][] = array(
 				'index' => 'A',
