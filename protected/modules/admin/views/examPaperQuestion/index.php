@@ -7,7 +7,7 @@ $this->breadcrumbs=array(
 );
 
 $this->menu=array(
-	array('label'=>'从试题库选题','url'=>array('index')),
+	array('label'=>'从试题库选题','url'=>array('choose', 'exam_paper_id'=>$examPaperModel->primaryKey)),
 );
 
 ?>

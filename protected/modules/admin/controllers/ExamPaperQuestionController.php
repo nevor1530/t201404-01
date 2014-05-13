@@ -127,11 +127,11 @@ class ExamPaperQuestionController extends AdminController
 		
 		$questionFilterForm = new QuestionFilterForm;
 		
-		$questionTypes = array (	
-			self::$single_choice_type => '单选题',
-			self::$multiple_choice_type => '多选题',
-			self::$true_false_type => '判断题',
-			self::$material_type => '材料题',
+		$questionTypes = array (
+			QuestionModel::SINGLE_CHOICE_TYPE => '单选题',
+			QuestionModel::MULTIPLE_CHOICE_TYPE => '多选题',
+			QuestionModel::TRUE_FALSE_TYPE => '判断题',
+			QuestionModel::MATERIAL_TYPE => '材料题',
 		);
 		
 		$criteria = new CDbCriteria();
@@ -190,17 +190,17 @@ class ExamPaperQuestionController extends AdminController
 			}
 		}
 		
-		$this->render('index', array(
-			'subject_id' => $subject_id,
+		$this->render('choose', array(
 			'subjectModel' => $subjectModel,
 			'questionTypes' => $questionTypes,
-			'examPaperListData'=>$this->getExamPaperListData($subject_id),
+			'examPaperListData'=>$this->getExamPaperListData($subjectModel->subject_id),
 			'examPointListData' => $examPointListData,
 			'questionFilterForm' => $questionFilterForm,
 			'questionModel'=>$questionModel,
 			'pages'=>$pager,
 			'questionList'=>$questionList,
 			'hideAdvancedSearch' => $hideAdvancedSearch,
+			'examPaperModel' => $examPaperModel,
 		));
 	}
 
@@ -228,5 +228,81 @@ class ExamPaperQuestionController extends AdminController
 			echo CActiveForm::validate($model);
 			Yii::app()->end();
 		}
+	}
+	
+	private function getQuestionIdListByExamPoints($examPoints) {
+		$criteria = new CDbCriteria();
+		$criteria->addInCondition("exam_point_id", $examPoints);
+		$result = QuestionExamPointModel::model()->findAll($criteria);	
+		
+		$questionIdList = array();
+		if ($result != null && count($result) > 0) {
+			foreach ($result as $record) {
+				$questionIdList[] = $record->question_id;
+			}
+		}
+		return $questionIdList;
+	}
+	
+	private function genExamPointListData($models, &$result, $level) {
+		$prefix = '';
+		for ($i = 0; $i < $level; $i++) {
+			$prefix .= '----';
+		}
+		
+		foreach($models as $model) {
+			$result[$model->exam_point_id] = $prefix . $model->name;
+			if (!empty($model->subExamPoints)){
+				 $this->genExamPointListData($model->subExamPoints, $result, $level + 1);
+			}
+		}
+	}
+	
+	private function getExamPaperListData($subject_id) {
+		$examPaperModel=ExamPaperModel::model()->findAll('subject_id=:subject_id', array(':subject_id' => $subject_id));
+		$examPaperListData = CHtml::listData($examPaperModel, 'exam_paper_id', 'name');
+		return $examPaperListData;
+	}
+	
+	private function convertQuestionModel2Array($questionModel) {
+		$question = array();
+		$question['id'] = $questionModel->question_id;
+		$question['content'] = $questionModel->questionExtra->title;
+		$question['analysis'] = $questionModel->questionExtra->analysis;
+		if ($questionModel->question_type == QuestionModel::SINGLE_CHOICE_TYPE || $questionModel->question_type == QuestionModel::MULTIPLE_CHOICE_TYPE) {
+			$answers = explode('|', $questionModel->answer);
+			for ($i = 0; $i < count($answers); $i++) {
+				$answers[$i] = chr($answers[$i] + 65);
+			}
+
+			$question['answer'] = implode(",  ", $answers);
+			$questionAnswerOptions = $questionModel->questionAnswerOptions;
+			foreach ($questionAnswerOptions as $questionAnswerOption) {
+				$question['answerOptions'][] = array(
+					'index' => chr($questionAnswerOption->attributes['index'] + 65),
+					'description' => $questionAnswerOption->attributes['description'],
+				);
+			}
+		}  else if ($questionModel->question_type == self::$true_false_type) {
+			$question['answer'] = ($questionModel->answer == 0) ? '正确' : '错误';
+			$question['answerOptions'][] = array(
+				'index' => 'A',
+				'description' => '正确',
+			);
+			
+			$question['answerOptions'][] = array(
+				'index' => 'B',
+				'description' => '错误',
+			);
+		}
+		
+		$questionExamPoints = $questionModel->questionExamPoints;
+		foreach ($questionExamPoints as $questionExamPoint) {
+			$examPointId = $questionExamPoint['exam_point_id'];
+			$examPointModel = ExamPointModel::model()->findByPk($examPointId);
+			$question['questionExamPoints'][] = $examPointModel['name'];
+		}
+		
+		return $question;
 	}
 }

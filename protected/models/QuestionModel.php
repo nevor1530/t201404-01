@@ -23,6 +23,11 @@
  */
 class QuestionModel extends CActiveRecord
 {
+	const SINGLE_CHOICE_TYPE = 0;
+	const MULTIPLE_CHOICE_TYPE = 1;
+	const TRUE_FALSE_TYPE = 2;
+	const MATERIAL_TYPE = 3;
+	
 	/**
 	 * @return string the associated database table name
 	 */

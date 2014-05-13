@@ -2,13 +2,12 @@
 $this->breadcrumbs=array(
 	$subjectModel->examBank->name=>array('/admin'),
 	$subjectModel->name=>array('/admin/subject/view', 'id'=>$subjectModel->subject_id),
-	'试题管理',
+	$examPaperModel->name=>array('/admin/examPaper/index', 'subject_id'=>$subjectModel->primaryKey),
+	'题目管理'=>array('/admin/examPaperQuestion/index', 'exam_paper_id'=>$examPaperModel->exam_paper_id),
+	'挑选题目'
 );
 
 $this->menu=array(
-	array('label'=>'添加选择题','url'=>array('createChoiceQuestion', 'subject_id'=>$subject_id)),
-	array('label'=>'添加判断题','url'=>array('createTrueOrFalseQuestion', 'subject_id'=>$subject_id)),
-	array('label'=>'添加材料题','url'=>array('createMaterialQuestion', 'subject_id'=>$subject_id)),
 );
 
 Yii::app()->clientScript->registerScript('search', "
@@ -32,7 +31,7 @@ $('.search-button').click(function(){
 <?php
 $prev_material_id = null; 
 foreach ($questionList as $question) { 
-	if (isset($question['material_id']) && $question['material_id'] !== null && $question['material_content'] !== null) { 
+	if (isset($question['material_id']) && $question['material_id'] != null && $question['material_content'] != null) { 
 		if ($prev_material_id != $question['material_id']) {
 			$prev_material_id = $question['material_id'];
 ?>
@@ -57,7 +56,7 @@ foreach ($questionList as $question) {
 		<a style="margin-right:20px"><?php echo '#' . $question['id'] ?></a>
 		<a class="pull-right" href="javascript:if(confirm('确认删除该题目吗？'))location='<?php echo Yii::app()->createUrl("/admin/question/deleteQuestion", array("subject_id"=> $subjectModel->subject_id,"question_id"=>$question['id']));?>'">删除</a>
 		<span style="margin-left:5px;margin-right:5px" class="pull-right">|</span>
-		<a class="pull-right" href="<?php echo Yii::app()->createUrl("/admin/question/updateQuestion", array("subject_id"=> $subject_id,"question_id"=>$question['id']));?>" style="margin-right:5px">编辑题目</a>
+		<a class="pull-right" href="<?php echo Yii::app()->createUrl("/admin/question/updateQuestion", array("subject_id"=> $subjectModel->subject_id,"question_id"=>$question['id']));?>" style="margin-right:5px">编辑题目</a>
 	</div>
 	<div style="padding:0 0 10px 10px; border-top:dashed 1px #000;background-color:#EEEEEE;">
 		<div class="row" style="padding-left:30px;padding-top:10px">
