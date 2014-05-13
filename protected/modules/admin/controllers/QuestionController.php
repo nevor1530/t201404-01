@@ -2,13 +2,8 @@
 
 class QuestionController extends AdminController
 {
-	public static $single_choice_type = 0;
-	public static $multiple_choice_type = 1;
-	public static $true_false_type = 2;
-	public static $material_type = 3;
 	
-	public function filters()
-	{
+	public function filters() {
 		return array(
 			'accessControl', // perform access control for CRUD operations
 			'postOnly + delete, create, ajaxCreate, ajaxUpdate, visible', // we only allow deletion via POST request
@@ -19,10 +14,10 @@ class QuestionController extends AdminController
 		$questionFilterForm = new QuestionFilterForm;
 		
 		$questionTypes = array (	
-			self::$single_choice_type => '单选题',
-			self::$multiple_choice_type => '多选题',
-			self::$true_false_type => '判断题',
-			self::$material_type => '材料题',
+			QuestionModel::SINGLE_CHOICE_TYPE => '单选题',
+			QuestionModel::MULTIPLE_CHOICE_TYPE => '多选题',
+			QuestionModel::TRUE_FALSE_TYPE => '判断题',
+			QuestionModel::MATERIAL_TYPE => '材料题',
 		);
 		
 		$criteria = new CDbCriteria();
@@ -121,10 +116,10 @@ class QuestionController extends AdminController
 		}
 		$choiceQuestionForm=new ChoiceQuestionForm;
 		$choiceQuestionTypes = array (	
-			self::$single_choice_type => '单选',
-			self::$multiple_choice_type => '多选',
+			QuestionModel::SINGLE_CHOICE_TYPE => '单选',
+			QuestionModel::MULTIPLE_CHOICE_TYPE => '多选',
 		);
-		$choiceQuestionForm->questionType = self::$single_choice_type;
+		$choiceQuestionForm->questionType = QuestionModel::SINGLE_CHOICE_TYPE;
 		
 		$criteria = new CDbCriteria();
 		$criteria->condition = 'subject_id = ' . $subject_id;  
@@ -150,9 +145,9 @@ class QuestionController extends AdminController
 				$questionModel->material_id = $material_id;
 				$questionModel->subject_id = $subject_id;
 				$questionModel->question_type = $choiceQuestionForm->questionType;
-				if ($choiceQuestionForm->questionType == self::$single_choice_type) {
+				if ($choiceQuestionForm->questionType == QuestionModel::SINGLE_CHOICE_TYPE) {
 					$questionModel->answer = $choiceQuestionForm->answer;
-				} else if ($choiceQuestionForm->questionType == self::$multiple_choice_type) {
+				} else if ($choiceQuestionForm->questionType == QuestionModel::MULTIPLE_CHOICE_TYPE) {
 					$questionModel->answer = implode("|", $choiceQuestionForm->answer);
 				}
 				
@@ -197,7 +192,7 @@ class QuestionController extends AdminController
 					if ($material_id != 0) {
 						$this->redirect(array('viewMaterialQuestion', 'subject_id' => $subject_id, 'material_id' => $material_id));
 					} else {
-						$this->redirect('', $result);
+						$this->redirect(array('createChoiceQuestion', 'subject_id' => $subject_id));
 					}
 				}
 			}
@@ -236,7 +231,7 @@ class QuestionController extends AdminController
 				$questionModel->exam_paper_id = ($trueOrFalseQuestionForm->examPaper != null) ? $trueOrFalseQuestionForm->examPaper : 0;
 				$questionModel->subject_id = $subject_id;
 				$questionModel->material_id = $material_id;
-				$questionModel->question_type = self::$true_false_type;
+				$questionModel->question_type = QuestionModel::TRUE_FALSE_TYPE;
 				$questionModel->answer = $trueOrFalseQuestionForm->answer;
 		
 				if ($questionModel->validate() && $questionModel->save()) {
@@ -264,7 +259,7 @@ class QuestionController extends AdminController
 					if ($material_id != 0) {
 						$this->redirect(array('viewMaterialQuestion', 'subject_id' => $subject_id, 'material_id' => $material_id));
 					} else {
-						$this->redirect('', $result);
+						$this->redirect(array('createTrueOrFalseQuestion', 'subject_id' => $subject_id));
 					}
 				}
 			}
@@ -275,9 +270,9 @@ class QuestionController extends AdminController
 	
 	public function actionUpdateQuestion($subject_id, $question_id, $material_id=0, $return_url=null) {
 		$questionModel = QuestionModel::model()->findByPk($question_id);
-		if ($questionModel->question_type == self::$true_false_type) {
+		if ($questionModel->question_type == QuestionModel::TRUE_FALSE_TYPE) {
 			$this->actionUpdateTureOrFalseQuestion($subject_id, $material_id, $questionModel, $return_url);
-		} else if ($questionModel->question_type == self::$single_choice_type || $questionModel->question_type == self::$multiple_choice_type) {
+		} else if ($questionModel->question_type == QuestionModel::SINGLE_CHOICE_TYPE || $questionModel->question_type == QuestionModel::MULTIPLE_CHOICE_TYPE) {
 			$this->actionUpdateChoiceQuestion($subject_id, $material_id, $questionModel, $return_url);
 		}
 	}
@@ -289,7 +284,7 @@ class QuestionController extends AdminController
 			$trueOrFalseQuestionForm->attributes=$_POST['TrueOrFalseQuestionForm'];
 			if ($trueOrFalseQuestionForm->validate()) {
 				$questionModel->exam_paper_id = ($trueOrFalseQuestionForm->examPaper != null) ? $trueOrFalseQuestionForm->examPaper : 0;
-				$questionModel->question_type = self::$true_false_type;
+				$questionModel->question_type = QuestionModel::TRUE_FALSE_TYPE;
 				$questionModel->answer = $trueOrFalseQuestionForm->answer;
 		
 				if ($questionModel->validate() && $questionModel->save()) {
@@ -402,8 +397,8 @@ class QuestionController extends AdminController
 		$this->genExamPointListData(ExamPointModel::model()->top()->findAll($criteria), $examPointListData, 0);
 		
 		$choiceQuestionTypes = array (	
-			self::$single_choice_type => '单选',
-			self::$multiple_choice_type => '多选',
+			QuestionModel::SINGLE_CHOICE_TYPE => '单选',
+			QuestionModel::MULTIPLE_CHOICE_TYPE => '多选',
 		);
 		
 		$result = array(
@@ -553,7 +548,7 @@ class QuestionController extends AdminController
 		$question['id'] = $questionModel->question_id;
 		$question['content'] = $questionModel->questionExtra->title;
 		$question['analysis'] = $questionModel->questionExtra->analysis;
-		if ($questionModel->question_type == self::$single_choice_type || $questionModel->question_type == self::$multiple_choice_type) {
+		if ($questionModel->question_type == QuestionModel::SINGLE_CHOICE_TYPE || $questionModel->question_type == QuestionModel::MULTIPLE_CHOICE_TYPE) {
 			$answers = explode('|', $questionModel->answer);
 			for ($i = 0; $i < count($answers); $i++) {
 				$answers[$i] = chr($answers[$i] + 65);
@@ -567,7 +562,7 @@ class QuestionController extends AdminController
 					'description' => $questionAnswerOption->attributes['description'],
 				);
 			}
-		}  else if ($questionModel->question_type == self::$true_false_type) {
+		}  else if ($questionModel->question_type == QuestionModel::TRUE_FALSE_TYPE) {
 			$question['answer'] = ($questionModel->answer == 0) ? '正确' : '错误';
 			$question['answerOptions'][] = array(
 				'index' => 'A',
