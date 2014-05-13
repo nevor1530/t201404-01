@@ -23,6 +23,11 @@
  */
 class QuestionModel extends CActiveRecord
 {
+	const SINGLE_CHOICE_TYPE = 0;
+	const MULTIPLE_CHOICE_TYPE = 1;
+	const TRUE_FALSE_TYPE = 2;
+	const MATERIAL_TYPE = 3;
+	
 	/**
 	 * @return string the associated database table name
 	 */
@@ -62,6 +67,7 @@ class QuestionModel extends CActiveRecord
 			'questionExamPoints' => array(self::HAS_MANY, 'QuestionExamPointModel', 'question_id'),
 			'questionExtra' => array(self::HAS_ONE, 'QuestionExtraModel', 'question_id'),
 			'questionInstances' => array(self::HAS_MANY, 'QuestionInstanceModel', 'question_id'),
+			'examPaperQuestions' => array(self::HAS_MANY, 'ExamPaperQuestionModel', 'question_id'),
 		);
 	}
 

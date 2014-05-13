@@ -114,6 +114,7 @@ class QuestionBlockController extends AdminController
 		
 		$model=new QuestionBlockModel('search');
 		$model->unsetAttributes();  // clear any default values
+		$model->exam_paper_id = $exam_paper_id;
 		if(isset($_GET['QuestionBlockModel']))
 			$model->attributes=$_GET['QuestionBlockModel'];
 

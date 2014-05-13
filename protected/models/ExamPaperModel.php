@@ -72,6 +72,7 @@ class ExamPaperModel extends CActiveRecord
 			'questionTypes' => array(self::HAS_MANY, 'QuestionTypeModel', 'examp_paper_id'),
 			'examPaperQuestions' => array(self::HAS_MANY, 'ExamPaperQuestionModel', 'exam_paper_id'),
 			'materials' => array(self::HAS_MANY, 'MaterialModel', 'exam_paper_id'),
+			'questionBlocks' => array(self::HAS_MANY, 'QuestionBlockModel', 'exam_paper_id', 'order'=>'sequence'),
 		);
 	}
 	

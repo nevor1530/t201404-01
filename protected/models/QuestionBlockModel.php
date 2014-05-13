@@ -65,6 +65,7 @@ class QuestionBlockModel extends CActiveRecord
 		return array(
 			'questions' => array(self::HAS_MANY, 'Question', 'question_block_id'),
 			'examPaper' => array(self::BELONGS_TO, 'ExamPaperModel', 'exam_paper_id'),
+			'examPaperQuestion' => array(self::HAS_MANY, 'ExamPaperQuestionModel', 'question_block_id', 'order'=>'sequence'),
 		);
 	}
 
