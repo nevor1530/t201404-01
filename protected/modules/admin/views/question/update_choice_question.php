@@ -19,5 +19,6 @@ echo $this->renderPartial('_choice_question_form', array(
 	'examPaperListData' => $examPaperListData,
 	'choiceQuestionTypes' => $choiceQuestionTypes,
 	'examPointListData' => $examPointListData,
+	'questionAnswerOptions' => $questionAnswerOptions,
 	'isNewRecord' => false
 )); ?>

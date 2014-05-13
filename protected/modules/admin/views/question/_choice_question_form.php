@@ -7,6 +7,11 @@
 			'validateOnSubmit'=>true,
 		),
 	));
+	
+	$answerOptionCount = 0;
+	if (isset($questionAnswerOptions) && count($questionAnswerOptions) > 0) {
+		$answerOptionCount = count($questionAnswerOptions);
+	}
 ?>
 	
 <div class="row" style="padding-left:30px;padding-top:20px">
@@ -38,27 +43,52 @@
 		'height' => '150px'
 	)); ?>
 	<div>
-		<button class="btn"  type="button" style="margin-top:10px" onclick="saveAnswerOption()">保存选项</button>
-		<button id="delete_options_btn" class="btn"  type="button" style="display:none;margin-top:10px;margin-left:20px" onclick="deleteAllAnswerOptions()">删除所有选项</button>
+		<button class="btn" type="button" style="margin-top:10px" onclick="saveAnswerOption()">保存选项</button>
+		<button id="delete_options_btn" class="btn" type="button" style="<?php if ($answerOptionCount==0) { echo 'display:none';} ?>;margin-top:10px;margin-left:20px" onclick="deleteAllAnswerOptions()">删除所有选项</button>
 	</div>
 </div>
 
 <div id="answerOptions" class="row" style="padding-left:30px;padding-top:20px">
 <?php 
-$questionAnswerOptions = $choiceQuestionForm->questionAnswerOptions;
-if (isset($questionAnswerOptions) && count($questionAnswerOptions) > 0) {
+if ($answerOptionCount > 0) {
 	foreach ($questionAnswerOptions as $index => $description) {
 ?>
 <div id="questionAnswerOption<?php echo $index;?>" name="ChoiceQuestionForm[answerOption<?php echo $index;?>]">
-	<div style="float:left">A. </div>
+	<div style="float:left"><?php echo chr($index + 65); ?>. </div>
 	<div><?php echo $description;?></div>
 </div>
 <?php }} ?>
 </div>
 
+<!-- hide fields -->
+<div id="hiddenField">
+<?php 
+if ($answerOptionCount > 0) {
+	foreach ($questionAnswerOptions as $index => $description) {
+?>
+<input type="hidden" name="ChoiceQuestionForm[answerOption<?php echo $index;?>]" value="<?php echo $description;?>">
+<?php }}?>
+</div>
+
 <div class="row" style="padding-left:30px;padding-top:20px">
 	<?php echo $form->labelEx($choiceQuestionForm, 'answer'); ?>
 	<div id="correctAnswer">
+		<?php 
+		if ($answerOptionCount > 0) {
+			foreach ($questionAnswerOptions as $index => $description) {
+				// 单选题
+				if ($choiceQuestionForm->questionType == 0) {
+		?>
+				<label class="radio inline" style="margin-right: 10px;">
+					<input type="radio" name="ChoiceQuestionForm[answer]" value="<?php echo $index;?>">
+					<label><?php echo chr($index + 65); ?></label>
+				</label>
+		<?php } else { ?>
+				<label class="checkbox inline" style="margin-right: 10px;">
+					<input type="checkbox" name="ChoiceQuestionForm[answer][]" value="<?php echo $index;?>">
+					<label><?php echo chr($index + 65); ?></label>
+				</label>
+		<?php }}} ?>		
 	</div>
 </div>
 
@@ -74,9 +104,6 @@ if (isset($questionAnswerOptions) && count($questionAnswerOptions) > 0) {
 		'width' => '800px',
 		'height' => '150px'
 	)); ?>
-</div>
-
-<div id="hiddenField">
 </div>
 
 <div class="form-actions">
@@ -147,7 +174,7 @@ function createCorrectAnswerDiv(answerOptionIndex) {
 }
 
 var answerOptionUM = UM.getEditor('ChoiceQuestionForm_questionAnswerOptions');
-var answerOptionCount = 0;
+var answerOptionCount = <?php echo $answerOptionCount; ?>;
 function saveAnswerOption() {
 	var content = answerOptionUM.getContent();
 	content.replace(/(^\s*)|(\s*$)/g, "");
@@ -159,7 +186,7 @@ function saveAnswerOption() {
 	$('#answerOptions').append(answerOptionDiv);
 	createCorrectAnswerDiv(answerOptionCount);
 	answerOptionUM.setContent("");
-	$('<input />', {type:'hidden', name:'ChoiceQuestionForm[answerOption' + answerOptionCount + ']', val: content}).appendTo('#choice-question-form');
+	$('<input />', {type:'hidden', name:'ChoiceQuestionForm[answerOption' + answerOptionCount + ']', val: content}).appendTo('#hiddenField');
 	$('#delete_options_btn').show();
 	answerOptionCount++;
 }

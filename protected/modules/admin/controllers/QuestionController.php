@@ -383,7 +383,6 @@ class QuestionController extends AdminController
 				$description = $questionAnswerOptionModel->description;
 				$questionAnswerOptions[$index] = $description;
 			}
-			$choiceQuestionForm->questionAnswerOptions = $questionAnswerOptions;
 		}
 		
 		$subjectModel = SubjectModel::model()->findByPk($subject_id);
@@ -406,6 +405,7 @@ class QuestionController extends AdminController
 			'material_id' => $material_id,
 			'subjectModel' => $subjectModel,
 			'choiceQuestionForm' => $choiceQuestionForm,
+			'questionAnswerOptions' => $questionAnswerOptions,
 			'examPaperListData'=>$this->getExamPaperListData($subject_id),
 			'choiceQuestionTypes' => $choiceQuestionTypes,
 			'examPointListData' => $examPointListData,
