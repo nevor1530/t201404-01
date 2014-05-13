@@ -3,7 +3,7 @@ $this->breadcrumbs=array(
 	$subjectModel->examBank->name=>array('/admin'),
 	$subjectModel->name=>array('/admin/subject/view', 'id'=>$subjectModel->subject_id),
 	'试题管理' => array('/admin/question/index', 'subject_id'=>$subject_id),
-	'添加材料题',
+	'更新材料题',
 );
 ?>
 
@@ -11,5 +11,5 @@ $this->breadcrumbs=array(
 echo $this->renderPartial('_material_question_form', array(
 	'materialQuestionForm'=>$materialQuestionForm,
 	'examPaperListData' => $examPaperListData,
-	'isNewRecord' => true
+	'isNewRecord' => false
 )); ?>

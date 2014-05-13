@@ -39,9 +39,11 @@ foreach ($questionList as $question) {
 <div style="margin-top:40px;">
 	<div style="margin-bottom:5px;">
 		<span style="font-size:20px;">材料预览：</span>
-		<a class="pull-right" href="javascript:if(confirm('确认删除该题目吗？'))location='<?php echo Yii::app()->createUrl("/admin/question/deleteQuestion", array("subject_id"=> $subjectModel->subject_id,"material_id"=>$question['material_id']));?>'">删除</a>
+		<a class="pull-right" href="javascript:if(confirm('确认删除该题目吗？'))location='<?php echo Yii::app()->createUrl("/admin/question/deleteQuestion", array("subject_id"=> $subject_id,"material_id"=>$question['material_id']));?>'">删除</a>
 		<span style="margin-left:5px;margin-right:5px" class="pull-right">|</span>
-		<a class="pull-right" href="" style="margin-right:5px">编辑材料</a>
+		<a class="pull-right" href="<?php echo Yii::app()->createUrl("/admin/question/updateMaterial", array("subject_id"=> $subject_id, "material_id"=>$question['material_id'], "return_url" => urlencode(Yii::app()->request->url)))?>" style="margin-right:5px">编辑材料</a>
+		<span style="margin-left:5px;margin-right:5px" class="pull-right">|</span>
+		<a class="pull-right" href="<?php echo Yii::app()->createUrl("/admin/question/viewMaterialQuestion", array("subject_id"=> $subject_id, "material_id"=>$question['material_id']))?>" style="margin-right:5px">添加题目</a>
 	</div>
 	<div>
 		<div style="border-top:dashed 1px #000;"><?php echo $question[material_content] ?></div>
@@ -55,9 +57,9 @@ foreach ($questionList as $question) {
 
 	<div style="margin-bottom:5px;">
 		<a style="margin-right:20px"><?php echo '#' . $question['id'] ?></a>
-		<a class="pull-right" href="javascript:if(confirm('确认删除该题目吗？'))location='<?php echo Yii::app()->createUrl("/admin/question/deleteQuestion", array("subject_id"=> $subjectModel->subject_id,"question_id"=>$question['id']));?>'">删除</a>
+		<a class="pull-right" href="javascript:if(confirm('确认删除该题目吗？'))location='<?php echo Yii::app()->createUrl("/admin/question/deleteQuestion", array("subject_id"=> $subject_id,"question_id"=>$question['id']));?>'">删除</a>
 		<span style="margin-left:5px;margin-right:5px" class="pull-right">|</span>
-		<a class="pull-right" href="<?php echo Yii::app()->createUrl("/admin/question/updateQuestion", array("subject_id"=> $subject_id,"question_id"=>$question['id']));?>" style="margin-right:5px">编辑题目</a>
+		<a class="pull-right" href="<?php echo Yii::app()->createUrl("/admin/question/updateQuestion", array("subject_id"=> $subject_id,"question_id"=>$question['id'], "material_id" => 0, "return_url" => urlencode(Yii::app()->request->url)));?>" style="margin-right:5px">编辑题目</a>
 	</div>
 	<div style="padding:0 0 10px 10px; border-top:dashed 1px #000;background-color:#EEEEEE;">
 		<div class="row" style="padding-left:30px;padding-top:10px">

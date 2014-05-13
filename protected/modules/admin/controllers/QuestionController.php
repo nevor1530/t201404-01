@@ -273,22 +273,22 @@ class QuestionController extends AdminController
 		$this->render('create_true_false_question', $result);
 	}
 	
-	public function actionUpdateQuestion($subject_id, $question_id, $material_id=0) {
+	public function actionUpdateQuestion($subject_id, $question_id, $material_id=0, $return_url=null) {
 		$questionModel = QuestionModel::model()->findByPk($question_id);
 		if ($questionModel->question_type == self::$true_false_type) {
-			$this->actionUpdateTureOrFalseQuestion($subject_id, $material_id, $questionModel);
+			$this->actionUpdateTureOrFalseQuestion($subject_id, $material_id, $questionModel, $return_url);
+		} else if ($questionModel->question_type == self::$single_choice_type || $questionModel->question_type == self::$multiple_choice_type) {
+			$this->actionUpdateChoiceQuestion($subject_id, $material_id, $questionModel, $return_url);
 		}
 	}
 	
-	public function actionUpdateTureOrFalseQuestion($subject_id, $material_id, $questionModel) {
+	public function actionUpdateTureOrFalseQuestion($subject_id, $material_id, $questionModel, $return_url) {
 		$question_id = $questionModel->question_id;
 		if(isset($_POST['TrueOrFalseQuestionForm'])) {
 			$trueOrFalseQuestionForm = new TrueOrFalseQuestionForm;
 			$trueOrFalseQuestionForm->attributes=$_POST['TrueOrFalseQuestionForm'];
 			if ($trueOrFalseQuestionForm->validate()) {
 				$questionModel->exam_paper_id = ($trueOrFalseQuestionForm->examPaper != null) ? $trueOrFalseQuestionForm->examPaper : 0;
-				$questionModel->subject_id = $subject_id;
-				$questionModel->material_id = $material_id;
 				$questionModel->question_type = self::$true_false_type;
 				$questionModel->answer = $trueOrFalseQuestionForm->answer;
 		
@@ -318,10 +318,8 @@ class QuestionController extends AdminController
 						}
 					}
 					
-					if ($material_id != 0) {
-						$this->redirect(array('viewMaterialQuestion', 'subject_id' => $subject_id, 'material_id' => $material_id));
-					} else {
-						$this->redirect(array('index', 'subject_id' => $subject_id));
+					if ($return_url != null) {
+						$this->redirect(urldecode($return_url));
 					}
 				}
 			}
@@ -364,6 +362,63 @@ class QuestionController extends AdminController
 		$this->render('update_true_false_question', $result);
 	}
 	
+	public function actionUpdateChoiceQuestion($subject_id, $material_id, $questionModel, $return_url) {
+		$question_id = $questionModel->question_id;
+		$choiceQuestionForm = new ChoiceQuestionForm;
+		$choiceQuestionForm->examPaper = $questionModel->exam_paper_id;
+		$choiceQuestionForm->questionType = $questionModel->question_type;
+		$choiceQuestionForm->content = $questionModel->questionExtra->title;
+		$choiceQuestionForm->answer = $questionModel->answer;
+		$choiceQuestionForm->analysis = $questionModel->questionExtra->analysis;
+		
+		$questionExamPoints = $questionModel->questionExamPoints;
+		$examPointIdList = array();
+		if ($questionExamPoints != null && count($questionExamPoints) > 0) {
+			foreach ($questionExamPoints as $questionExamPoint) {
+				 $examPointIdList[] = $questionExamPoint->exam_point_id;
+			}
+		}
+		$choiceQuestionForm->examPoints = $examPointIdList;
+		
+		$questionAnswerOptionModels = $questionModel->questionAnswerOptions;
+		if ($questionAnswerOptionModels != null && count($questionAnswerOptionModels) > 0) {
+			$questionAnswerOptions = array();
+			foreach ($questionAnswerOptionModels as $questionAnswerOptionModel) {
+				$index = $questionAnswerOptionModel->index;
+				$description = $questionAnswerOptionModel->description;
+				$questionAnswerOptions[$index] = $description;
+			}
+			$choiceQuestionForm->questionAnswerOptions = $questionAnswerOptions;
+		}
+		
+		$subjectModel = SubjectModel::model()->findByPk($subject_id);
+		if($subjectModel === null) {
+			throw new CHttpException(404,'The requested page does not exist.');
+		}
+	
+		$criteria = new CDbCriteria();
+		$criteria->condition = 'subject_id = ' . $subject_id;  
+		$examPointListData = array();
+		$this->genExamPointListData(ExamPointModel::model()->top()->findAll($criteria), $examPointListData, 0);
+		
+		$choiceQuestionTypes = array (	
+			self::$single_choice_type => '单选',
+			self::$multiple_choice_type => '多选',
+		);
+		
+		$result = array(
+			'subject_id' => $subject_id,
+			'material_id' => $material_id,
+			'subjectModel' => $subjectModel,
+			'choiceQuestionForm' => $choiceQuestionForm,
+			'examPaperListData'=>$this->getExamPaperListData($subject_id),
+			'choiceQuestionTypes' => $choiceQuestionTypes,
+			'examPointListData' => $examPointListData,
+		);
+		
+		$this->render('update_choice_question', $result);
+	}
+	
 	public function actionCreateMaterialQuestion($subject_id) {
 		$materialQuestionForm = new MaterialQuestionForm;
 		$subjectModel=SubjectModel::model()->findByPk($subject_id);
@@ -386,12 +441,51 @@ class QuestionController extends AdminController
 				$materialModel->content = $materialQuestionForm->content;
 				$materialModel->subject_id = $subject_id;
 				$materialModel->save();
+				
 				$material_id = $materialModel->material_id;
 				$this->redirect(array('viewMaterialQuestion', 'subject_id' => $subject_id, 'material_id' => $material_id));
 			}
 		}
 					
 		$this->render('create_material_question', $result);
+	}
+	
+	public function actionUpdateMaterial($subject_id, $material_id, $return_url = null) {
+		$materialModel = MaterialModel::model()->findByPk($material_id);
+		if ($materialModel == null) {
+			$this->redirect(urldecode($return_url));
+		}
+		
+		$materialQuestionForm = new MaterialQuestionForm;
+		if(isset($_POST['MaterialQuestionForm'])) {
+			$materialQuestionForm->attributes=$_POST['MaterialQuestionForm'];
+			if ($materialQuestionForm->validate()) {
+				$materialModel->exam_paper_id = ($materialQuestionForm->examPaper != null) ? $materialQuestionForm->examPaper : 0;
+				$materialModel->content = $materialQuestionForm->content;
+				$materialModel->save();
+				
+				if ($return_url != null) {
+					$this->redirect(urldecode($return_url));
+				}
+			}
+		}
+		
+		$materialQuestionForm->examPaper = $materialModel->exam_paper_id;
+		$materialQuestionForm->content = $materialModel->content;
+		
+		$subjectModel=SubjectModel::model()->findByPk($subject_id);
+		if($subjectModel===null) {
+			throw new CHttpException(404,'The requested page does not exist.');
+		}
+	
+		$result = array(
+			'subject_id' => $subject_id,
+			'subjectModel' => $subjectModel,
+			'materialQuestionForm' => $materialQuestionForm,
+			'examPaperListData' => $this->getExamPaperListData($subject_id),
+		);
+		
+		$this->render('update_material_question', $result);
 	}
 	
 	public function actionViewMaterialQuestion($subject_id, $material_id) {
