@@ -168,4 +168,59 @@ class ExamPaperQuestionModel extends CActiveRecord
 			throw new Exception($value.' 超出题目数量');
 		}
 	}
+	
+	/**
+	 * @param $exam_paper_id
+	 * @param $question_id
+	 * @return ExamPaperQuestionModel	use <pre>$model->hasErrors()</pre>
+	 */
+	public function addQuestion($exam_paper_id, $question_id){
+		if (!$exam_paper_id || !$question_id){
+			throw new Exception('参数全都不能为空');
+		}
+		if (self::model()->exists('exam_paper_id=:epid and question_id=:qid', array(':epid'=>$exam_paper_id, ':qid'=>$question_id))){
+			throw new Exception('该问题已在该试卷中了');
+		}
+		$model = new self();
+		$model->exam_paper_id = $exam_paper_id;
+		$model->question_id = $question_id;
+		$model->save();
+		return $model;
+	}
+	
+	/**
+	 * @return $model
+	 */
+	public function addMateria($exam_paper_id, $material_id){
+		if (!$exam_paper_id && !$material_id){
+			throw new Exception('参数全都不能为空');
+		}
+		$questionModels = QuestionModel::model()->findAll('material_id');
+		if (!$questionModels){
+			throw new Exception('指定材料题#'.$material_id.'不存在');
+		}
+		$question_id = $questionModels[0]->question_id;
+		if (self::model()->exists('exam_paper_id=:epid and question_id=:qid', array(':epid'=>$exam_paper_id, ':qid'=>$question_id))){
+			throw new Exception('该问题已在该试卷中了');
+		}
+		
+		$saveModels = array();
+		$retModel = null;
+		foreach($questionModels as $questionModel){
+			$model = new self();
+			$model->exam_paper_id = $exam_paper_id;
+			$model->question_id = $questionModel->question_id;
+			if (!$model->save()){
+				$retModel = $model;
+				foreach($saveModels as $saveModel){
+					$saveModel->delete();
+				}
+			} else {
+				$saveModels[] = $model;
+				$retModel = $model;
+			}
+		}
+		
+		return $retModel;
+	}
 }
