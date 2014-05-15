@@ -10,6 +10,11 @@ class ExamPaperQuestionController extends AdminController
 		);
 	}
 	
+	/**
+	 * @param ExamPaperQuestionModel[exam_paper_id]
+	 * @param ExamPaperQuestionModel[question_id]
+	 * @param ExamPaperQuestionModel[material_id]
+	 */
 	public function actionOperate(){
 		$action = $_POST['action'];
 		$model=new ExamPaperQuestionModel;
