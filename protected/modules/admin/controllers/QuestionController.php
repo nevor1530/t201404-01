@@ -37,7 +37,7 @@ class QuestionController extends AdminController
 		}
 
 		$criteria = new CDbCriteria();    
-		$criteria->order = 'exam_paper_id, material_id, question_id desc';
+		$criteria->order = 'material_id, question_id desc';
 		$hideAdvancedSearch = true;
 		if (isset($_POST['QuestionFilterForm'])) {
 			$questionFilterForm->attributes = $_POST['QuestionFilterForm'];
@@ -47,7 +47,7 @@ class QuestionController extends AdminController
 			}
 			
 			if ($questionFilterForm->examPaper != null) {
-				$criteria->addCondition('exam_paper_id=' . $questionFilterForm->examPaper);
+				//$criteria->addCondition('exam_paper_id=' . $questionFilterForm->examPaper);
 				$hideAdvancedSearch = false;
 			}
 			
@@ -122,7 +122,7 @@ class QuestionController extends AdminController
 		$choiceQuestionForm->questionType = QuestionModel::SINGLE_CHOICE_TYPE;
 		
 		$criteria = new CDbCriteria();
-		$criteria->condition = 'subject_id = ' . $subject_id;  
+		$criteria->condition = 'subject_id = ' . $subject_id;
 		$examPointListData = array();
 		$this->genExamPointListData(ExamPointModel::model()->top()->findAll($criteria), $examPointListData, 0);
 		
@@ -141,7 +141,7 @@ class QuestionController extends AdminController
 			if ($choiceQuestionForm->validate()) {
 				// save question
 				$questionModel = new QuestionModel;
-				$questionModel->exam_paper_id = ($choiceQuestionForm->examPaper != null) ? $choiceQuestionForm->examPaper : 0;
+				//$questionModel->exam_paper_id = ($choiceQuestionForm->examPaper != null) ? $choiceQuestionForm->examPaper : 0;
 				$questionModel->material_id = $material_id;
 				$questionModel->subject_id = $subject_id;
 				$questionModel->question_type = $choiceQuestionForm->questionType;
@@ -228,7 +228,7 @@ class QuestionController extends AdminController
 			$trueOrFalseQuestionForm->attributes=$_POST['TrueOrFalseQuestionForm'];
 			if ($trueOrFalseQuestionForm->validate()) {
 				$questionModel = new QuestionModel;
-				$questionModel->exam_paper_id = ($trueOrFalseQuestionForm->examPaper != null) ? $trueOrFalseQuestionForm->examPaper : 0;
+				//$questionModel->exam_paper_id = ($trueOrFalseQuestionForm->examPaper != null) ? $trueOrFalseQuestionForm->examPaper : 0;
 				$questionModel->subject_id = $subject_id;
 				$questionModel->material_id = $material_id;
 				$questionModel->question_type = QuestionModel::TRUE_FALSE_TYPE;
@@ -283,7 +283,6 @@ class QuestionController extends AdminController
 			$trueOrFalseQuestionForm = new TrueOrFalseQuestionForm;
 			$trueOrFalseQuestionForm->attributes=$_POST['TrueOrFalseQuestionForm'];
 			if ($trueOrFalseQuestionForm->validate()) {
-				$questionModel->exam_paper_id = ($trueOrFalseQuestionForm->examPaper != null) ? $trueOrFalseQuestionForm->examPaper : 0;
 				$questionModel->question_type = QuestionModel::TRUE_FALSE_TYPE;
 				$questionModel->answer = $trueOrFalseQuestionForm->answer;
 		
@@ -321,7 +320,6 @@ class QuestionController extends AdminController
 		}
 		
 		$trueOrFalseQuestionForm = new TrueOrFalseQuestionForm;
-		$trueOrFalseQuestionForm->examPaper = $questionModel->exam_paper_id;
 		$trueOrFalseQuestionForm->content = $questionModel->questionExtra->title;
 		$trueOrFalseQuestionForm->answer = $questionModel->answer;
 		$trueOrFalseQuestionForm->analysis = $questionModel->questionExtra->analysis;
@@ -360,7 +358,6 @@ class QuestionController extends AdminController
 	public function actionUpdateChoiceQuestion($subject_id, $material_id, $questionModel, $return_url) {
 		$question_id = $questionModel->question_id;
 		$choiceQuestionForm = new ChoiceQuestionForm;
-		$choiceQuestionForm->examPaper = $questionModel->exam_paper_id;
 		$choiceQuestionForm->questionType = $questionModel->question_type;
 		$choiceQuestionForm->content = $questionModel->questionExtra->title;
 		$choiceQuestionForm->answer = $questionModel->answer;

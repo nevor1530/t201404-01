@@ -19,6 +19,10 @@
 </div>
 
 <div class="row" style="padding-left:30px;padding-top:20px">
+	<?php echo $form->textFieldRow($choiceQuestionForm,'questionNumber',array('class'=>'span5')); ?>
+</div>
+
+<div class="row" style="padding-left:30px;padding-top:20px">
 	<?php echo $form->radioButtonListInlineRow($choiceQuestionForm, 'questionType', $choiceQuestionTypes); ?>
 </div>
 

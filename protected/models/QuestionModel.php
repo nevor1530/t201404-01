@@ -44,11 +44,11 @@ class QuestionModel extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('exam_paper_id, answer', 'required'),
-			array('exam_paper_id, material_id, question_type, subject_id', 'numerical', 'integerOnly'=>true),
+			array('answer', 'required'),
+			array('material_id, question_type, subject_id', 'numerical', 'integerOnly'=>true),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('question_id, exam_paper_id, material_id, answer, question_type, subject_id', 'safe', 'on'=>'search'),
+			array('question_id, material_id, answer, question_type, subject_id', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -62,7 +62,6 @@ class QuestionModel extends CActiveRecord
 		return array(
 			'material' => array(self::BELONGS_TO, 'MaterialModel', 'material_id'),
 			'questionBlock' => array(self::BELONGS_TO, 'QuestionBlockModel', 'question_block_id'),
-			'examPaper' => array(self::BELONGS_TO, 'ExamPaperModel', 'exam_paper_id'),
 			'questionAnswerOptions' => array(self::HAS_MANY, 'QuestionAnswerOptionModel', 'question_id'),
 			'questionExamPoints' => array(self::HAS_MANY, 'QuestionExamPointModel', 'question_id'),
 			'questionExtra' => array(self::HAS_ONE, 'QuestionExtraModel', 'question_id'),
@@ -79,7 +78,6 @@ class QuestionModel extends CActiveRecord
 		return array(
 			'question_id' => 'Question',
 			'subject_id' => 'subject_id',
-			'exam_paper_id' => 'exam_paper_id',
 			'material_id' => 'Material',
 			'answer' => 'Answer',
 			'question_type' => 'question_type',
@@ -105,7 +103,6 @@ class QuestionModel extends CActiveRecord
 		$criteria=new CDbCriteria;
 
 		$criteria->compare('question_id',$this->question_id);
-		$criteria->compare('exam_paper_id',$this->exam_paper_id);
 		$criteria->compare('material_id',$this->material_id);
 		$criteria->compare('answer',$this->answer);
 		$criteria->compare('question_type',$this->question_type);

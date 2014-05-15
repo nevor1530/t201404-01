@@ -51,14 +51,14 @@ $this->menu=array(
 			正确答案：<?php echo $question['answer']; ?>
 		</div>
 		
-		<?php if (isset($question['analysis'])) { ?> 
+		<?php if (isset($question['analysis']) && $question['analysis'] != null) { ?> 
 			<div class="row" style="padding-left:30px;padding-top:10px">
 				<div style="width:40px;float:left">解析:</div>
 				<div><?php echo $question['analysis'];?></div>
 			</div>
 		<?php } ?>
 		
-		<?php if (isset($question['questionExamPoints'])) { ?> 
+		<?php if (isset($question['questionExamPoints']) && $question['questionExamPoints'] != null) { ?> 
 		<div class="row" style="padding-left:30px;padding-top:10px">
 			考点：
 			<?php foreach ($question['questionExamPoints'] as $questionExamPoint) {?>
