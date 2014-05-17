@@ -16,7 +16,7 @@ $this->menu=array(
 <div style="margin-bottom:20px;">
 	<div style="margin-bottom:5px;">
 		<span style="font-size:20px;">材料预览：</span>
-		<a class="pull-right" href="javascript:if(confirm('确认删除该题目吗？'))location='<?php echo Yii::app()->createUrl("/admin/question/deleteQuestion", array("subject_id"=> $subjectModel->subject_id,"material_id"=>$question['material_id']));?>'">删除</a>
+		<a class="pull-right" href="javascript:if(confirm('确认删除该题目吗？'))location='<?php echo Yii::app()->createUrl("/admin/question/deleteQuestion", array("subject_id"=> $subjectModel->subject_id,"material_id"=>$material_id));?>'">删除</a>
 		<span style="margin-left:5px;margin-right:5px" class="pull-right">|</span>
 		<a class="pull-right" href="<?php echo Yii::app()->createUrl("/admin/question/updateMaterial", array("subject_id"=> $subject_id, "material_id"=>$material_id, "return_url" => urlencode(Yii::app()->request->url)))?>" style="margin-right:5px">编辑材料</a>
 	</div>

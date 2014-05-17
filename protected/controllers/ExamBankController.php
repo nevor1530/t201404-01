@@ -6,7 +6,7 @@ class ExamBankController extends Controller
 	 * @var string the default layout for the views. Defaults to '//layouts/column2', meaning
 	 * using two-column layout. See 'protected/views/layouts/column2.php'.
 	 */
-	public $layout='//layouts/column2';
+	public $layout='//layouts/main';
 
 	/**
 	 * @return array action filters
@@ -15,7 +15,6 @@ class ExamBankController extends Controller
 	{
 		return array(
 			'accessControl', // perform access control for CRUD operations
-			'postOnly + delete', // we only allow deletion via POST request
 		);
 	}
 
@@ -44,130 +43,63 @@ class ExamBankController extends Controller
 			),
 		);
 	}
-
-	/**
-	 * Displays a particular model.
-	 * @param integer $id the ID of the model to be displayed
-	 */
-	public function actionView($id)
-	{
-		$this->render('view',array(
-			'model'=>$this->loadModel($id),
-		));
-	}
-
-	/**
-	 * Creates a new model.
-	 * If creation is successful, the browser will be redirected to the 'view' page.
-	 */
-	public function actionCreate()
-	{
-		$model=new ExamBankModel;
-
-		// Uncomment the following line if AJAX validation is needed
-		// $this->performAjaxValidation($model);
-
-		if(isset($_POST['ExamBankModel']))
-		{
-			$model->attributes=$_POST['ExamBankModel'];
-			if($model->save())
-				$this->redirect(array('view','id'=>$model->exam_bank_id));
-		}
-
-		$this->render('create',array(
-			'model'=>$model,
-		));
-	}
-
-	/**
-	 * Updates a particular model.
-	 * If update is successful, the browser will be redirected to the 'view' page.
-	 * @param integer $id the ID of the model to be updated
-	 */
-	public function actionUpdate($id)
-	{
-		$model=$this->loadModel($id);
-
-		// Uncomment the following line if AJAX validation is needed
-		// $this->performAjaxValidation($model);
-
-		if(isset($_POST['ExamBankModel']))
-		{
-			$model->attributes=$_POST['ExamBankModel'];
-			if($model->save())
-				$this->redirect(array('view','id'=>$model->exam_bank_id));
-		}
-
-		$this->render('update',array(
-			'model'=>$model,
-		));
-	}
-
-	/**
-	 * Deletes a particular model.
-	 * If deletion is successful, the browser will be redirected to the 'admin' page.
-	 * @param integer $id the ID of the model to be deleted
-	 */
-	public function actionDelete($id)
-	{
-		$this->loadModel($id)->delete();
-
-		// if AJAX request (triggered by deletion via admin grid view), we should not redirect the browser
-		if(!isset($_GET['ajax']))
-			$this->redirect(isset($_POST['returnUrl']) ? $_POST['returnUrl'] : array('admin'));
-	}
-
+	
 	/**
 	 * Lists all models.
 	 */
-	public function actionIndex()
-	{
-		$dataProvider=new CActiveDataProvider('ExamBankModel');
-		$this->render('index',array(
-			'dataProvider'=>$dataProvider,
-		));
-	}
-
-	/**
-	 * Manages all models.
-	 */
-	public function actionAdmin()
-	{
-		$model=new ExamBankModel('search');
-		$model->unsetAttributes();  // clear any default values
-		if(isset($_GET['ExamBankModel']))
-			$model->attributes=$_GET['ExamBankModel'];
-
-		$this->render('admin',array(
-			'model'=>$model,
-		));
-	}
-
-	/**
-	 * Returns the data model based on the primary key given in the GET variable.
-	 * If the data model is not found, an HTTP exception will be raised.
-	 * @param integer $id the ID of the model to be loaded
-	 * @return ExamBankModel the loaded model
-	 * @throws CHttpException
-	 */
-	public function loadModel($id)
-	{
-		$model=ExamBankModel::model()->findByPk($id);
-		if($model===null)
-			throw new CHttpException(404,'The requested page does not exist.');
-		return $model;
-	}
-
-	/**
-	 * Performs the AJAX validation.
-	 * @param ExamBankModel $model the model to be validated
-	 */
-	protected function performAjaxValidation($model)
-	{
-		if(isset($_POST['ajax']) && $_POST['ajax']==='exam-bank-model-form')
-		{
-			echo CActiveForm::validate($model);
-			Yii::app()->end();
+	public function actionIndex() {
+		$criteria = new CDbCriteria;
+		$criteria->order = '`order`';
+		$results = ExamBankModel::model()->findAll($criteria);
+		
+		$examBanks = array();
+		if ($results != null) {
+			foreach ($results as $record) {
+				$realExamPaperCount = $this->getRealExamPaperCount($record->exam_bank_id);
+				$examBank = array(
+					'name' => $record->name,
+					'icon' => Constants::$EXAM_BANK_ICON_DIR_PATH . $record->icon,
+					'real_exam_paper_count' => $realExamPaperCount,
+				);
+				$examBanks[] = $examBank;
+			}
 		}
+		
+		print_r($examBanks);exit();
+		
+		$this->render('index',array(
+			'examBanks' => $examBanks,
+		));
 	}
+	
+	private function getRealExamPaperCount($examBankId) {
+		$sql = "SELECT COUNT(*) FROM exam_paper WHERE subject_id IN (" .
+					"SELECT subject_id FROM subject WHERE exam_bank_id=$examBankId" .
+				") AND is_real = 1";
+		$db = Yii::app()->db;
+		$command = $db->createCommand($sql);
+		$result = $command->queryAll(); 
+		if ($result != null && is_array($result) && count($result) > 0) {
+			return $result[0];
+		}
+		
+		return 0;
+	}
+	
+	private function getQuestionCount($examBankId) {
+		$sql = "SELECT count(*) FROM exam_paper_question WHERE exam_paper_id IN (" . 
+					"SELECT exam_paper_id FROM exam_paper WHERE subject_id in (" .
+						"SELECT subject_id FROM subject WHERE exam_bank_id=$examBankId" .
+					") AND is_real=1)" .
+				") AND status=1";
+		$db = Yii::app()->db;
+		$command = $db->createCommand($sql);
+		$result = $command->queryAll(); 
+		if ($result != null && is_array($result) && count($result) > 0) {
+			return $result[0];
+		}
+		
+		return 0;
+	}
+
 }
