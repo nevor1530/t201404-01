@@ -55,48 +55,51 @@ class ExamBankController extends Controller
 		$examBanks = array();
 		if ($results != null) {
 			foreach ($results as $record) {
-				$realExamPaperCount = $this->getRealExamPaperCount($record->exam_bank_id);
+				$examBankId = $record->exam_bank_id;
+				$realExamPaperCount = $this->getRealExamPaperCount($examBankId);
+				$questionCount = $this->getQuestionCount($examBankId);
 				$examBank = array(
+					'exam_bank_id' => $examBankId,
 					'name' => $record->name,
 					'icon' => Constants::$EXAM_BANK_ICON_DIR_PATH . $record->icon,
 					'real_exam_paper_count' => $realExamPaperCount,
+					'question_count' => $questionCount,
 				);
 				$examBanks[] = $examBank;
 			}
 		}
 		
-		print_r($examBanks);exit();
-		
+//		print_r($examBanks);exit();
 		$this->render('index',array(
 			'examBanks' => $examBanks,
 		));
 	}
 	
 	private function getRealExamPaperCount($examBankId) {
-		$sql = "SELECT COUNT(*) FROM exam_paper WHERE subject_id IN (" .
+		$sql = "SELECT COUNT(*) as count FROM exam_paper WHERE subject_id IN (" .
 					"SELECT subject_id FROM subject WHERE exam_bank_id=$examBankId" .
 				") AND is_real = 1";
 		$db = Yii::app()->db;
 		$command = $db->createCommand($sql);
 		$result = $command->queryAll(); 
 		if ($result != null && is_array($result) && count($result) > 0) {
-			return $result[0];
+			return $result[0]['count'];
 		}
 		
 		return 0;
 	}
 	
 	private function getQuestionCount($examBankId) {
-		$sql = "SELECT count(*) FROM exam_paper_question WHERE exam_paper_id IN (" . 
+		$sql = "SELECT count(DISTINCT(question_id)) as count FROM exam_paper_question WHERE exam_paper_id IN (" . 
 					"SELECT exam_paper_id FROM exam_paper WHERE subject_id in (" .
 						"SELECT subject_id FROM subject WHERE exam_bank_id=$examBankId" .
-					") AND is_real=1)" .
-				") AND status=1";
+					") AND is_real=1" .
+				") AND sequence > 0";
 		$db = Yii::app()->db;
 		$command = $db->createCommand($sql);
 		$result = $command->queryAll(); 
 		if ($result != null && is_array($result) && count($result) > 0) {
-			return $result[0];
+			return $result[0]['count'];
 		}
 		
 		return 0;

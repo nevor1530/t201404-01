@@ -46,52 +46,25 @@
 }
 </style>
 
+<?php 
+for ($i = 0; $i < count($examBanks); $i++) {
+	$examBank = $examBanks[$i];
+	$sectionStyle = ($i % 2 == 0 ? "float:right" : "float:left");
+	if ($i % 2 == 0) { 
+?>
 <div class="row" style="margin-top: 50px;">
+<?php } ?>
 	<div class="span6">
-		<div class="exam-bank-section" style="float:right">
-			<img src="<?php echo Yii::app()->baseUrl ."/data/icon/examBank/11.png";?>" style="height:110px"/>
+		<div class="exam-bank-section" style="<?php echo $sectionStyle ?>">
+			<img src="<?php echo Yii::app()->baseUrl . "/" . $examBank['icon'];?>" style="height:110px"/>
 			<div style="float:right;margin-top:10px;margin-left:15px;">
-				<div class="title">公务员题卷</div>
-				<div class="paper-qty">共10套真卷</div>
-				<div class="question-qty">100道题</div>
+				<div class="title"><?php echo $examBank['name'] ?></div>
+				<div class="paper-qty">共<?php echo $examBank['real_exam_paper_count'] ?>套真卷</div>
+				<div class="question-qty"><?php echo $examBank['question_count'] ?>道题</div>
 				<button class="btn btn-primary" name="yt0" type="submit">马上去答题</button>
 			</div>
 		</div>
 	</div>
-	<div class="span6">
-		<div class="exam-bank-section" style="float:left">
-			<img src="<?php echo Yii::app()->baseUrl ."/data/icon/examBank/12.png";?>" style="height:110px"/>
-			<div style="float:right;margin-top:10px;margin-left:15px;">
-				<div class="title">公务员题卷</div>
-				<div class="paper-qty">共10套真卷</div>
-				<div class="question-qty">100道题</div>
-				<button class="btn btn-primary" name="yt0" type="submit">马上去答题</button>
-			</div>
-		</div>
-	</div>
+<?php if ($i % 2 ==1) { ?>
 </div>
-
-<div class="row" style="margin-top: 30px;">
-	<div class="span6">
-		<div class="exam-bank-section" style="float:right">
-			<img src="<?php echo Yii::app()->baseUrl ."/data/icon/examBank/11.png";?>" style="height:110px"/>
-			<div style="float:right;margin-top:10px;margin-left:15px;">
-				<div class="title">公务员题卷</div>
-				<div class="paper-qty">共10套真卷</div>
-				<div class="question-qty">100道题</div>
-				<button class="btn btn-primary" name="yt0" type="submit">马上去答题</button>
-			</div>
-		</div>
-	</div>
-	<div class="span6">
-		<div class="exam-bank-section" style="float:left">
-			<img src="<?php echo Yii::app()->baseUrl ."/data/icon/examBank/12.png";?>" style="height:110px"/>
-			<div style="float:right;margin-top:10px;margin-left:15px;">
-				<div class="title">公务员题卷</div>
-				<div class="paper-qty">共10套真卷</div>
-				<div class="question-qty">100道题</div>
-				<button class="btn btn-primary" name="yt0" type="submit">马上去答题</button>
-			</div>
-		</div>
-	</div>
-</div>
+<?php }} ?>

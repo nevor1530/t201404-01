@@ -42,7 +42,7 @@ class ExamPaperQuestionController extends AdminController
 			}
 		} else {
 			$ret['status'] = 1;
-			$ret['errMsg'] = '参数错ykgd';
+			$ret['errMsg'] = '参数错';
 			echo json_encde(array('status'=>1, 'errMsg'));
 		}
 		
@@ -189,7 +189,7 @@ class ExamPaperQuestionController extends AdminController
 		}
 
 		$criteria = new CDbCriteria();    
-		$criteria->order = 'exam_paper_id, material_id, question_id desc';
+		$criteria->order = 'material_id, question_id desc';
 		$hideAdvancedSearch = true;
 		if (isset($_POST['QuestionFilterForm'])) {
 			$questionFilterForm->attributes = $_POST['QuestionFilterForm'];
