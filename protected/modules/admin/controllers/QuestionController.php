@@ -42,7 +42,11 @@ class QuestionController extends AdminController
 		if (isset($_GET['QuestionFilterForm'])) {
 			$questionFilterForm->attributes = $_GET['QuestionFilterForm'];
 			if ($questionFilterForm->questionType != null) {
-				$criteria->addCondition('question_type=' . $questionFilterForm->questionType);
+				if ($questionFilterForm->questionType == QuestionModel::MATERIAL_TYPE) {
+					$criteria->addCondition('material_id!=0');
+				} else {
+					$criteria->addCondition('question_type=' . $questionFilterForm->questionType);
+				}
 				$hideAdvancedSearch = false;
 			}
 			
