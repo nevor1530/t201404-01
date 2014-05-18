@@ -38,12 +38,18 @@ foreach ($questionList as $question) {
 <div style="margin-top:40px;">
 	<div style="margin-bottom:5px;">
 		<span style="font-size:20px;">材料预览：</span>
-		<a class="pull-right" href="javascript:if(confirm('确认删除该题目吗？'))location='<?php echo Yii::app()->createUrl("/admin/question/deleteQuestion", array("subject_id"=> $subjectModel->subject_id,"material_id"=>$question['material_id']));?>'">删除</a>
-		<span style="margin-left:5px;margin-right:5px" class="pull-right">|</span>
-		<a class="pull-right" href="" style="margin-right:5px">编辑材料</a>
+		<span class="pull-right">
+			<?php 
+			$htmlOptions = array('id'=>'question_'.$question['id']);
+			$htmlOptions['class'] = 'js-exam-paper-question-check';
+			$htmlOptions['data-material_id'] = $question['material_id'];
+			isset($question['is_sequenced']) && $question['is_sequenced'] && $htmlOptions['disabled'] = true;
+			echo CHtml::checkBox('', isset($question['is_chosen']) && $question['is_chosen'], $htmlOptions);?>
+			<label class="label" for="<?php echo 'question_'.$question['id'];?>">加入</label>
+		</span>
 	</div>
 	<div>
-		<div style="border-top:dashed 1px #000;"><?php echo $question[material_content] ?></div>
+		<div style="border-top:dashed 1px #000;"><?php echo $question['material_content'] ?></div>
 	</div>
 </div>
 <?php } ?>
@@ -54,15 +60,17 @@ foreach ($questionList as $question) {
 
 	<div style="margin-bottom:5px;">
 		<a style="margin-right:20px"><?php echo '#' . $question['id'] ?></a>
-		<span class="pull-right">
-			<?php 
-			$htmlOptions = array('id'=>'question_'.$question['id']);
-			$htmlOptions['class'] = 'js-exam-paper-question-check';
-			$htmlOptions['data-id'] = $question['id'];
-			isset($question['is_sequenced']) && $question['is_sequenced'] && $htmlOptions['disabled'] = true;
-			echo CHtml::checkBox('', isset($question['is_chosen']) && $question['is_chosen'], $htmlOptions);?>
-			<label class="label" for="<?php echo 'question_'.$question['id'];?>">加入</label>
-		</span>
+		<?php if (!isset($question['material_id'])):?>
+			<span class="pull-right">
+				<?php 
+				$htmlOptions = array('id'=>'question_'.$question['id']);
+				$htmlOptions['class'] = 'js-exam-paper-question-check';
+				$htmlOptions['data-question_id'] = $question['id'];
+				isset($question['is_sequenced']) && $question['is_sequenced'] && $htmlOptions['disabled'] = true;
+				echo CHtml::checkBox('', isset($question['is_chosen']) && $question['is_chosen'], $htmlOptions);?>
+				<label class="label" for="<?php echo 'question_'.$question['id'];?>">加入</label>
+			</span>
+		<?php endif;?>
 	</div>
 	<div style="padding:0 0 10px 10px; border-top:dashed 1px #000;background-color:#EEEEEE;">
 		<div class="row" style="padding-left:30px;padding-top:10px">
@@ -129,7 +137,7 @@ $this->widget('CLinkPager',array(
 
 <?php 
 $exam_paper_question_options = array(
-	'ExamPaperQuestionModel[exam_paper_id]'=>$examPaperModel->primaryKey,
+	'exam_paper_id'=>$examPaperModel->primaryKey,
 );
 $exam_paper_question_options = CJavaScript::encode($exam_paper_question_options);
 $exam_paper_question_url = Yii::app()->createUrl('/admin/examPaperQuestion/operate');
@@ -138,7 +146,11 @@ $exam_paper_question_script = <<< END
 jQuery(".js-exam-paper-question-check").on("change", function(){
 	var jQthis = jQuery(this);
 	var params = $exam_paper_question_options;
-	params['ExamPaperQuestionModel[question_id]'] = jQthis.data("id");
+	if (jQthis.data("question_id")){
+		params['question_id'] = jQthis.data("question_id");
+	} else {
+		params['material_id'] = jQthis.data("material_id");
+	}
 	params['action'] = this.checked ? 'add' : 'remove';
 	jQuery.ajax({
 		url: "$exam_paper_question_url",

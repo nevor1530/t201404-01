@@ -7,7 +7,7 @@ $form=$this->beginWidget('bootstrap.widgets.TbActiveForm', array(
 	'clientOptions'=>array(
 		'validateOnSubmit'=>true,
 	),
-	'method'=>'post',
+	'method'=>'get',
 )); 
 ?>
 	

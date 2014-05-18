@@ -39,8 +39,8 @@ class QuestionController extends AdminController
 		$criteria = new CDbCriteria();    
 		$criteria->order = 'material_id, question_id desc';
 		$hideAdvancedSearch = true;
-		if (isset($_POST['QuestionFilterForm'])) {
-			$questionFilterForm->attributes = $_POST['QuestionFilterForm'];
+		if (isset($_GET['QuestionFilterForm'])) {
+			$questionFilterForm->attributes = $_GET['QuestionFilterForm'];
 			if ($questionFilterForm->questionType != null) {
 				$criteria->addCondition('question_type=' . $questionFilterForm->questionType);
 				$hideAdvancedSearch = false;

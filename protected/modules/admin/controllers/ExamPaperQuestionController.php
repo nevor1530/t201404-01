@@ -17,33 +17,24 @@ class ExamPaperQuestionController extends AdminController
 	 */
 	public function actionOperate(){
 		$action = $_POST['action'];
+		$exam_paper_id = $_POST['exam_paper_id'];
 		$model=new ExamPaperQuestionModel;
-		$model->attributes=$_POST['ExamPaperQuestionModel'];
 		$ret = array();
 		if ($action === 'add'){
-			if($model->save()){
-				$ret['status'] = 0;
-			} else {
-				$ret['status'] = 1;
-				$ret['errMsg'] = CHtml::errorSummary($model);
+			if (isset($_POST['question_id'])){
+				$model->addQuestion($exam_paper_id, $_POST['question_id']);
+			} elseif (isset($_POST['material_id'])){
+				$model->addMaterial($exam_paper_id, $_POST['material_id']);
 			}
 		} elseif ($action === 'remove'){
-			$params = array(
-				':question_id' => $model->question_id,
-				':exam_paper_id' => $model->exam_paper_id,
-			);
-			
-			$model = ExamPaperQuestionModel::model()->find('question_id=:question_id and exam_paper_id=:exam_paper_id', $params);
-			if ($model && $model->delete()){
-				$ret['status']=0;
-			} else {
-				$ret['status'] = 1;
-				$ret['errMsg'] = '数据异常';
+			if (isset($_POST['question_id'])){
+				$model->deleteQuestion($exam_paper_id, $_POST['question_id']);
+			} elseif (isset($_POST['material_id'])){
+				$model->deleteMaterial($exam_paper_id, $_POST['material_id']);
 			}
 		} else {
 			$ret['status'] = 1;
 			$ret['errMsg'] = '参数错';
-			echo json_encde(array('status'=>1, 'errMsg'));
 		}
 		
 		echo json_encode($ret);
@@ -161,7 +152,7 @@ class ExamPaperQuestionController extends AdminController
 		$this->render('index', $res);
 	}
 	
-	public function actionChoose($exam_paper_id, $exam_block_id=null, $sequence=null){
+	public function actionChoose($exam_paper_id, $sequence=null){
 		$examPaperModel = ExamPaperModel::model()->findByPk($exam_paper_id);
 		if (!$examPaperModel)
 			throw new CHttpException(404,'The requested page does not exist.');
@@ -191,8 +182,8 @@ class ExamPaperQuestionController extends AdminController
 		$criteria = new CDbCriteria();    
 		$criteria->order = 'material_id, question_id desc';
 		$hideAdvancedSearch = true;
-		if (isset($_POST['QuestionFilterForm'])) {
-			$questionFilterForm->attributes = $_POST['QuestionFilterForm'];
+		if (isset($_GET['QuestionFilterForm'])) {
+			$questionFilterForm->attributes = $_GET['QuestionFilterForm'];
 			if ($questionFilterForm->questionType != null) {
 				$criteria->addCondition('question_type=' . $questionFilterForm->questionType);
 				$hideAdvancedSearch = false;

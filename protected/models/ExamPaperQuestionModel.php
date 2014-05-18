@@ -172,55 +172,184 @@ class ExamPaperQuestionModel extends CActiveRecord
 	/**
 	 * @param $exam_paper_id
 	 * @param $question_id
-	 * @return ExamPaperQuestionModel	use <pre>$model->hasErrors()</pre>
+	 * @return errors array
 	 */
-	public function addQuestion($exam_paper_id, $question_id){
+	public function addQuestion($exam_paper_id, $question_id, $sequence=null){
 		if (!$exam_paper_id || !$question_id){
 			throw new Exception('参数全都不能为空');
 		}
-		if (self::model()->exists('exam_paper_id=:epid and question_id=:qid', array(':epid'=>$exam_paper_id, ':qid'=>$question_id))){
-			throw new Exception('该问题已在该试卷中了');
-		}
+		
+		// 是否在试卷中了
 		$model = new self();
 		$model->exam_paper_id = $exam_paper_id;
 		$model->question_id = $question_id;
-		$model->save();
-		return $model;
+		if (!$model->questionExists()){
+			if(!$model->save()){
+				return $model->errors;
+			}
+		} else {
+			$model = self::model()->find('exam_paper_id=:epid and question_id=:qid'
+				,array(':epid'=>$exam_paper_id, ':qid'=>$question_id));
+		}
+		
+		if ($sequence !== sequence){
+			$model->setGlobalSequence($sequence);
+			if (!$model->sequenceExists()){
+				if(!$model->save()){
+					return $model->errors;
+				}
+			} else {
+				throw new Exception('指定题号上已有题目,该题目已加入备选题');
+			}
+		}
+		
+		return array();
 	}
 	
 	/**
-	 * @return $model
+	 * 在试卷中移除备选题
 	 */
-	public function addMateria($exam_paper_id, $material_id){
+	public function deleteQuestion($exam_paper_id, $question_id){
+		if (!$exam_paper_id || !$question_id){
+			throw new Exception('参数全都不能为空');
+		}
+		
+		// 是否在试卷中了
+		$model = self::model()->find('exam_paper_id=:epid and question_id=:qid'
+			,array(':epid'=>$exam_paper_id, ':qid'=>$question_id));
+		if ($model){
+			if ($model->sequence > 0){
+				throw new Exception('请先解除题号');
+			} else {
+				$model->delete();
+			}
+		}
+		
+		return true;
+	}
+	
+	/**
+	 * @return $errors array
+	 */
+	public function addMaterial($exam_paper_id, $material_id, $sequence=null){
 		if (!$exam_paper_id && !$material_id){
 			throw new Exception('参数全都不能为空');
 		}
-		$questionModels = QuestionModel::model()->findAll('material_id');
+		$questionModels = QuestionModel::model()->findAll('material_id=:mid', array(':mid'=>$material_id));
 		if (!$questionModels){
 			throw new Exception('指定材料题#'.$material_id.'不存在');
 		}
 		$question_id = $questionModels[0]->question_id;
-		if (self::model()->exists('exam_paper_id=:epid and question_id=:qid', array(':epid'=>$exam_paper_id, ':qid'=>$question_id))){
-			throw new Exception('该问题已在该试卷中了');
-		}
-		
 		$saveModels = array();
-		$retModel = null;
 		foreach($questionModels as $questionModel){
 			$model = new self();
 			$model->exam_paper_id = $exam_paper_id;
 			$model->question_id = $questionModel->question_id;
-			if (!$model->save()){
-				$retModel = $model;
-				foreach($saveModels as $saveModel){
-					$saveModel->delete();
+			if (!$model->questionExists()){
+				if (!$model->save()){
+					return $model->errors;
 				}
 			} else {
-				$saveModels[] = $model;
-				$retModel = $model;
+				$model = self::model()->find('exam_paper_id=:epid and question_id=:qid'
+					,array(':epid'=>$model->exam_paper_id, ':qid'=>$model->question_id));
+			}
+			$saveModels[] = $model;
+		}
+		
+		if ($sequence !== null){
+			$i = 0;
+			foreach($saveModels as $saveModel){
+				$saveModel->setGlobalSequence($sequence+$i);
+				if (!$saveModel->sequenceExists()){
+					if (!$saveModel->save()){
+						return $saveModel->errors;
+					}
+				}
+				$i++;
 			}
 		}
 		
-		return $retModel;
+		return true;
+	}
+	
+	public function deleteMaterial($exam_paper_id, $material_id){
+		if (!$exam_paper_id && !$material_id){
+			throw new Exception('参数全都不能为空');
+		}
+		
+		$questionModels = QuestionModel::model()->findAll('material_id=:mid', array(':mid'=>$material_id));
+		if (!$questionModels){
+			throw new Exception('指定材料题#'.$material_id.'不存在');
+		}
+		$question_id = $questionModels[0]->question_id;
+		foreach($questionModels as $questionModel){
+			$model = self::model()->find('exam_paper_id=:epid and question_id=:qid'
+				,array(':epid'=>$model->exam_paper_id, ':qid'=>$model->question_id));
+			if ($model){
+				if ($model->sequence === 0){
+					$model->delete();
+				} else {
+					throw new Exception('请先解除题号');
+				}
+			}
+		}
+		
+		return true;
+	}
+	
+	/**
+	 * @param $question_ids number|array
+	 */
+	public function removeQestionSequence($exam_paper_id, $question_ids){
+		if (!is_array($question_ids)){
+			$question_ids = array($question_ids);
+		}
+		
+		foreach($question_ids as $question_id){
+			$model = self::model()->find('exam_paper_id=:epid and question_id=:qid'
+				,array(':epid'=>$exam_paper_id, ':qid'=>$question_id));
+			if ($model){
+				$model->sequence = 0;
+				$model->block_id = 0;
+				if (!$model->save()){
+					throw new Exception(CHtml::errorSummary($model));
+				}
+			}
+		}
+	}
+	
+	public function removeMaterialSequence($exam_paper_id, $material_id){
+		$questionModels = QuestionModel::model()->findAll('material_id=:mid', array(':mid'=>$material_id));
+		if (!$questionModels){
+			throw new Exception('指定材料题#'.$material_id.'不存在');
+		}
+		$question_ids = array();
+		foreach($questionModels as $questionModel){
+			$question_ids = $questionModel->question_id;
+		}
+		
+		$this->removeQuestionSequence($exam_paper_id, $question_ids);
+	}
+	
+	public function questionExists($exam_paper_id=null, $question_id=null){
+		if ($exam_paper_id === null){
+			$exam_paper_id = $this->exam_paper_id;
+			$question_id = $this->question_id;
+		}
+		return self::model()->exists('exam_paper_id=:epid and question_id=:qid', array(':epid'=>$exam_paper_id, ':qid'=>$question_id));
+	}
+	
+	public function sequenceExists($exam_paper_id=null, $sequence=null, $question_id=null){
+		if ($exam_paper_id === null){
+			$model = $this;
+		} else {
+			$model = new self();
+			$model->exam_paper_id = $exam_paper_id;
+			$model->setGlobalSequence($sequence);
+			$model->question_id = $question_id;
+		}
+		
+		return self::model()->exists('exam_paper_id=:epid and question_block_id=:qbid and sequence=:s and question_id!=:qid',
+				array(':epid'=>$model->exam_paper_id, ':qbid'=>$model->question_block_id, ':s'=>$model->sequence, ':qid'=>$model->question_id));
 	}
 }

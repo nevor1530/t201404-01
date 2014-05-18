@@ -46,7 +46,7 @@ foreach ($questionList as $question) {
 		<a class="pull-right" href="<?php echo Yii::app()->createUrl("/admin/question/viewMaterialQuestion", array("subject_id"=> $subject_id, "material_id"=>$question['material_id']))?>" style="margin-right:5px">添加题目</a>
 	</div>
 	<div>
-		<div style="border-top:dashed 1px #000;"><?php echo $question[material_content] ?></div>
+		<div style="border-top:dashed 1px #000;"><?php echo $question['material_content'] ?></div>
 	</div>
 </div>
 <?php } ?>
