@@ -27,7 +27,7 @@ class ExamBankController extends Controller
 	{
 		return array(
 			array('allow',  // allow all users to perform 'index' and 'view' actions
-				'actions'=>array('index','view'),
+				'actions'=>array('index','view', 'info'),
 				'users'=>array('*'),
 			),
 			array('allow', // allow authenticated user to perform 'create' and 'update' actions
@@ -59,7 +59,7 @@ class ExamBankController extends Controller
 				$realExamPaperCount = $this->getRealExamPaperCount($examBankId);
 				$questionCount = $this->getQuestionCount($examBankId);
 				$examBank = array(
-					'exam_bank_id' => $examBankId,
+					'id' => $examBankId,
 					'name' => $record->name,
 					'icon' => Constants::$EXAM_BANK_ICON_DIR_PATH . $record->icon,
 					'real_exam_paper_count' => $realExamPaperCount,
@@ -69,10 +69,32 @@ class ExamBankController extends Controller
 			}
 		}
 		
-//		print_r($examBanks);exit();
 		$this->render('index',array(
 			'examBanks' => $examBanks,
 		));
+	}
+	
+	public function actionInfo($exam_bank_id) {
+		$examBankRecord = ExamBankModel::model()->findByPk($exam_bank_id);
+		
+		$subjects = array();
+		$subjectRecords = $examBankRecord->subjects;
+		if ($subjectRecords != null) {
+			foreach ($subjectRecords as $subjectRecord) {
+				$subjects[] = array(
+					'id' => $subjectRecord->subject_id,
+					'name' => $subjectRecord->name
+				);
+			}
+		}
+		
+		$result = array(
+			'exam_bank_name' => $examBankRecord->name,
+			'subjects' => $subjects,
+		);
+		
+		//print_r($result); exit();
+		$this->render('info', $result);
 	}
 	
 	private function getRealExamPaperCount($examBankId) {
@@ -104,5 +126,5 @@ class ExamBankController extends Controller
 		
 		return 0;
 	}
-
+	
 }

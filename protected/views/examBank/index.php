@@ -61,7 +61,7 @@ for ($i = 0; $i < count($examBanks); $i++) {
 				<div class="title"><?php echo $examBank['name'] ?></div>
 				<div class="paper-qty">共<?php echo $examBank['real_exam_paper_count'] ?>套真卷</div>
 				<div class="question-qty"><?php echo $examBank['question_count'] ?>道题</div>
-				<button class="btn btn-primary" name="yt0" type="submit">马上去答题</button>
+				<button class="btn btn-primary" onclick="{location.href='<?php echo Yii::app()->createUrl("/examBank/info", array("exam_bank_id"=> $examBank['id']))?>'}">马上去答题</button>
 			</div>
 		</div>
 	</div>
