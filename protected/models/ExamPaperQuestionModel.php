@@ -258,18 +258,22 @@ class ExamPaperQuestionModel extends CActiveRecord
 		
 		if ($sequence !== null){
 			$i = 0;
-			foreach($saveModels as $saveModel){
+			foreach($saveModels as &$saveModel){
 				$saveModel->setGlobalSequence($sequence+$i);
-				if (!$saveModel->sequenceExists()){
-					if (!$saveModel->save()){
-						return $saveModel->errors;
-					}
+				if ($saveModel->sequenceExists()){
+					throw new CHttpException(200, '题号'.$saveModel->getGlobalSequence().'已指定题目，请先解除');
 				}
 				$i++;
 			}
+			foreach($saveModels as $savedModel){
+				if (!$savedModel->save()){
+					return $savedModel->errors;
+				}
+			}
+			exit();
 		}
 		
-		return true;
+		return array();
 	}
 	
 	public function deleteMaterial($exam_paper_id, $material_id){

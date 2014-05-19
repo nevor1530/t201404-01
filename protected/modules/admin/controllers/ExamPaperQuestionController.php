@@ -41,24 +41,38 @@ class ExamPaperQuestionController extends AdminController
 	}
 	
 	public function actionSequence(){
-		$id = $_POST['id'];
+		$exam_paper_id = $_POST['exam_paper_id'];
 		$sequence = $_POST['sequence'];
-		
-		$model = $this->loadModel($id);
-		$model->setGlobalSequence($sequence);
-		// 判断序号是否有效
-		$exists = ExamPaperQuestionModel::model()->exists('exam_paper_id=:epid and sequence=:seq and question_block_id=:qbid', 
-			array(':epid'=>$model->exam_paper_id, ':seq'=>$model->sequence, ':qbid'=>$model->question_block_id)
-		);
-		if ($exists){
-			$ret = array('status'=>1, 'errMsg'=>"序号$sequence上已指定题目");
+		$is_material = isset($_POST['material_id']);
+		if ($is_material){
+			$material_id = $_POST['material_id'];
 		} else {
-			if ($model->save()){
-				$ret = array('status'=>0);
+			$question_id = $_POST['question_id'];
+		}
+		
+		$model = new ExamPaperQuestionModel();
+		$errors = array();
+		if ($is_material){
+			if ($sequence == 0){
+				$model->removeMaterialSequence($exam_paper_id, $material_id);
 			} else {
-				$ret = array('status'=>1, 'errMsg'=>CHtml::errorSummary($model));
+				$errors = $model->addMaterial($exam_paper_id, $material_id, $sequence);
+			}
+		} else {
+			if ($sequence == 0){
+				$model->removeQuestionSequence($exam_paper_id, $question_id);
+			} else {
+				$errors = $model->addQuestion($exam_paper_id, $question_id, $sequence);
 			}
 		}
+		
+		$ret = array();
+		$ret['status'] = 0;
+		if (!empty($errors)){
+			$ret['status'] = 1;
+			$ret['errMsg'] = $this->ajaxErrorSummary($errors);
+		}
+		
 		echo json_encode($ret);
 	}
 
@@ -140,6 +154,7 @@ class ExamPaperQuestionController extends AdminController
 		$criteria = new CDbCriteria();
 		$criteria->with = array('question', 'question.questionExtra', 'question.questionAnswerOptions');
 		$criteria->addCondition('t.exam_paper_id='.$exam_paper_id);
+		$criteria->order = 'question.material_id';
 		$questionDataProvider = new CActiveDataProvider('ExamPaperQuestionModel', array('criteria'=>$criteria));
 		
 		$res['examPaperModel'] = $examPaperModel;

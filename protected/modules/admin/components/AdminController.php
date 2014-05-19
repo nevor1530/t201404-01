@@ -125,4 +125,16 @@ class AdminController extends Controller
 		echo json_encode(array('status'=>0));
 		Yii::app()->end();
 	}
+	
+	protected function ajaxErrorSummary($errors){
+		$content = '';
+		foreach($errors as $itemErrors){
+			foreach($itemErrors as $error)
+			{
+				if($error!='')
+					$content.=$error."\n";
+			}
+		}
+		return $content;
+	}
 }

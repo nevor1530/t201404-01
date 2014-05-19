@@ -33,7 +33,9 @@ $this->menu=array(
 </div>
 
 <h4>备选题</h4>
-<?php $this->widget('bootstrap.widgets.TbListView',array(
+<?php 
+$GLOBALS['prev_material_id'] = 0;
+$this->widget('bootstrap.widgets.TbListView',array(
 	'dataProvider'=>$questionDataProvider,
 	'itemView'=>'_view',
 )); ?>
@@ -60,6 +62,10 @@ input.sequence-input {
 .exam-paper-question-sequence {
 	margin-left: 40%;
 }
+
+.material_question {
+	padding-left: 40px;
+}
 END;
 
 Yii::app()->clientScript->registerCss(__CLASS__."#css", $cssScript);
@@ -77,9 +83,14 @@ jQuery(".js-sequence-btn").on("click", function(){
 	
 	var url = "$sequenceUrl";
 	var data = {
-		id: input.data("id"),
-		sequence: input.val()
+		sequence: input.val(),
+		exam_paper_id: $examPaperModel->primaryKey
 	};
+	if (input.data("question_id")){
+		data.question_id = input.data("question_id");
+	} else {
+		data.material_id = input.data("material_id");
+	}
 	jQuery.ajax({
 		url: "$sequenceUrl",
 		data: data,
