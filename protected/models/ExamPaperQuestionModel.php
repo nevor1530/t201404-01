@@ -192,7 +192,7 @@ class ExamPaperQuestionModel extends CActiveRecord
 				,array(':epid'=>$exam_paper_id, ':qid'=>$question_id));
 		}
 		
-		if ($sequence !== sequence){
+		if ($sequence !== null){
 			$model->setGlobalSequence($sequence);
 			if (!$model->sequenceExists()){
 				if(!$model->save()){

@@ -19,7 +19,7 @@ class ExamPaperQuestionController extends AdminController
 		$action = $_POST['action'];
 		$exam_paper_id = $_POST['exam_paper_id'];
 		$model=new ExamPaperQuestionModel;
-		$ret = array();
+		$ret = array('status'=>0);
 		if ($action === 'add'){
 			if (isset($_POST['question_id'])){
 				$model->addQuestion($exam_paper_id, $_POST['question_id']);
@@ -185,7 +185,11 @@ class ExamPaperQuestionController extends AdminController
 		if (isset($_GET['QuestionFilterForm'])) {
 			$questionFilterForm->attributes = $_GET['QuestionFilterForm'];
 			if ($questionFilterForm->questionType != null) {
-				$criteria->addCondition('question_type=' . $questionFilterForm->questionType);
+				if ($questionFilterForm->questionType == QuestionModel::MATERIAL_TYPE) {
+					$criteria->addCondition('material_id!=0');
+				} else {
+					$criteria->addCondition('question_type=' . $questionFilterForm->questionType);
+				}
 				$hideAdvancedSearch = false;
 			}
 			
