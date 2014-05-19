@@ -145,7 +145,6 @@ class QuestionController extends AdminController
 			if ($choiceQuestionForm->validate()) {
 				// save question
 				$questionModel = new QuestionModel;
-				//$questionModel->exam_paper_id = ($choiceQuestionForm->examPaper != null) ? $choiceQuestionForm->examPaper : 0;
 				$questionModel->material_id = $material_id;
 				$questionModel->subject_id = $subject_id;
 				$questionModel->question_type = $choiceQuestionForm->questionType;
@@ -156,7 +155,16 @@ class QuestionController extends AdminController
 				}
 				
 				if ($questionModel->validate() && $questionModel->save()) {
-					// save question title
+					// save exam_paper_question if examPaper and questionNumber are set
+					if ($choiceQuestionForm->examPaper != null && $choiceQuestionForm->questionNumber != null) {
+						$exam_paper_id = $choiceQuestionForm->examPaper;
+						$sequence = $choiceQuestionForm->questionNumber;
+						$question_id =  $questionModel->question_id;
+						$examPaperQuestionModel = new ExamPaperQuestionModel;
+						$examPaperQuestionModel->addQuestion($exam_paper_id, $question_id, $sequence);
+					}
+					
+					// save question title and analysis
 					$questionExtraModel = new QuestionExtraModel;
 					$questionExtraModel->question_id = $questionModel->question_id;
 					$questionExtraModel->title = $choiceQuestionForm->content;
@@ -232,13 +240,22 @@ class QuestionController extends AdminController
 			$trueOrFalseQuestionForm->attributes=$_POST['TrueOrFalseQuestionForm'];
 			if ($trueOrFalseQuestionForm->validate()) {
 				$questionModel = new QuestionModel;
-				//$questionModel->exam_paper_id = ($trueOrFalseQuestionForm->examPaper != null) ? $trueOrFalseQuestionForm->examPaper : 0;
 				$questionModel->subject_id = $subject_id;
 				$questionModel->material_id = $material_id;
 				$questionModel->question_type = QuestionModel::TRUE_FALSE_TYPE;
 				$questionModel->answer = $trueOrFalseQuestionForm->answer;
 		
 				if ($questionModel->validate() && $questionModel->save()) {
+					// save exam_paper_question if examPaper and questionNumber are set
+					if ($trueOrFalseQuestionForm->examPaper != null && $trueOrFalseQuestionForm->questionNumber != null) {
+						$exam_paper_id = $trueOrFalseQuestionForm->examPaper;
+						$sequence = $trueOrFalseQuestionForm->questionNumber;
+						$question_id =  $questionModel->question_id;
+						$examPaperQuestionModel = new ExamPaperQuestionModel;
+						$examPaperQuestionModel->addQuestion($exam_paper_id, $question_id, $sequence);
+					}
+					
+					// save analysis and title
 					$questionExtraModel = new QuestionExtraModel;
 					$questionExtraModel->question_id = $questionModel->question_id;
 					$questionExtraModel->title = $trueOrFalseQuestionForm->content;
@@ -291,6 +308,16 @@ class QuestionController extends AdminController
 				$questionModel->answer = $trueOrFalseQuestionForm->answer;
 		
 				if ($questionModel->validate() && $questionModel->save()) {
+					// save exam_paper_question if examPaper and questionNumber are set
+					if ($trueOrFalseQuestionForm->examPaper != null && $trueOrFalseQuestionForm->questionNumber != null) {
+						$exam_paper_id = $trueOrFalseQuestionForm->examPaper;
+						$sequence = $trueOrFalseQuestionForm->questionNumber;
+						$question_id =  $questionModel->question_id;
+						$examPaperQuestionModel = new ExamPaperQuestionModel;
+						$examPaperQuestionModel->addQuestion($exam_paper_id, $question_id, $sequence);
+					}
+					
+					// update title and analysis
 					$questionExtraModel = QuestionExtraModel::model()->findByPk($questionModel->question_id);
 					if ($questionExtraModel == null) {
 						$questionExtraModel = new QuestionExtraModel;
@@ -361,6 +388,77 @@ class QuestionController extends AdminController
 	
 	public function actionUpdateChoiceQuestion($subject_id, $material_id, $questionModel, $return_url) {
 		$question_id = $questionModel->question_id;
+		if(isset($_POST['ChoiceQuestionForm'])) {
+			$choiceQuestionForm = new ChoiceQuestionForm;
+			$choiceQuestionForm->attributes=$_POST['ChoiceQuestionForm'];
+			if ($choiceQuestionForm->validate()) {
+				$questionModel->question_type = $choiceQuestionForm->questionType;
+				if ($choiceQuestionForm->questionType == QuestionModel::SINGLE_CHOICE_TYPE) {
+					$questionModel->answer = $choiceQuestionForm->answer;
+				} else if ($choiceQuestionForm->questionType == QuestionModel::MULTIPLE_CHOICE_TYPE) {
+					$questionModel->answer = implode("|", $choiceQuestionForm->answer);
+				}
+		
+				if ($questionModel->validate() && $questionModel->save()) {
+					// save exam_paper_question if examPaper and questionNumber are set
+					if ($choiceQuestionForm->examPaper != null && $choiceQuestionForm->questionNumber != null) {
+						$exam_paper_id = $choiceQuestionForm->examPaper;
+						$sequence = $choiceQuestionForm->questionNumber;
+						$question_id =  $questionModel->question_id;
+						$examPaperQuestionModel = new ExamPaperQuestionModel;
+						$examPaperQuestionModel->addQuestion($exam_paper_id, $question_id, $sequence);
+					}
+					
+					// save question title and analysis
+					$questionExtraModel = QuestionExtraModel::model()->findByPk($questionModel->question_id);
+					if ($questionExtraModel == null) {
+						$questionExtraModel = new QuestionExtraModel;
+						$questionExtraModel->question_id = $question_id;
+					}
+					
+					$questionExtraModel->title = $choiceQuestionForm->content;
+					$questionExtraModel->analysis = $choiceQuestionForm->analysis;
+					
+					if ($questionExtraModel->validate() && $questionExtraModel->save()) {
+						// save answer options
+						QuestionAnswerOptionModel::model()->deleteAll('question_id='.$question_id);
+						$keys = array_keys($_POST['ChoiceQuestionForm']);
+						foreach ($keys as $key) {
+							if (strpos($key, 'answerOption') === 0) {
+								$answerOptionIndex = str_replace('answerOption', '', $key);
+								$answerOptionDescription = $_POST['ChoiceQuestionForm'][$key];
+					
+								$questionAnswerOptionModel = new QuestionAnswerOptionModel;
+								$questionAnswerOptionModel->question_id = $questionModel->question_id;
+								$questionAnswerOptionModel->index = $answerOptionIndex;
+								$questionAnswerOptionModel->description = $answerOptionDescription;
+								if ($questionAnswerOptionModel->validate()) {
+									$questionAnswerOptionModel->save();
+								}
+							}
+						}
+					}
+					
+					//save question exam point
+					QuestionExamPointModel::model()->deleteAll('question_id='.$question_id);
+					if ($choiceQuestionForm->examPoints != null) {
+						foreach ($choiceQuestionForm->examPoints as $key => $examPointId) {
+							$questionExamPointModel = new QuestionExamPointModel;
+							$questionExamPointModel->question_id = $questionModel->question_id;
+							$questionExamPointModel->exam_point_id = $examPointId;
+							if ($questionExamPointModel->validate()) {
+								$questionExamPointModel->save();
+							}
+						}
+					}
+					
+					if ($return_url != null) {
+						$this->redirect(urldecode($return_url));
+					}
+				}
+			}
+		}
+		
 		$choiceQuestionForm = new ChoiceQuestionForm;
 		$choiceQuestionForm->questionType = $questionModel->question_type;
 		$choiceQuestionForm->content = $questionModel->questionExtra->title;

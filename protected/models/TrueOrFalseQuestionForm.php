@@ -7,6 +7,7 @@
 class TrueOrFalseQuestionForm extends CFormModel
 {
 	public $examPaper;
+	public $questionNumber;
 	public $content;
 	public $answer;
 	public $examPoints;
@@ -19,7 +20,8 @@ class TrueOrFalseQuestionForm extends CFormModel
 	{
 		return array(
 			array('content, answer', 'required'),
-			array('examPaper, examPoints, analysis', 'safe'),
+			array('examPaper, questionNumber', 'numerical', 'integerOnly'=>true),
+			array('examPaper, questionNumber, examPoints, analysis', 'safe'),
 		);
 	}
 
@@ -30,6 +32,7 @@ class TrueOrFalseQuestionForm extends CFormModel
 	{
 		return array(
 			'examPaper' => '所属试卷',
+			'questionNumber' => '试卷中题号（数字）',
 			'content' => '题干',
 			'answer' => '正确答案',
 			'examPoints' => '考点',

@@ -14,6 +14,10 @@
 </div>
 
 <div class="row" style="padding-left:30px;padding-top:20px">
+	<?php echo $form->textFieldRow($trueOrFalseQuestionForm,'questionNumber',array('class'=>'span5')); ?>
+</div>
+
+<div class="row" style="padding-left:30px;padding-top:20px">
 	<?php echo $form->labelEx($trueOrFalseQuestionForm, 'content'); ?>
 	<?php $this->widget('umeditor.widgets.UMeditorField', array(
 		'model'=>$trueOrFalseQuestionForm,
