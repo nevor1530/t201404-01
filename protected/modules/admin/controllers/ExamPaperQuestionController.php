@@ -6,7 +6,7 @@ class ExamPaperQuestionController extends AdminController
 	{
 		return array(
 			'accessControl', // perform access control for CRUD operations
-			'postOnly + operate, sequence', // we only allow deletion via POST request
+			'postOnly + delete, operate, sequence', // we only allow deletion via POST request
 		);
 	}
 	
@@ -41,13 +41,13 @@ class ExamPaperQuestionController extends AdminController
 	}
 	
 	public function actionSequence(){
-		$exam_paper_id = $_POST['exam_paper_id'];
-		$sequence = $_POST['sequence'];
-		$is_material = isset($_POST['material_id']);
+		$exam_paper_id = $_REQUEST['exam_paper_id'];
+		$sequence = isset($_REQUEST['sequence']) ? $_REQUEST['sequence'] : 0;
+		$is_material = isset($_REQUEST['material_id']);
 		if ($is_material){
-			$material_id = $_POST['material_id'];
+			$material_id = $_REQUEST['material_id'];
 		} else {
-			$question_id = $_POST['question_id'];
+			$question_id = $_REQUEST['question_id'];
 		}
 		
 		$model = new ExamPaperQuestionModel();
@@ -75,7 +75,7 @@ class ExamPaperQuestionController extends AdminController
 		
 		echo json_encode($ret);
 	}
-
+	
 	/**
 	 * Updates a particular model.
 	 * If update is successful, the browser will be redirected to the 'view' page.
@@ -103,21 +103,19 @@ class ExamPaperQuestionController extends AdminController
 	/**
 	 * Deletes a particular model.
 	 * If deletion is successful, the browser will be redirected to the 'admin' page.
-	 * @param integer $id the ID of the model to be deleted
 	 */
-	public function actionDelete($id)
+	public function actionDelete($exam_paper_id, $question_id = null, $material_id = null)
 	{
-		if(Yii::app()->request->isPostRequest)
-		{
-			// we only allow deletion via POST request
-			$this->loadModel($id)->delete();
-
-			// if AJAX request (triggered by deletion via admin grid view), we should not redirect the browser
-			if(!isset($_GET['ajax']))
-				$this->redirect(isset($_POST['returnUrl']) ? $_POST['returnUrl'] : array('admin'));
+		if ($question_id === null && $material_id === null){
+			throw new CHttpException(404);
 		}
-		else
-			throw new CHttpException(400,'Invalid request. Please do not repeat this request again.');
+		
+		$model = new ExamPaperQuestionModel();
+		if (!$question_id){
+			$model->deleteQuestion($exam_paper_id, $question_id);
+		} else {
+			$model->deleteMaterial($exam_paper_id, $material_id);
+		}
 	}
 
 	/**

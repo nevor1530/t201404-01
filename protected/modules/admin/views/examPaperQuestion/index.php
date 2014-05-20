@@ -76,9 +76,10 @@ $sequenceUrl = Yii::app()->createUrl('/admin/examPaperQuestion/sequence');
 $sequenceScript = <<< END
 jQuery(".js-sequence-btn").on("click", function(){
 	jQthis = jQuery(this);
-	var input = jQthis.parent().find(".sequence-input");
+	var input = jQthis.parent().find(".js-sequence-input");
 	if (!/^\d+$/.test(input.val())){
 	    alert('必须为数字');
+	    return false;
 	}
 	
 	var url = "$sequenceUrl";
@@ -104,6 +105,51 @@ jQuery(".js-sequence-btn").on("click", function(){
 			}
 		}
 	});
+});
+
+jQuery(".js-sequence-modify-btn").on("click", function(){
+	var jQparent = jQuery(this).parents(".exam_paper-question-item-title");
+	var jQtextSpan = jQparent.find(".js-sequence-text-block");
+	var jQinputSpan = jQparent.find(".js-sequence-input-block");
+	var jQsequenceText = jQparent.find(".js-sequence-text");
+	var jQinput = jQparent.find(".js-sequence-input");
+	jQtextSpan.addClass("hidden");
+	jQinputSpan.removeClass("hidden");
+	jQinput.val(jQsequenceText.html());
+});
+
+jQuery(".js-exam-paper-question-delete").on("click", function(){
+	var jQthis = jQuery(this);
+	jQuery.ajax({
+		url: this.href,
+		type: "POST",
+		dataType: 'json',
+		success: function(data){
+			if (data.status === 0){
+				location.reload();
+			} else {
+				alert(data.errMsg);
+			}
+		}
+	});
+	return false;
+});
+
+jQuery(".js-exam-paper-question-unsequence").on("click", function(){
+	var jQthis = jQuery(this);
+	jQuery.ajax({
+		url: this.href,
+		type: "POST",
+		dataType: 'json',
+		success: function(data){
+			if (data.status === 0){
+				location.reload();
+			} else {
+				alert(data.errMsg);
+			}
+		}
+	});
+	return false;
 });
 END;
 

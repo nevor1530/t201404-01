@@ -211,7 +211,7 @@ class ExamPaperQuestionModel extends CActiveRecord
 	 */
 	public function deleteQuestion($exam_paper_id, $question_id){
 		if (!$exam_paper_id || !$question_id){
-			throw new Exception('参数全都不能为空');
+			throw new CHttpException(404, '参数全都不能为空');
 		}
 		
 		// 是否在试卷中了
@@ -219,7 +219,7 @@ class ExamPaperQuestionModel extends CActiveRecord
 			,array(':epid'=>$exam_paper_id, ':qid'=>$question_id));
 		if ($model){
 			if ($model->sequence > 0){
-				throw new Exception('请先解除题号');
+				throw new CHttpException(200, '请先解除题号');
 			} else {
 				$model->delete();
 			}
@@ -270,7 +270,6 @@ class ExamPaperQuestionModel extends CActiveRecord
 					return $savedModel->errors;
 				}
 			}
-			exit();
 		}
 		
 		return array();
@@ -304,17 +303,16 @@ class ExamPaperQuestionModel extends CActiveRecord
 	/**
 	 * @param $question_ids number|array
 	 */
-	public function removeQestionSequence($exam_paper_id, $question_ids){
+	public function removeQuestionSequence($exam_paper_id, $question_ids){
 		if (!is_array($question_ids)){
 			$question_ids = array($question_ids);
 		}
-		
 		foreach($question_ids as $question_id){
 			$model = self::model()->find('exam_paper_id=:epid and question_id=:qid'
 				,array(':epid'=>$exam_paper_id, ':qid'=>$question_id));
 			if ($model){
 				$model->sequence = 0;
-				$model->block_id = 0;
+				$model->question_block_id = 0;
 				if (!$model->save()){
 					throw new Exception(CHtml::errorSummary($model));
 				}
@@ -329,7 +327,7 @@ class ExamPaperQuestionModel extends CActiveRecord
 		}
 		$question_ids = array();
 		foreach($questionModels as $questionModel){
-			$question_ids = $questionModel->question_id;
+			$question_ids[] = $questionModel->question_id;
 		}
 		
 		$this->removeQuestionSequence($exam_paper_id, $question_ids);
