@@ -688,7 +688,7 @@ class QuestionController extends AdminController
 	}
 	
 	private function getExamPaperListData($subject_id) {
-		$examPaperModel=ExamPaperModel::model()->findAll('subject_id=:subject_id', array(':subject_id' => $subject_id));
+		$examPaperModel = ExamPaperModel::model()->findAll('subject_id=:subject_id', array(':subject_id' => $subject_id));
 		$examPaperListData = CHtml::listData($examPaperModel, 'exam_paper_id', 'name');
 		return $examPaperListData;
 	}
