@@ -56,8 +56,8 @@ class ExamBankController extends Controller
 		if ($results != null) {
 			foreach ($results as $record) {
 				$examBankId = $record->exam_bank_id;
-				$realExamPaperCount = $this->getRealExamPaperCount($examBankId);
-				$questionCount = $this->getQuestionCount($examBankId);
+				$realExamPaperCount = $this->getRealExamPaperCountByExamBankId($examBankId);
+				$questionCount = $this->getQuestionCountByExamBankId($examBankId);
 				$examBank = array(
 					'id' => $examBankId,
 					'name' => $record->name,
@@ -74,7 +74,7 @@ class ExamBankController extends Controller
 		));
 	}
 	
-	public function actionInfo($exam_bank_id) {
+	public function actionInfo($exam_bank_id, $subject_id = 0) {
 		$examBankRecord = ExamBankModel::model()->findByPk($exam_bank_id);
 		
 		$subjects = array();
@@ -88,16 +88,77 @@ class ExamBankController extends Controller
 			}
 		}
 		
+		if ($subject_id == 0 && count($subjects) == 0) {
+			throw new CHttpException(404,'The requested page does not exist.');
+		} else if ($subject_id == 0) {
+			$subject_id = $subjects[0]['id'];
+		}
+		
+		$criteria = new CDbCriteria();
+		$criteria->condition = 'subject_id = ' . $subject_id;  
+		$examPointRecords = ExamPointModel::model()->top()->findAll($criteria);
+		
+		$examPoints = array();
+		$this->genExamPointListData($examPointRecords, $examPoints);
+		
+		header("Content-Type: text/html; charset=utf8");
+		print_r($examPoints);exit();
+		
 		$result = array(
 			'exam_bank_name' => $examBankRecord->name,
 			'subjects' => $subjects,
+			'exam_points' => $examPoints,
 		);
 		
-		//print_r($result); exit();
 		$this->render('info', $result);
 	}
 	
-	private function getRealExamPaperCount($examBankId) {
+	private function genExamPointListData($examPointRecords, &$result) {
+		if ($examPointRecords == null || count($examPointRecords) == 0) {
+			return;
+		}
+		
+		for ($i = 0; $i < count($examPointRecords); $i++) {
+			$examPointRecord = $examPointRecords[$i];
+			$examPointId = $examPointRecord->exam_point_id;
+			$result[$i] = array(
+				'id' => $examPointId,
+				'name' => $examPointRecord->name,
+			);
+			
+			$curExamPointQuestionIds = $this->getQuestionIdsByExamPointId($examPointId);
+			
+			if (!empty($examPointRecord->subExamPoints)){
+				$subExamPoints = array();
+				$this->genExamPointListData($examPointRecord->subExamPoints, $subExamPoints);
+				$result[$i]['sub_exam_points'] = $subExamPoints;
+				foreach ($subExamPoints as $subExamPoint) {
+					$curExamPointQuestionIds = array_merge($curExamPointQuestionIds, $this->getQuestionIdsByExamPointId($subExamPoint['id']));
+				}
+			} else {
+				$result[$i]['sub_exam_points'] = array();
+			}
+			
+			$curExamPointQuestionIds = array_unique($curExamPointQuestionIds);
+			$result[$i]['question_ids'] = $curExamPointQuestionIds;
+			$result[$i]['question_count'] += count($curExamPointQuestionIds);
+		}
+	}
+	
+	private function getQuestionIdsByExamPointId($examPointId) {
+		$questionIds = array();
+		$criteria = new CDbCriteria();
+		$criteria->condition = 'exam_point_id = ' . $examPointId;  
+		$records = QuestionExamPointModel::model()->findAll($criteria);	
+		if ($records != null) {
+			foreach ($records as $record) {
+				$questionIds[] = $record->question_id;
+			}
+		}
+		return $questionIds;
+	}
+	
+	private function getRealExamPaperCountByExamBankId($examBankId) {
 		$sql = "SELECT COUNT(*) as count FROM exam_paper WHERE subject_id IN (" .
 					"SELECT subject_id FROM subject WHERE exam_bank_id=$examBankId" .
 				") AND is_real = 1";
@@ -111,7 +172,7 @@ class ExamBankController extends Controller
 		return 0;
 	}
 	
-	private function getQuestionCount($examBankId) {
+	private function getQuestionCountByExamBankId($examBankId) {
 		$sql = "SELECT count(DISTINCT(question_id)) as count FROM exam_paper_question WHERE exam_paper_id IN (" . 
 					"SELECT exam_paper_id FROM exam_paper WHERE subject_id in (" .
 						"SELECT subject_id FROM subject WHERE exam_bank_id=$examBankId" .

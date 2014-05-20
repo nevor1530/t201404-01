@@ -66,11 +66,31 @@ $this->breadcrumbs=array(
     background-color: #F5F5F5;
 }
 
+
+.treeview ul {
+    background-color: #FFFFFF;
+    margin-top: 4px;
+}
+
+.treeview, .treeview ul {
+    list-style-image: none;
+    list-style-position: outside;
+    list-style-type: none;
+    margin-bottom: 0;
+    margin-left: 0;
+    margin-right: 0;
+    margin-top: 0;
+    padding-bottom: 0;
+    padding-left: 0;
+    padding-right: 0;
+    padding-top: 0;
+}
+
 .treeview .hitarea {
     background-attachment: scroll;
     background-clip: border-box;
     background-color: rgba(0, 0, 0, 0);
-    background-image: url("images/treeview-default.gif");
+    background-image: url("<?php echo Yii::app()->request->baseUrl; ?>/images/treeview-default.gif");
     background-origin: padding-box;
     background-position: -64px -25px;
     background-repeat: no-repeat;
@@ -138,10 +158,22 @@ $this->breadcrumbs=array(
 							<div class="exam_point_tree_item">历史</div>
 						</li>
 					</ul>
+					<ul>
+						<li id="9" class="hasChildren collapsable">
+							<div class="hitarea hasChildren-hitarea collapsable-hitarea"></div>
+							<div class="exam_point_tree_item">历史</div>
+						</li>
+					</ul>
 				</li>
 				<li id="8" class="hasChildren collapsable">
 					<div class="hitarea hasChildren-hitarea collapsable-hitarea"></div>
 					<div class="exam_point_tree_item">人文</div>
+					<ul>
+						<li id="9" class="hasChildren collapsable">
+							<div class="hitarea hasChildren-hitarea collapsable-hitarea"></div>
+							<div class="exam_point_tree_item">历史</div>
+						</li>
+					</ul>
 				</li>
 			</ul>
 		</div>
