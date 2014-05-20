@@ -99,21 +99,21 @@ class ExamBankController extends Controller
 		$examPointRecords = ExamPointModel::model()->top()->findAll($criteria);
 		
 		$examPoints = array();
-		$this->genExamPointListData($examPointRecords, $examPoints);
+		$this->getExamPoints($examPointRecords, $examPoints);
 		
-		header("Content-Type: text/html; charset=utf8");
-		print_r($examPoints);exit();
+//		header("Content-Type: text/html; charset=utf8");
+//		print_r($examPoints);exit();
 		
 		$result = array(
-			'exam_bank_name' => $examBankRecord->name,
+			'examBankName' => $examBankRecord->name,
 			'subjects' => $subjects,
-			'exam_points' => $examPoints,
+			'examPoints' => $examPoints,
 		);
 		
 		$this->render('info', $result);
 	}
 	
-	private function genExamPointListData($examPointRecords, &$result) {
+	private function getExamPoints($examPointRecords, &$result) {
 		if ($examPointRecords == null || count($examPointRecords) == 0) {
 			return;
 		}
@@ -130,10 +130,10 @@ class ExamBankController extends Controller
 			
 			if (!empty($examPointRecord->subExamPoints)){
 				$subExamPoints = array();
-				$this->genExamPointListData($examPointRecord->subExamPoints, $subExamPoints);
+				$this->getExamPoints($examPointRecord->subExamPoints, $subExamPoints);
 				$result[$i]['sub_exam_points'] = $subExamPoints;
 				foreach ($subExamPoints as $subExamPoint) {
-					$curExamPointQuestionIds = array_merge($curExamPointQuestionIds, $this->getQuestionIdsByExamPointId($subExamPoint['id']));
+					$curExamPointQuestionIds = array_merge($curExamPointQuestionIds, $subExamPoint['question_ids']);
 				}
 			} else {
 				$result[$i]['sub_exam_points'] = array();

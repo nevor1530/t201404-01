@@ -59,80 +59,48 @@ $this->breadcrumbs=array(
 }
 
 .exam_point_tree {
-	margin-top: 20px;
+	padding: 10px 20px 40px 20px;
+	border-color: #cbe3ff;
+	border-style: solid; 
+	border-width: 1px;
 }
 
-.exam_point_tree_item {
-    background-color: #F5F5F5;
+.exam_point_tree .header {
+	font-size: 15px;
+	font-weight: 700;
+	margin-bottom: 5px;
 }
 
-
-.treeview ul {
-    background-color: #FFFFFF;
-    margin-top: 4px;
+.exam_point_tree .divider {
+	height:10px;
+	border-top-color:#96c7ff; 
+	border-top-style:solid; 
+	border-top-width:2px;
+	margin-left: -5px;
+	margin-right: -5px;
 }
 
-.treeview, .treeview ul {
-    list-style-image: none;
-    list-style-position: outside;
-    list-style-type: none;
-    margin-bottom: 0;
-    margin-left: 0;
-    margin-right: 0;
-    margin-top: 0;
-    padding-bottom: 0;
-    padding-left: 0;
-    padding-right: 0;
-    padding-top: 0;
+.exam_point_item {
+	margin-top: 8px;
+	color: #003f82;
+	font-size: 14px;
 }
 
-.treeview .hitarea {
-    background-attachment: scroll;
-    background-clip: border-box;
-    background-color: rgba(0, 0, 0, 0);
-    background-image: url("<?php echo Yii::app()->request->baseUrl; ?>/images/treeview-default.gif");
-    background-origin: padding-box;
-    background-position: -64px -25px;
-    background-repeat: no-repeat;
-    background-size: auto auto;
-    cursor: pointer;
-    float: left;
-    height: 16px;
-    margin-left: -16px;
-    width: 16px;
+.exam_point_item .progress {
+	margin-bottom: 0px;
+	height: 15px;
 }
 
-.treeview li {
-    margin-bottom: 0;
-    margin-left: 0;
-    margin-right: 0;
-    margin-top: 0;
-    padding-bottom: 3px;
-    padding-left: 16px;
-    padding-right: 0;
-    padding-top: 3px;
-}
-
-.treeview li {
-    background-attachment: scroll;
-    background-clip: border-box;
-    background-color: rgba(0, 0, 0, 0);
-    background-image: url("images/treeview-default-line.gif");
-    background-origin: padding-box;
-    background-repeat: no-repeat;
-    background-size: auto auto;
-}
-
-
-.treeview li.collapsable, .treeview li.expandable {
-    background-position: 0 -176px;
+.col-centered {
+	float: none;
+	margin: 0 auto;
 }
 </style>
 
 <div class="main">
 	<div class="row">
 		<div class="offset2">
-			<button class="btn btn-primary btn-large disabled" disabled="disabled"><?php echo $exam_bank_name; ?></button>
+			<button class="btn btn-primary btn-large disabled" disabled="disabled"><?php echo $examBankName; ?></button>
 		</div>
 		<div class="offset2 subjects">
 			<?php for ($i = 0; $i < count($subjects); $i++) { 
@@ -148,34 +116,46 @@ $this->breadcrumbs=array(
 			<button class="tab">我的练习</button>
 		</div>
 		<div class="offset2 exam_point_tree">
-			<ul id="yw0" class="treeview">
-				<li id="8" class="hasChildren collapsable">
-					<div class="hitarea hasChildren-hitarea collapsable-hitarea"></div>
-					<div class="exam_point_tree_item">人文</div>
-					<ul>
-						<li id="9" class="hasChildren collapsable">
-							<div class="hitarea hasChildren-hitarea collapsable-hitarea"></div>
-							<div class="exam_point_tree_item">历史</div>
-						</li>
-					</ul>
-					<ul>
-						<li id="9" class="hasChildren collapsable">
-							<div class="hitarea hasChildren-hitarea collapsable-hitarea"></div>
-							<div class="exam_point_tree_item">历史</div>
-						</li>
-					</ul>
-				</li>
-				<li id="8" class="hasChildren collapsable">
-					<div class="hitarea hasChildren-hitarea collapsable-hitarea"></div>
-					<div class="exam_point_tree_item">人文</div>
-					<ul>
-						<li id="9" class="hasChildren collapsable">
-							<div class="hitarea hasChildren-hitarea collapsable-hitarea"></div>
-							<div class="exam_point_tree_item">历史</div>
-						</li>
-					</ul>
-				</li>
-			</ul>
+			<div class="row header">
+				<div class="span3">专项名称</div>
+				<div class="span3">答题进度</div>
+				<div class="span1">答题量</div>
+				<div class="span2">答题正确率</div>
+			</div>	
+			<div class="divider"></div>
+			<?php 
+				function genExamPointHtml($examPoint, $level) {
+					$prefix = '';
+					for ($i = 0; $i < $level * 7; $i++) {
+						$prefix .= '&nbsp;';
+					}
+		
+					if (count($examPoint['sub_exam_points']) > 0) {
+						$downImg = Yii::app()->request->baseUrl . "/images/down-arrow.png";
+						$arrowHtml = '<img src="' . $downImg . '" style="max-width:10px"/>&nbsp&nbsp';	
+					} else {
+						$leftImg = Yii::app()->request->baseUrl . "/images/left-arrow.png";
+						$arrowHtml = '<img src="' . $leftImg . '" style="max-width:12px"/>&nbsp&nbsp';	
+					}
+    
+					$html = '<div class="row exam_point_item">';
+					$html .= '<div class="span3">' . $prefix . $arrowHtml . $examPoint['name'] . '</div>';
+					$html .= '<div class="span3"><div class="pull-right" style="margin-left:15px;margin-bottom:2px;">10/20道</div><div class="progress"><div class="bar" style="width: 60%;"></div></div></div>';
+					$html .= '<div class="span3">' . $examPoint['question_count'] . '道</div>';
+					$html .= '<div class="span3"></div>';
+					$html .= '</div>';
+					
+					foreach ($examPoint['sub_exam_points'] as $subExamPoint) {
+						$html .= genExamPointHtml($subExamPoint, $level+1);
+					}
+					
+					return $html;
+				}
+				
+				foreach ($examPoints as $examPoint) {
+					echo genExamPointHtml($examPoint, 0);
+				}
+			?>
 		</div>
 	</div>
 </div>
