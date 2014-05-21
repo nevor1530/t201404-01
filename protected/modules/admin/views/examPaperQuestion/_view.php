@@ -9,7 +9,7 @@
 			<span class="exam-paper-question-sequence js-sequence-input-block <?php echo $data->sequence == 0 ? '' : 'hidden'?>" >
 				第<?php echo CHtml::numberField('', '',array('class'=>'js-sequence-input sequence-input', 'data-material_id'=>$data->question->material_id));?>道｜	<button class="btn btn-mini btn-primary js-sequence-btn" type="button">确定</button>
 			</span>
-			<span class="pull-right <?php echo $data->sequence == 0 ? '' : 'hidden'?>"><?php echo CHtml::link('从本试卷中踢出', Yii::app()->createUrl('/admin/examPaperQuestion/delete', array('material_id'=>$data->question->material_id)), array('class'=>'js-exam-paper-question-delete'))?></span>
+			<span class="pull-right <?php echo $data->sequence == 0 ? '' : 'hidden'?>"><?php echo CHtml::link('从本试卷中踢出', Yii::app()->createUrl('/admin/examPaperQuestion/delete', array('exam_paper_id'=>$data->exam_paper_id, 'material_id'=>$data->question->material_id)), array('class'=>'js-exam-paper-question-delete'))?></span>
 			<span class="pull-right <?php echo $data->sequence > 0 ? '' : 'hidden'?>"><?php echo CHtml::link('移除题号', Yii::app()->createUrl('/admin/examPaperQuestion/sequence', array('exam_paper_id'=>$data->exam_paper_id, 'material_id'=>$data->question->material_id)), array('class'=>'js-exam-paper-question-unsequence'))?></span>
 		</div>
 		<div>
@@ -27,12 +27,23 @@
 			<span class="exam-paper-question-sequence js-sequence-input-block <?php echo $data->sequence == 0 ? '' : 'hidden'?>" >
 				第<?php echo CHtml::numberField('', '',array('class'=>'js-sequence-input sequence-input', 'data-question_id'=>$data->question->question_id));?>道｜	<button class="btn btn-mini btn-primary js-sequence-btn" type="button">确定</button>
 			</span>
-			<span class="pull-right <?php echo $data->sequence == 0 ? '' : 'hidden'?>"><?php echo CHtml::link('从本试卷中踢出', Yii::app()->createUrl('/admin/examPaperQuestion/delete', array('question_id'=>$data->question_id)), array('class'=>'js-exam-paper-question-delete'))?></span>
+			<span class="pull-right <?php echo $data->sequence == 0 ? '' : 'hidden'?>"><?php echo CHtml::link('从本试卷中踢出', Yii::app()->createUrl('/admin/examPaperQuestion/delete', array('exam_paper_id'=>$data->exam_paper_id, 'question_id'=>$data->question_id)), array('class'=>'js-exam-paper-question-delete'))?></span>
 			<span class="pull-right <?php echo $data->sequence > 0 ? '' : 'hidden'?>"><?php echo CHtml::link('移除题号', Yii::app()->createUrl('/admin/examPaperQuestion/sequence', array('exam_paper_id'=>$data->exam_paper_id, 'question_id'=>$data->question_id)), array('class'=>'js-exam-paper-question-unsequence'))?></span>
 		<?php endif;?>
 	</div>
 	
-	<b><?php echo CHtml::encode($data->getAttributeLabel('question.questionExtra.title')); ?>:</b>
+	<b><?php echo QuestionModel::$QUESTION_TYPES[$data->question->question_type]; ?>:</b>
 	<?php echo $data->question->questionExtra->title;?>
-	<br />
+	
+	<?php if ($data->question->question_type == QuestionModel::SINGLE_CHOICE_TYPE || $data->question->question_type == QuestionModel::MULTIPLE_CHOICE_TYPE):?>
+		<div class="row" style="padding-left:30px;padding-top:10px">
+			<div style="padding-bottom:10px;">选项：  </div>
+			<div>
+				<?php foreach ($data->question->questionAnswerOptions as $answerOption) {?>
+					<div style="float:left"><?php echo chr($answerOption->index + ord('A')) . ". "?></div>
+					<div><?php echo $answerOption->description;?></div>
+				<?php }?>
+			</div>
+		</div>
+	<?php endif;?>
 </div>

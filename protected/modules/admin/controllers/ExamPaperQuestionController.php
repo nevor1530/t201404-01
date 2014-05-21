@@ -111,11 +111,13 @@ class ExamPaperQuestionController extends AdminController
 		}
 		
 		$model = new ExamPaperQuestionModel();
-		if (!$question_id){
+		if ($question_id){
 			$model->deleteQuestion($exam_paper_id, $question_id);
 		} else {
 			$model->deleteMaterial($exam_paper_id, $material_id);
 		}
+		
+		echo json_encode(array('status'=>0));
 	}
 
 	/**

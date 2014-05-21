@@ -282,7 +282,7 @@ class ExamPaperQuestionModel extends CActiveRecord
 		
 		$questionModels = QuestionModel::model()->findAll('material_id=:mid', array(':mid'=>$material_id));
 		if (!$questionModels){
-			throw new Exception('指定材料题#'.$material_id.'不存在');
+			throw new Exception(200, '指定材料题#'.$material_id.'不存在');
 		}
 		$question_id = $questionModels[0]->question_id;
 		foreach($questionModels as $questionModel){
