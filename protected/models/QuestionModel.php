@@ -28,6 +28,13 @@ class QuestionModel extends CActiveRecord
 	const TRUE_FALSE_TYPE = 2;
 	const MATERIAL_TYPE = 3;
 	
+	public static $QUESTION_TYPES = array (	
+			QuestionModel::SINGLE_CHOICE_TYPE => '单选题',
+			QuestionModel::MULTIPLE_CHOICE_TYPE => '多选题',
+			QuestionModel::TRUE_FALSE_TYPE => '判断题',
+			QuestionModel::MATERIAL_TYPE => '材料题',
+	);
+	
 	/**
 	 * @return string the associated database table name
 	 */
