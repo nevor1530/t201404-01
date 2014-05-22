@@ -72,7 +72,7 @@ $this->breadcrumbs=array(
 }
 
 .exam_point_tree .divider {
-	height:10px;
+	height:2px;
 	border-top-color:#96c7ff; 
 	border-top-style:solid; 
 	border-top-width:2px;
@@ -152,7 +152,13 @@ $this->breadcrumbs=array(
 					return $html;
 				}
 				
-				foreach ($examPoints as $examPoint) {
+				
+				for ($i = 0; $i < count($examPoints); $i++) {
+					if ($i != 0) {
+						echo '<div style="height:2px;margin-top:5px;border-top-color:#96c7ff;border-top-style:dashed;border-top-width:1px;"></div>';
+					}
+
+					$examPoint = $examPoints[$i];
 					echo genExamPointHtml($examPoint, 0);
 				}
 			?>

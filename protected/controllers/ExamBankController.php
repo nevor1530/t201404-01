@@ -75,6 +75,7 @@ class ExamBankController extends Controller
 	}
 	
 	public function actionInfo($exam_bank_id, $subject_id = 0) {
+		print_r(Yii::app()->user->user_id);exit();
 		$examBankRecord = ExamBankModel::model()->findByPk($exam_bank_id);
 		
 		$subjects = array();
