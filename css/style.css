@@ -1,0 +1,351 @@
+@charset "utf-8";
+/* CSS Document */
+* {
+	font-family: "Microsoft YaHei" ! important;
+	font-size: 14px;
+}
+
+body, ul{
+	padding: 0;
+	margin: 0;
+}
+
+button {
+	border: none;
+}
+
+a {
+	color: #ffffff;
+	text-decoration: none;
+}
+
+a:hover,
+.profile ul li a:hover,
+ul.subject-list li a:hover,
+ul.subject-list li.current a:hover,
+ul.subfunction-list li a:hover,
+.exam-point-tree a:hover {
+	color: #ff4b15;
+	text-decoration: underline;
+}
+
+.logo {
+	background-image: url("../images/logo.png");
+	width: 212px;
+	height: 89px;
+	display: inline-block;
+}
+
+.header-bg {
+	background-color: rgba(55,116,180,1);
+	height: 89px;
+	width: 100%;
+	position: absolute;
+	z-index: -1;
+}
+
+.container {
+	max-width: 900px;
+	margin: auto;
+}
+
+#header {
+	position: relative;
+}
+
+.profile {
+	position: absolute;
+	bottom: 0;
+	right: 0;
+}
+
+.profile-user {
+	margin-bottom: 5px;
+}
+
+.profile-avatar{
+	background-image: url("../images/profile_avatar.png");
+	width: 16px;
+	height: 15px;
+	display: inline-block;
+}
+.profile-triangle {
+	background-image: url("../images/profile_triangle.png");
+	width: 13px;
+	height: 13px;
+	display: inline-block;
+}
+
+/*用户菜单*/
+.profile ul {
+	display: none;
+	position: absolute;
+	width: 100%;
+	text-align: center;
+	border: 1px solid rgba(96, 170, 246, 1);
+	background-color: #ffffff;
+}
+
+.profile ul a {
+	color: #000000;
+}
+
+.profile:hover ul {
+	display: block;
+	font-size: 12px;
+}
+
+.profile ul li {
+	list-style: none;
+	padding: 5px 0;
+	border-top: 1px dashed rgba(96, 170, 246, 1);
+}
+
+.profile ul li:first-child {
+	border: none;
+}
+/*end 用户菜单*/
+
+.header-divider {
+	border: 1px solid rgba(175, 199, 225, 1);
+	height: 1px;
+	background-color: rgba(55, 116, 180, 1);
+	margin-top: 45px;
+}
+
+#main {
+	padding: 0 26px;
+}
+
+/*续费提示*/
+.expire-tip {
+	position: absolute;
+	top: 165px;
+	width: 100%;
+	text-align: center;
+}
+
+.expire-tip-content {
+	background-color: #b7bcc2;
+	padding: 11px 20px;
+	border-radius: 21px;
+}
+
+.expire-tip-time {
+	color: #ff4b15;
+}
+
+.expire-tip-btn {
+	padding: 6px 10px;
+	border-radius: 16px;
+	background-color: #4391e3;
+}
+
+.expire-tip-btn:hover {
+	background-color: #00b7ee;
+	color: #ffffff;
+	text-decoration: none;
+}
+
+.exam-bank-btn {
+	margin-top: -7px;
+	background-image: url(../images/exam_bank_bg.png);
+	background-repeat: repeat-x;
+	font-size: 20px;
+	padding: 8px 30px;
+	border-radius: 10px;
+	color: #ffffff;
+	display: inline-block;
+}
+
+/*学科导航*/
+.subject-list {
+	margin-top: 18px;
+	overflow: hidden;
+}
+
+ul.subject-list li {
+	list-style:none;
+	border: 1px solid #cbe3ff;
+	padding: 9px 8px;
+	display: inline-block;
+	float: left;
+}
+
+ul.subject-list li.current {
+	background-color: #a6cff8;
+	border-color: 1px solid #000000;
+}
+
+ul.subject-list li a {
+	color: #000000;
+	font-size: 20px;
+}
+
+ul.subject-list li.current a {
+	color: #ffffff;
+}
+/*end 学科导航*/
+
+ul.function-list {
+	margin-top: 1px;
+	overflow: hidden;
+}
+
+ul.function-list li {
+	list-style:none;
+	border: 1px solid #4391e3;
+	padding: 6px 40px;
+	display: inline-block;
+	float: left;
+	background-color: #d8e8fa;
+}
+
+ul.function-list li:hover {
+	background-color: #7ecef4;
+}
+
+ul.function-list li.current {
+	background-image: url("../images/function_current_bg.png");
+	background-repeat: repeat-x;
+}
+
+ul.function-list li a {
+	color: #000000;
+	font-size: 16px;
+}
+
+ul.function-list li.current a {
+	color: #ffffff;
+}
+
+ul.function-list li a:hover {
+	text-decoration: none;
+}
+
+/*subfunction list*/
+ul.subfunction-list {
+	margin-top: 12px;
+	overflow: hidden;
+}
+
+ul.subfunction-list li {
+	list-style:none;
+	border: 1px solid #cbe3ff;
+	padding: 6px 42px;
+	display: inline-block;
+	float: left;
+	position: relative;
+}
+
+ul.subfunction-list li.current {
+	border-bottom: 5px solid #00b7ee;
+	padding-bottom: 2px;
+}
+
+ul.subfunction-list li a {
+	color: #000000;
+}
+
+ul.subfunction-list li.current a {
+	font-weight: bold;
+}
+
+.content {
+	padding: 10px 13px 0 13px;
+}
+
+/*exam point tree*/
+.exam-point-tree {
+	border-top: 3px solid #96c7ff;
+	margin-top: 10px;
+	padding-top: 10px;
+	line-height: 28px;
+}
+
+.exam-point-tree > .level {
+	border-top: 1px dashed #62abfe;
+}
+
+.exam-point-tree > .level:first-child {
+	border-top: none;
+}
+
+.exam-point-tree, .exam-point-tree a{
+	color: #003f82;
+}
+
+.exam-point-tree .title {
+	padding-left: 20px;
+	background-image: url(../images/exam_point_tree_collaps.png);
+	background-repeat: no-repeat;
+	background-position-y: 7px;
+}
+
+.exam-point-tree  .item:hover {
+	background-color: #d5e8fd;
+}
+
+.exam-point-tree .expand > .item > .title {
+	background-image: url(../images/exam_point_tree_expand.png);
+}
+
+.exam-point-tree .button {
+	background-color: #60aaf6;
+	padding: 3px 30px;
+	color: #ffffff;
+	margin-left: 20px;
+}
+
+.exam-point-tree .button:hover {
+	background-color: #00b7ee;
+}
+
+.exam-point-tree .sublevel {
+	padding-left: 20px;
+	display: none;
+}
+/* end of exam-point-tree */
+
+/* point-practice */
+.point-practice .button {
+	margin: 0;
+}
+/* end of point-practice */
+.content .name-column {
+	display: inline-block;
+}
+
+.content .process-column {
+	width: 246px;
+	display: inline-block;
+	text-align: center;
+	float: right;
+}
+
+.content .done-questions-column {
+	width: 164px;
+	display: inline-block;
+	text-align: center;
+	float: right;
+}
+
+.content .rate-column {
+	width: 82px;
+	display: inline-block;
+	text-align: center;
+	float: right;
+}
+
+.content .button-column {
+	width: 100px;
+	display: inline-block;
+	text-align: center;
+	float: right;
+}
+
+.point-practice .process-bar {
+	width: 70%;
+	display: inline-block;
+	vertical-align: middle;
+}

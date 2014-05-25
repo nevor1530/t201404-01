@@ -1,51 +1,53 @@
-<?php /* @var $this Controller */ 
-	Yii::app()->bootstrap->register();  
-?>
-<!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-	<meta name="language" content="en" />
-
-	<link rel="stylesheet" type="text/css" href="<?php echo Yii::app()->request->baseUrl; ?>/css/index.css" />
-
-	<title><?php echo CHtml::encode($this->pageTitle); ?></title>
-	<?php Yii::app()->bootstrap->register(); ?>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>学海题库</title>
+<script src="http://code.jquery.com/jquery-2.1.1.min.js" type="text/javascript"></script>
+<script src="<?php echo Yii::app()->request->baseUrl; ?>/js/my_practice.js" type="text/javascript"></script>
+<link href="<?php echo Yii::app()->request->baseUrl; ?>/css/style.css" rel="stylesheet" type="text/css"/>
+<link href="<?php echo Yii::app()->request->baseUrl; ?>/css/common.css" rel="stylesheet" type="text/css"/>
 </head>
 
 <body>
+	<div class="header-bg"></div>
+    <div class="expire-tip">
+    	<span class="expire-tip-content">
+            您的帐号将于<span class="expire-tip-time">2011年05月01日</span>过期，请提前续费
+            <a class="expire-tip-btn">立即续费</a>	
+        </span>
+    </div>
+    <div class="container"> 
+    	<!-- 顶部蓝底部分-->
+    	<div id="header">
+    		<a class="logo"></a>
 
-<div class="navbar navbar-fixed-top">
-	<div class="row">
-		<div class="offset2 span4 text-left">
-			<img class="logo" src="<?php echo Yii::app()->request->baseUrl; ?>/images/logo.png"/>
-		</div>
-		<?php if (Yii::app()->user->isGuest) : ?>
-			<div class="span4 text-right btn-container">
-				<a href="<?php echo $this->createUrl('site/register') ?>" class="register-btn"><span>注册</span></a>
-				<span class="divider"></span>
-				<a href="<?php echo $this->createUrl('site/login') ?>" class="login-btn">登录</a>
-			</div>
-		<?php else : ?>
-			<div class="span4 text-right btn-container">
-				<a href="" class="username"><span><?php echo Yii::app()->user->name ?></span></a>
-				<span class="divider"></span>
-				<a href="<?php echo $this->createUrl('site/logout') ?>" class="login-btn">注销</a>
-			</div>
-		<?php endif ?>
-	</div>
-</div>
-	
-<div class="container" id="page">
-	
-	<?php echo $content; ?>
-	
-	<div class="clear"></div>
-
-	<div id="footer">
-	</div><!-- footer -->
-
-</div><!-- page -->
-
+			<span class="profile profile-user"><a href="#">注册</a> | <a href="#">登录</a></span>
+            <span class="profile">
+            	<div class="profile-user">
+                    <span class="profile-avatar"></span>
+                    <a href="#">zhixingzeng@gmail.com</a>
+                    <span class="profile-triangle"></span>
+                </div>
+                <ul>
+                	<li><a href="#">给当前题库续费</a></li>
+                    <li><a href="#">给当前题库续费</a></li>
+                    <li><a href="#">给当前题库续费</a></li>
+                    <li><a href="#">给当前题库续费</a></li>
+                    <li><a href="#">给当前题库续费</a></li>
+                </ul>
+            </span>
+        </div>
+        <!-- end of 顶部蓝底部分 -->
+		<div class="header-divider"></div>
+        <!-- 页面的内容 -->
+        <div id="main">
+           	<?php echo $content; ?>
+        </div>
+        <!-- end of 页面的内容 -->
+        
+        <div id="footer">
+        </div>
+    </div>	
 </body>
 </html>

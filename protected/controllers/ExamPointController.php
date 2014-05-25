@@ -6,7 +6,7 @@ class ExamPointController extends Controller
 	 * @var string the default layout for the views. Defaults to '//layouts/column2', meaning
 	 * using two-column layout. See 'protected/views/layouts/column2.php'.
 	 */
-	public $layout='//layouts/main';
+	public $layout='//layouts/function';
 
 	/**
 	 * @return array action filters
@@ -37,39 +37,39 @@ class ExamPointController extends Controller
 	}
 	
 	public function actionIndex($exam_bank_id, $subject_id = 0) {
-		$examBankRecord = ExamBankModel::model()->findByPk($exam_bank_id);
+//		$examBankRecord = ExamBankModel::model()->findByPk($exam_bank_id);
+//		
+//		$subjects = array();
+//		$subjectRecords = $examBankRecord->subjects;
+//		if ($subjectRecords != null) {
+//			foreach ($subjectRecords as $subjectRecord) {
+//				$subjects[] = array(
+//					'id' => $subjectRecord->subject_id,
+//					'name' => $subjectRecord->name
+//				);
+//			}
+//		}
+//		
+//		if ($subject_id == 0 && count($subjects) == 0) {
+//			throw new CHttpException(404,'The requested page does not exist.');
+//		} else if ($subject_id == 0) {
+//			$subject_id = $subjects[0]['id'];
+//		}
+//		
+//		$criteria = new CDbCriteria();
+//		$criteria->condition = 'subject_id = ' . $subject_id;  
+//		$examPointRecords = ExamPointModel::model()->top()->findAll($criteria);
+//		
+//		$examPoints = array();
+//		$this->getExamPoints($examPointRecords, $examPoints);
+//		
+//		$result = array(
+//			'examBankName' => $examBankRecord->name,
+//			'subjects' => $subjects,
+//			'examPoints' => $examPoints,
+//		);
 		
-		$subjects = array();
-		$subjectRecords = $examBankRecord->subjects;
-		if ($subjectRecords != null) {
-			foreach ($subjectRecords as $subjectRecord) {
-				$subjects[] = array(
-					'id' => $subjectRecord->subject_id,
-					'name' => $subjectRecord->name
-				);
-			}
-		}
-		
-		if ($subject_id == 0 && count($subjects) == 0) {
-			throw new CHttpException(404,'The requested page does not exist.');
-		} else if ($subject_id == 0) {
-			$subject_id = $subjects[0]['id'];
-		}
-		
-		$criteria = new CDbCriteria();
-		$criteria->condition = 'subject_id = ' . $subject_id;  
-		$examPointRecords = ExamPointModel::model()->top()->findAll($criteria);
-		
-		$examPoints = array();
-		$this->getExamPoints($examPointRecords, $examPoints);
-		
-		$result = array(
-			'examBankName' => $examBankRecord->name,
-			'subjects' => $subjects,
-			'examPoints' => $examPoints,
-		);
-		
-		$this->render('index', $result);
+		$this->render('index', array());
 	}
 	
 	public function createExamPaper($examPointId) {
