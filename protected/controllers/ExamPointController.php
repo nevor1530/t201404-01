@@ -91,27 +91,41 @@ class ExamPointController extends Controller
 		
 		$questions = array();
 		if ($questionRecords != null) {
-			for ($index = 0; $index < count($questionRecords); $index++) {
-				$questionModel = $questionRecords[$index];
-				$question[$index]['id'] = $questionModel->question_id;
-				$question[$index]['content'] = $questionModel->questionExtra->title;
-				if ($questionModel->question_type == QuestionModel::SINGLE_CHOICE_TYPE || $questionModel->question_type == QuestionModel::MULTIPLE_CHOICE_TYPE) {
-					$questionAnswerOptions = $questionModel->questionAnswerOptions;
-					foreach ($questionAnswerOptions as $questionAnswerOption) {
+			$examPaperInstanceModel = new ExamPaperInstanceModel;
+			$examPaperInstanceModel->exam_paper_id = 0;
+			$examPaperInstanceModel->user_id = $userId = Yii::app()->user->id;
+			$examPaperInstanceModel->remain_time = 30;
+			
+			if ($examPaperInstanceModel->validate() && $examPaperInstanceModel->save()) {
+				for ($index = 0; $index < count($questionRecords); $index++) {
+					$questionInstanceModel = new QuestionInstanceModel;
+					$questionInstanceModel->exam_paper_instance_id = $examPaperInstanceModel->exam_paper_instance_id;
+					$questionInstanceModel->question_id = $questionModel->question_id;
+					$questionInstanceModel->user_id = $userId = Yii::app()->user->id;
+					if ($questionInstanceModel->validate()) {
+						$questionInstanceModel->save();
+					}
+					
+					$questionModel = $questionRecords[$index];
+					$question[$index]['id'] = $questionModel->question_id;
+					$question[$index]['content'] = $questionModel->questionExtra->title;
+					if ($questionModel->question_type == QuestionModel::SINGLE_CHOICE_TYPE || $questionModel->question_type == QuestionModel::MULTIPLE_CHOICE_TYPE) {
+						$questionAnswerOptions = $questionModel->questionAnswerOptions;
+						foreach ($questionAnswerOptions as $questionAnswerOption) {
+							$question[$index]['answerOptions'][] = array(
+								'index' => chr($questionAnswerOption->attributes['index'] + 65),
+								'description' => $questionAnswerOption->attributes['description'],
+							);
+						}
+					}  else if ($questionModel->question_type == QuestionModel::TRUE_FALSE_TYPE) {
 						$question[$index]['answerOptions'][] = array(
-							'index' => chr($questionAnswerOption->attributes['index'] + 65),
-							'description' => $questionAnswerOption->attributes['description'],
+							array('index' => 'A', 'description' => '正确'),
+							array('index' => 'B', 'description' => '错误'),
 						);
 					}
-				}  else if ($questionModel->question_type == QuestionModel::TRUE_FALSE_TYPE) {
-					$question[$index]['answerOptions'][] = array(
-						array('index' => 'A', 'description' => '正确'),
-						array('index' => 'B', 'description' => '错误'),
-					);
 				}
+				
 			}
-			
-			$examPaperModel = new QuestionModel;
 		}
 		
 		$this->render('new_exam_paper', $questions);
