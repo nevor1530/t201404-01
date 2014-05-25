@@ -1,0 +1,29 @@
+@charset "utf-8";
+/* CSS Document */
+
+.bold {
+	font-weight: bold;
+}
+
+.font-size12 {
+	font-size: 12px;
+}
+
+.pull-right {
+	float: right;
+}
+
+.process-bar {
+	position: relative;
+	border-radius: 10px;
+	border: 1px solid #b2b4b6;
+	overflow: hidden;
+	height: 16px;
+}
+
+.process-bar .rate-bar {
+	height: 100%;
+	background-color: #3774b4;
+	border-radius: 10px;
+}
+	
