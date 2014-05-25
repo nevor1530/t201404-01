@@ -6,7 +6,7 @@ class ExamPointController extends Controller
 	 * @var string the default layout for the views. Defaults to '//layouts/column2', meaning
 	 * using two-column layout. See 'protected/views/layouts/column2.php'.
 	 */
-	public $layout='//layouts/column2';
+	public $layout='//layouts/main';
 
 	/**
 	 * @return array action filters
@@ -26,151 +26,181 @@ class ExamPointController extends Controller
 	public function accessRules()
 	{
 		return array(
-			array('allow',  // allow all users to perform 'index' and 'view' actions
-				'actions'=>array('index','view'),
-				'users'=>array('*'),
-			),
 			array('allow', // allow authenticated user to perform 'create' and 'update' actions
-				'actions'=>array('create','update'),
+				'actions'=>array('index'),
 				'users'=>array('@'),
-			),
-			array('allow', // allow admin user to perform 'admin' and 'delete' actions
-				'actions'=>array('admin','delete'),
-				'users'=>array('admin'),
 			),
 			array('deny',  // deny all users
 				'users'=>array('*'),
 			),
 		);
 	}
-
-	/**
-	 * Displays a particular model.
-	 * @param integer $id the ID of the model to be displayed
-	 */
-	public function actionView($id)
-	{
-		$this->render('view',array(
-			'model'=>$this->loadModel($id),
-		));
-	}
-
-	/**
-	 * Creates a new model.
-	 * If creation is successful, the browser will be redirected to the 'view' page.
-	 */
-	public function actionCreate()
-	{
-		$model=new ExamPointModel;
-
-		// Uncomment the following line if AJAX validation is needed
-		// $this->performAjaxValidation($model);
-
-		if(isset($_POST['ExamPointModel']))
-		{
-			$model->attributes=$_POST['ExamPointModel'];
-			if($model->save())
-				$this->redirect(array('view','id'=>$model->exam_point_id));
+	
+	public function actionIndex($exam_bank_id, $subject_id = 0) {
+		$examBankRecord = ExamBankModel::model()->findByPk($exam_bank_id);
+		
+		$subjects = array();
+		$subjectRecords = $examBankRecord->subjects;
+		if ($subjectRecords != null) {
+			foreach ($subjectRecords as $subjectRecord) {
+				$subjects[] = array(
+					'id' => $subjectRecord->subject_id,
+					'name' => $subjectRecord->name
+				);
+			}
 		}
-
-		$this->render('create',array(
-			'model'=>$model,
-		));
-	}
-
-	/**
-	 * Updates a particular model.
-	 * If update is successful, the browser will be redirected to the 'view' page.
-	 * @param integer $id the ID of the model to be updated
-	 */
-	public function actionUpdate($id)
-	{
-		$model=$this->loadModel($id);
-
-		// Uncomment the following line if AJAX validation is needed
-		// $this->performAjaxValidation($model);
-
-		if(isset($_POST['ExamPointModel']))
-		{
-			$model->attributes=$_POST['ExamPointModel'];
-			if($model->save())
-				$this->redirect(array('view','id'=>$model->exam_point_id));
-		}
-
-		$this->render('update',array(
-			'model'=>$model,
-		));
-	}
-
-	/**
-	 * Deletes a particular model.
-	 * If deletion is successful, the browser will be redirected to the 'admin' page.
-	 * @param integer $id the ID of the model to be deleted
-	 */
-	public function actionDelete($id)
-	{
-		if(Yii::app()->request->isPostRequest)
-		{
-			// we only allow deletion via POST request
-			$this->loadModel($id)->delete();
-
-			// if AJAX request (triggered by deletion via admin grid view), we should not redirect the browser
-			if(!isset($_GET['ajax']))
-				$this->redirect(isset($_POST['returnUrl']) ? $_POST['returnUrl'] : array('admin'));
-		}
-		else
-			throw new CHttpException(400,'Invalid request. Please do not repeat this request again.');
-	}
-
-	/**
-	 * Lists all models.
-	 */
-	public function actionIndex()
-	{
-		$dataProvider=new CActiveDataProvider('ExamPointModel');
-		$this->render('index',array(
-			'dataProvider'=>$dataProvider,
-		));
-	}
-
-	/**
-	 * Manages all models.
-	 */
-	public function actionAdmin()
-	{
-		$model=new ExamPointModel('search');
-		$model->unsetAttributes();  // clear any default values
-		if(isset($_GET['ExamPointModel']))
-			$model->attributes=$_GET['ExamPointModel'];
-
-		$this->render('admin',array(
-			'model'=>$model,
-		));
-	}
-
-	/**
-	 * Returns the data model based on the primary key given in the GET variable.
-	 * If the data model is not found, an HTTP exception will be raised.
-	 * @param integer the ID of the model to be loaded
-	 */
-	public function loadModel($id)
-	{
-		$model=ExamPointModel::model()->findByPk($id);
-		if($model===null)
+		
+		if ($subject_id == 0 && count($subjects) == 0) {
 			throw new CHttpException(404,'The requested page does not exist.');
-		return $model;
+		} else if ($subject_id == 0) {
+			$subject_id = $subjects[0]['id'];
+		}
+		
+		$criteria = new CDbCriteria();
+		$criteria->condition = 'subject_id = ' . $subject_id;  
+		$examPointRecords = ExamPointModel::model()->top()->findAll($criteria);
+		
+		$examPoints = array();
+		$this->getExamPoints($examPointRecords, $examPoints);
+		
+		$result = array(
+			'examBankName' => $examBankRecord->name,
+			'subjects' => $subjects,
+			'examPoints' => $examPoints,
+		);
+		
+		$this->render('index', $result);
 	}
+	
+	public function createExamPaper($examPointId) {
+		$criteria = new CDbCriteria();
+		$examPointRecord = ExamPointModel::model()->findByPk($examPointId);
+		
+		$subExamPoints = array();
+		$this->getExamPoints($examPointRecord->subExamPoints, $subExamPoints);
 
-	/**
-	 * Performs the AJAX validation.
-	 * @param CModel the model to be validated
-	 */
-	protected function performAjaxValidation($model)
-	{
-		if(isset($_POST['ajax']) && $_POST['ajax']==='exam-point-model-form')
-		{
-			echo CActiveForm::validate($model);
-			Yii::app()->end();
+		$candidateQuestionIds = $this->getQuestionIdsByExamPointId($examPointId);
+		foreach ($subExamPoints as $subExamPoint) {
+			$candidateQuestionIds = array_merge($candidateQuestionIds, $subExamPoint['question_ids']);
+		}
+		
+		$selectedQuestionIds = array_rand($candidateQuestionIds, 15);
+		$criteria = new CDbCriteria();
+		$criteria->addInCondition("question_id", $selectedQuestionIds);
+		$questionRecords = QuestionExamPointModel::model()->findAll($criteria);	
+		
+		$questions = array();
+		if ($questionRecords != null) {
+			for ($index = 0; $index < count($questionRecords); $index++) {
+				$questionModel = $questionRecords[$index];
+				$question[$index]['id'] = $questionModel->question_id;
+				$question[$index]['content'] = $questionModel->questionExtra->title;
+				if ($questionModel->question_type == QuestionModel::SINGLE_CHOICE_TYPE || $questionModel->question_type == QuestionModel::MULTIPLE_CHOICE_TYPE) {
+					$questionAnswerOptions = $questionModel->questionAnswerOptions;
+					foreach ($questionAnswerOptions as $questionAnswerOption) {
+						$question[$index]['answerOptions'][] = array(
+							'index' => chr($questionAnswerOption->attributes['index'] + 65),
+							'description' => $questionAnswerOption->attributes['description'],
+						);
+					}
+				}  else if ($questionModel->question_type == QuestionModel::TRUE_FALSE_TYPE) {
+					$question[$index]['answerOptions'][] = array(
+						array('index' => 'A', 'description' => '正确'),
+						array('index' => 'B', 'description' => '错误'),
+					);
+				}
+			}
+			
+			$examPaperModel = new QuestionModel;
+		}
+		
+		$this->render('new_exam_paper', $questions);
+	}
+	
+	private function getExamPoints($examPointRecords, &$result) {
+		if ($examPointRecords == null || count($examPointRecords) == 0) {
+			return;
+		}
+		
+		for ($i = 0; $i < count($examPointRecords); $i++) {
+			$examPointRecord = $examPointRecords[$i];
+			$examPointId = $examPointRecord->exam_point_id;
+			$result[$i] = array(
+				'id' => $examPointId,
+				'name' => $examPointRecord->name,
+				'exam_point_ids' => array($examPointId),
+			);
+			
+			$curExamPointQuestionIds = $this->getQuestionIdsByExamPointId($examPointId);
+			
+			if (!empty($examPointRecord->subExamPoints)){
+				$subExamPoints = array();
+				$this->getExamPoints($examPointRecord->subExamPoints, $subExamPoints);
+				$result[$i]['sub_exam_points'] = $subExamPoints;
+				$subExamPointIds = array();
+				foreach ($subExamPoints as $subExamPoint) {
+					$curExamPointQuestionIds = array_merge($curExamPointQuestionIds, $subExamPoint['question_ids']);
+					$subExamPointIds[] = $subExamPoint['id'];
+				}
+				$result[$i]['exam_point_ids'] = array_merge($result[$i]['exam_point_ids'], $subExamPointIds);
+			} else {
+				$result[$i]['sub_exam_points'] = array();
+			}
+			
+			$curExamPointQuestionIds = array_unique($curExamPointQuestionIds);
+			$result[$i]['question_ids'] = $curExamPointQuestionIds;
+			$result[$i]['question_count'] = count($curExamPointQuestionIds);
+			
+			$userId = Yii::app()->user->id;
+			$result[$i]['finished_question_count'] = $this->getFinishedQuestionCount($userId, $result[$i]['exam_point_ids']);
+			$result[$i]['correct_question_count'] = $this->calCorrectQuestionCount($userId, $result[$i]['exam_point_ids']);
 		}
 	}
+	
+	private function getQuestionIdsByExamPointId($examPointId) {
+		$questionIds = array();
+		$criteria = new CDbCriteria();
+		$criteria->condition = 'exam_point_id = ' . $examPointId;  
+		$records = QuestionExamPointModel::model()->findAll($criteria);	
+		if ($records != null) {
+			foreach ($records as $record) {
+				$questionIds[] = $record->question_id;
+			}
+		}
+		return $questionIds;
+	}
+	
+	private function getFinishedQuestionCount($userId, $examPointIds) {
+		$sql = "SELECT count(DISTINCT(question_instance.question_id)) as count FROM question_instance,question_exam_point WHERE " .
+					"question_instance.myanswer IS NOT NULL AND " . 
+					"question_instance.user_id=$userId AND " . 
+					"question_instance.question_id=question_exam_point.question_id AND " .
+					"question_exam_point.question_id IN(" . implode(',' , $examPointIds) . ")";
+		$db = Yii::app()->db;
+		$command = $db->createCommand($sql);
+		$result = $command->queryAll(); 
+		if ($result != null && is_array($result) && count($result) > 0) {
+			return $result[0]['count'];
+		}
+		
+		return 0;
+	}
+	
+	private function calCorrectQuestionCount($userId, $examPointIds) {
+		$sql = "SELECT count(DISTINCT(question_instance.question_id)) as count FROM question_instance,question,question_exam_point WHERE " .
+					"question_instance.user_id=$userId AND " . 
+					"question_instance.question_id=question_exam_point.question_id AND " .
+					"question_instance.question_id=question.question_id AND " . 
+					"question_instance.myanswer=question.answer AND " . 
+					"question_exam_point.question_id IN(" . implode(',' , $examPointIds) . ")";
+		$db = Yii::app()->db;
+		$command = $db->createCommand($sql);
+		$result = $command->queryAll(); 
+		if ($result != null && is_array($result) && count($result) > 0) {
+			return $result[0]['count'];
+		}
+		
+		return 0;
+	}
+	
 }

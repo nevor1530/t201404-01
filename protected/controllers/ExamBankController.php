@@ -26,17 +26,9 @@ class ExamBankController extends Controller
 	public function accessRules()
 	{
 		return array(
-			array('allow',  // allow all users to perform 'index' and 'view' actions
-				'actions'=>array('index','view'),
-				'users'=>array('*'),
-			),
 			array('allow', // allow authenticated user to perform 'create' and 'update' actions
-				'actions'=>array('create','update', 'info'),
+				'actions'=>array('index'),
 				'users'=>array('@'),
-			),
-			array('allow', // allow admin user to perform 'admin' and 'delete' actions
-				'actions'=>array('admin','delete'),
-				'users'=>array('admin'),
 			),
 			array('deny',  // deny all users
 				'users'=>array('*'),
@@ -72,90 +64,6 @@ class ExamBankController extends Controller
 		$this->render('index',array(
 			'examBanks' => $examBanks,
 		));
-	}
-	
-	public function actionInfo($exam_bank_id, $subject_id = 0) {
-		$examBankRecord = ExamBankModel::model()->findByPk($exam_bank_id);
-		
-		$subjects = array();
-		$subjectRecords = $examBankRecord->subjects;
-		if ($subjectRecords != null) {
-			foreach ($subjectRecords as $subjectRecord) {
-				$subjects[] = array(
-					'id' => $subjectRecord->subject_id,
-					'name' => $subjectRecord->name
-				);
-			}
-		}
-		
-		if ($subject_id == 0 && count($subjects) == 0) {
-			throw new CHttpException(404,'The requested page does not exist.');
-		} else if ($subject_id == 0) {
-			$subject_id = $subjects[0]['id'];
-		}
-		
-		$criteria = new CDbCriteria();
-		$criteria->condition = 'subject_id = ' . $subject_id;  
-		$examPointRecords = ExamPointModel::model()->top()->findAll($criteria);
-		
-		$examPoints = array();
-		$this->getExamPoints($examPointRecords, $examPoints);
-		
-//		header("Content-Type: text/html; charset=utf8");
-//		print_r($examPoints);exit();
-		
-		$result = array(
-			'examBankName' => $examBankRecord->name,
-			'subjects' => $subjects,
-			'examPoints' => $examPoints,
-		);
-		
-		$this->render('info', $result);
-	}
-	
-	private function getExamPoints($examPointRecords, &$result) {
-		if ($examPointRecords == null || count($examPointRecords) == 0) {
-			return;
-		}
-		
-		for ($i = 0; $i < count($examPointRecords); $i++) {
-			$examPointRecord = $examPointRecords[$i];
-			$examPointId = $examPointRecord->exam_point_id;
-			$result[$i] = array(
-				'id' => $examPointId,
-				'name' => $examPointRecord->name,
-			);
-			
-			$curExamPointQuestionIds = $this->getQuestionIdsByExamPointId($examPointId);
-			
-			if (!empty($examPointRecord->subExamPoints)){
-				$subExamPoints = array();
-				$this->getExamPoints($examPointRecord->subExamPoints, $subExamPoints);
-				$result[$i]['sub_exam_points'] = $subExamPoints;
-				foreach ($subExamPoints as $subExamPoint) {
-					$curExamPointQuestionIds = array_merge($curExamPointQuestionIds, $subExamPoint['question_ids']);
-				}
-			} else {
-				$result[$i]['sub_exam_points'] = array();
-			}
-			
-			$curExamPointQuestionIds = array_unique($curExamPointQuestionIds);
-			$result[$i]['question_ids'] = $curExamPointQuestionIds;
-			$result[$i]['question_count'] = count($curExamPointQuestionIds);
-		}
-	}
-	
-	private function getQuestionIdsByExamPointId($examPointId) {
-		$questionIds = array();
-		$criteria = new CDbCriteria();
-		$criteria->condition = 'exam_point_id = ' . $examPointId;  
-		$records = QuestionExamPointModel::model()->findAll($criteria);	
-		if ($records != null) {
-			foreach ($records as $record) {
-				$questionIds[] = $record->question_id;
-			}
-		}
-		return $questionIds;
 	}
 	
 	private function getRealExamPaperCountByExamBankId($examBankId) {
