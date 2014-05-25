@@ -27,11 +27,11 @@ class ExamBankController extends Controller
 	{
 		return array(
 			array('allow',  // allow all users to perform 'index' and 'view' actions
-				'actions'=>array('index','view', 'info'),
+				'actions'=>array('index','view'),
 				'users'=>array('*'),
 			),
 			array('allow', // allow authenticated user to perform 'create' and 'update' actions
-				'actions'=>array('create','update'),
+				'actions'=>array('create','update', 'info'),
 				'users'=>array('@'),
 			),
 			array('allow', // allow admin user to perform 'admin' and 'delete' actions
@@ -75,7 +75,6 @@ class ExamBankController extends Controller
 	}
 	
 	public function actionInfo($exam_bank_id, $subject_id = 0) {
-		print_r(Yii::app()->user->user_id);exit();
 		$examBankRecord = ExamBankModel::model()->findByPk($exam_bank_id);
 		
 		$subjects = array();
@@ -142,7 +141,7 @@ class ExamBankController extends Controller
 			
 			$curExamPointQuestionIds = array_unique($curExamPointQuestionIds);
 			$result[$i]['question_ids'] = $curExamPointQuestionIds;
-			$result[$i]['question_count'] += count($curExamPointQuestionIds);
+			$result[$i]['question_count'] = count($curExamPointQuestionIds);
 		}
 	}
 	
