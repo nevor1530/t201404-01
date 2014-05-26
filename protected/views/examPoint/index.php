@@ -16,90 +16,37 @@ $this->breadcrumbs=array(
     <div class="process-column">答题进度</div>
 </div>
 <div class="exam-point-tree point-practice">
-	<div class="level">
-    	<div class="item">
-        	<div class="title name-column">考点名</div>
-            <button class="button button-column">练习</button>
-            <div class="rate-column">91%</div>
-			<div class="done-questions-column">117道</div>
-            <div class="process-column">
-            	<div class="process-bar"><div class="rate-bar" style="width: 20%"></div></div>
-                87/110道
-            </div>
-        </div>
-        <div class="sublevel">
-        	<div class="level">
-            <div class="item">
-                <div class="title name-column">考点名</div>
-                <button class="button button-column">练习</button>
-                <div class="rate-column">91%</div>
-                <div class="done-questions-column">117道</div>
-                <div class="process-column">
-                    <div class="process-bar"><div class="rate-bar" style="width: 20%"></div></div>
-                    87/110道
-                </div>
-            </div>
-            <div class="sublevel">
-                <div class="level">
-                    <div class="item">
-                        <div class="title name-column">考点名</div>
-                        <button class="button button-column">练习</button>
-                        <div class="rate-column">91%</div>
-                        <div class="done-questions-column">117道</div>
-                        <div class="process-column">
-                            <div class="process-bar"><div class="rate-bar" style="width: 20%"></div></div>
-                            87/110道
-                        </div>
-                    </div>
-                    <div class="sublevel">
-                        
-                    </div>
-                </div>
-            </div>
-        </div>
-        </div>
-    </div>
-    <div class="level">
-    	<div class="item">
-        	<div class="title name-column">考点名</div>
-            <button class="button button-column">练习</button>
-            <div class="rate-column">91%</div>
-			<div class="done-questions-column">117道</div>
-            <div class="process-column">
-            	<div class="process-bar"><div class="rate-bar" style="width: 20%"></div></div>
-                87/110道
-            </div>
-        </div>
-        <div class="sublevel">
-        	<div class="level">
-            <div class="item">
-                <div class="title name-column">考点名</div>
-                <button class="button button-column">练习</button>
-                <div class="rate-column">91%</div>
-                <div class="done-questions-column">117道</div>
-                <div class="process-column">
-                    <div class="process-bar"><div class="rate-bar" style="width: 20%"></div></div>
-                    87/110道
-                </div>
-            </div>
-            <div class="sublevel">
-                <div class="level">
-                    <div class="item">
-                        <div class="title name-column">考点名</div>
-                        <button class="button button-column">练习</button>
-                        <div class="rate-column">91%</div>
-                        <div class="done-questions-column">117道</div>
-                        <div class="process-column">
-                            <div class="process-bar"><div class="rate-bar" style="width: 20%"></div></div>
-                            87/110道
-                        </div>
-                    </div>
-                    <div class="sublevel">
-                        
-                    </div>
-                </div>
-            </div>
-        </div>
-        </div>
-    </div>
+<?php 
+	function genExamPointHtml($examPoint) {
+		$totalQuestionCount = $examPoint['question_count'];
+		$finishedQuestionCount = $examPoint['finished_question_count'];
+		$correctQuestionCount = $examPoint['correct_question_count'];
+		$correctRate = $totalQuestionCount == 0 ? 0 : $correctQuestionCount / $totalQuestionCount;
+		
+		$html = '<div class="level">';
+		$html .= '	<div class="item">';
+		$html .= '		<div class="title name-column">' . $examPoint['name'] . '</div>';
+		$html .= '		<button class="button button-column">练习</button>';
+		$html .= '		<div class="rate-column">' . $correctRate . '</div>';
+		$html .= '		<div class="done-questions-column">' . $finishedQuestionCount . '道</div>';
+		$html .= '		<div class="process-column">';
+		$html .= '			<div class="process-bar"><div class="rate-bar" style="width: 20%"></div></div>';
+		$html .= '		' . $finishedQuestionCount . '/' . $totalQuestionCount . '道';
+		$html .= '		</div>';
+		$html .= '	</div>';
+		
+		$subExamPoints = $examPoint['sub_exam_points'];
+		foreach ($subExamPoints as $subExamPoint) {
+			$html .= '	<div class="sublevel">';
+			$html .= genExamPointHtml($subExamPoint);
+			$html .= '	</div>';
+		}
+		$html .= '</div>';
+		return $html;
+	}
+	
+	foreach ($examPoints as $examPoint) {
+		echo genExamPointHtml($examPoint);
+	}
+?>
 </div>

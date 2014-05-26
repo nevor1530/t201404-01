@@ -1,9 +1,13 @@
 <?php /* @var $this Controller */ ?>
 <?php $this->beginContent('//layouts/main'); ?>
-    <span class="exam-bank-btn">题库名称</span>
+    <span class="exam-bank-btn"><?php echo $this->examBankName; ?></span>
     <ul class="subject-list">
-    	<li class="current"><a href="#">学生1</a></li>
-        <li><a href="#">学科2</a></li>
+    	<?php foreach ($this->subjects as $subject) { 
+    		$subjectName = $subject['name'];
+    		$style = $subject['is_current'] ? "current" : "";
+    	?>
+    		<li class="<?php echo $style;?>"><a href="#"><?php echo $subjectName; ?></a></li>
+    	<?php } ?>
     </ul>
     
     <ul class="function-list">
