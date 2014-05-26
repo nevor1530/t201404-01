@@ -1,21 +1,3 @@
-<?php
-/* @var $this SiteController */
-/* @var $model LoginForm */
-/* @var $form CActiveForm  */
-
-//$this->pageTitle=Yii::app()->name . ' - ' . $examBankName;
-$this->breadcrumbs=array(
-	'Login',
-);
-?>
-
-<!-- 专项训练，真题模考，我的练习 单独的页面内容 -->
-<ul class="subfunction-list">
-	<li class="current"><a href="#">练习历史</a></li>
-    <li><a href="#">我的错题</a></li>
-    <li><a href="#">我的收藏</a></li>
-</ul>
-
 <div class="content">
 	<div class="point-practice-table-header">
 		<div class="name-column">专项训练</div>

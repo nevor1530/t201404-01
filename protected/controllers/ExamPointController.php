@@ -12,10 +12,6 @@ class ExamPointController extends Controller
 	public $subjects;
 	public $curTab;
 	
-	const PRACTISE_TAB = 0;
-	const REAL_EXAM_PAPER_TAB = 1;
-	const PRACTISE_HISTORY_TAB = 2;
-
 	/**
 	 * @return array action filters
 	 */
@@ -45,7 +41,7 @@ class ExamPointController extends Controller
 	}
 	
 	public function actionIndex($exam_bank_id, $subject_id = 0) {
-		$this->curTab = PRACTISE_TAB;
+		$this->curTab = Constants::$EXAM_POINT_TAB;
 		$examBankRecord = ExamBankModel::model()->findByPk($exam_bank_id);
 		$this->examBankName = $examBankRecord->name;
 		$this->examBankId = $exam_bank_id;
