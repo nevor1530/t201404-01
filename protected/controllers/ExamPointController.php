@@ -7,6 +7,7 @@ class ExamPointController extends Controller
 	 * using two-column layout. See 'protected/views/layouts/column2.php'.
 	 */
 	public $layout='//layouts/function';
+	public $examBankId;
 	public $examBankName;
 	public $subjects;
 	public $curTab;
@@ -47,6 +48,7 @@ class ExamPointController extends Controller
 		$this->curTab = PRACTISE_TAB;
 		$examBankRecord = ExamBankModel::model()->findByPk($exam_bank_id);
 		$this->examBankName = $examBankRecord->name;
+		$this->examBankId = $exam_bank_id;
 		
 		$subjects = array();
 		$subjectRecords = $examBankRecord->subjects;
