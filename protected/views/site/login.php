@@ -25,14 +25,14 @@ $this->breadcrumbs=array(
 	
 	<div class="login-form form-horizontal">
 		<div class="control-group">
-			<label class="control-label"><?php echo $form->labelEx($model,'username'); ?></label>
+			<?php echo $form->labelEx($model,'username', array('class'=>'control-label')); ?>
 			<div class="controls">
 				<input class="username-input" type="text" id="LoginForm_username" name="LoginForm[username]" placeholder="请输入邮箱">
 			</div>
 		</div>
 	
 		<div class="control-group">
-			<label class="control-label"><?php echo $form->labelEx($model,'password'); ?></label>
+			<?php echo $form->labelEx($model,'password', array('class'=>'control-label')); ?>
 			<div class="controls">
 				<input class="password-input" type="password" id="LoginForm_password" name="LoginForm[password]" placeholder="请输入6个以上字符">
 			</div>
@@ -45,7 +45,7 @@ $this->breadcrumbs=array(
 		</div>
 		
 		<div class="control-group">
-			<input class="register-btn" type="submit" value="还没有账号？立即注册>>">
+			<input class="register-btn" type="button" onclick="location.href='<?php echo Yii::app()->createUrl('site/register');?>'" value="还没有账号？立即注册>>">
 		</div>
 		
 		<?php $this->endWidget(); ?>

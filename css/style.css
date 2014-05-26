@@ -1,4 +1,4 @@
-﻿@charset "utf-8";
+@charset "utf-8";
 /* CSS Document */
 * {
 	font-family: "Microsoft YaHei" ! important;
@@ -47,200 +47,25 @@ ul.subfunction-list li a:hover,
 .container {
 	max-width: 900px;
 	margin: auto;
+	position: relative;
 }
 
 #header {
 	position: relative;
 }
 
-.login {
-	padding-top: 90px;
-	margin: 0 auto;
-}
-
-.login .title-group {
-	margin: 0 auto;
-	display: table;
-	width: auto;
-}
-
-.login .user-icon {
-	background: url("../images/login.png") no-repeat;
-	background-size: 22px 22px;
-	width: 22px;
-	height: 22px;
-	display: inline-block;
-	vertical-align: top;
-	margin-right: 5px;
-}
-
-.login .title {
-	font-weight: 600;
-	font-family: "Microsoft YaHei" !important;
-	font-size: 18px;
-	letter-spacing: 1px;
-}
-
-.login .login-form {
-	margin-top: 40px;
-}
-
-.login .control-group {
-	display: table;
-	width: auto;
-	margin-left: auto;
-	margin-right: auto;
-	margin-bottom: 10px;
-}
-
-.login .login-form .control-label {
-	width: 40px;
-}
-
-.login .login-form .controls {
-	margin-left: 60px;
-	float: right;
-}
-
-.login .login-form .controls .username-input {
-	width: 240px;
-}
-
-.login .login-form .controls .password-input {
-	width: 240px;
-}
-
-.login .login-btn {
- 	padding-bottom: 8px;
-    padding-left: 45px;
-    padding-right: 45px;
-    padding-top: 8px;
-    box-shadow: 0 -4px 0 #2A6496 inset;
-    border-radius: 6px;
-    background-color: #4391e3;
-    color: #FFFFFF;
-    font-size: 19px;
-    letter-spacing: 10px;
-    border-width: 0;
-    margin-left: 60px;
-}
-
-.login .register-btn {
-	padding: 8px 31px;
-    box-shadow: 0 -4px 0 #2A6496 inset;
-    border-radius: 6px;
-    background-color: #4391e3;
-    color: #FFFFFF;
-    font-size: 16px;
-    letter-spacing: 0.5px;
-    border-width: 0;
-    margin-left: 65px;
-}
-
-.login .auto-login-text {
-	line-height: 42px;
-	font-size: 12px;
-}
-
-.register {
-	padding-top: 90px;
-	margin: 0 auto;
-}
-
-.register .title-group {
-	margin: 0 auto;
-	padding-left: 70px;
-	display: table;
-	width: auto;
-}
-
-.register .user-icon {
-	background: url("../images/register.png") no-repeat;
-	background-size: 22px 22px;
-	width: 22px;
-	height: 22px;
-	display: inline-block;
-	vertical-align: top;
-	margin-right: 5px;
-}
-
-.register .title {
-	font-weight: 600;
-	font-family: "Microsoft YaHei" !important;
-	font-size: 18px;
-	letter-spacing: 1px;
-}
-
-.register .register-form {
-	margin-top: 40px;
-}
-
-.register .control-group {
-	display: table;
-	width: auto;
-	margin-left: auto;
-	margin-right: auto;
-	margin-bottom: 10px;
-}
-
-.register .register-form .control-label {
-	width: 80px;
-}
-
-.register .register-form .controls {
-	margin-left: 100px;
-	float: right;
-}
-
-.register .register-form .controls .username-input {
-	width: 240px;
-}
-
-.register .register-form .controls .password-input {
-	width: 240px;
-}
-
-.register .register-form .controls .confirm-input {
-	width: 240px;
-}
-
-.register .register-btn {
- 	padding: 8px 15px;
-    box-shadow: 0 -4px 0 #2A6496 inset;
-    background-color: #4391e3;
-    border-radius: 4px;
-    color: #FFFFFF;
-    font-size: 19px;
-    letter-spacing: 6px;
-    border-width: 0;
-    margin-left: 60px;
-}
-
-.register .login-btn {
-	padding: 10px 60px;
-    box-shadow: 0 -4px 0 #2A6496 inset;
-    border-radius: 6px;
-    background-color: #4391e3;
-    color: #FFFFFF;
-    font-size: 16px;
-    letter-spacing: 0.5px;
-    border-width: 0;
-    margin-left: 50px;
-}
-
-.register .policy-text {
-	line-height: 49px;
-	font-size: 13px;
-}
-
 .profile {
 	position: absolute;
 	bottom: 0;
 	right: 0;
+	min-width: 180px;
+	text-align: right;
 }
 
 .profile-user {
 	margin-bottom: 5px;
+	font-size: 18px;
+	color: #ffffff;
 }
 
 .profile-avatar{
@@ -294,7 +119,7 @@ ul.subfunction-list li a:hover,
 }
 
 #main {
-	padding: 20px 26px;
+	padding: 0 26px;
 }
 
 /*续费提示*/
@@ -340,7 +165,7 @@ ul.subfunction-list li a:hover,
 
 /*学科导航*/
 .subject-list {
-	margin-top: 28px;
+	margin-top: 18px;
 	overflow: hidden;
 }
 
@@ -440,7 +265,6 @@ ul.subfunction-list li.current a {
 	border-top: 3px solid #96c7ff;
 	margin-top: 10px;
 	padding-top: 10px;
-	padding-bottom: 20px;
 	line-height: 28px;
 }
 
@@ -475,7 +299,7 @@ ul.subfunction-list li.current a {
 	background-color: #60aaf6;
 	padding: 3px 30px;
 	color: #ffffff;
-	margin-left: 20px;
+	margin: 0 0 0 20px;
 }
 
 .exam-point-tree .button:hover {
@@ -530,3 +354,274 @@ ul.subfunction-list li.current a {
 	display: inline-block;
 	vertical-align: middle;
 }
+
+/* 登录页面 */
+
+.login {
+	padding-top: 70px;
+	margin: 0 auto;
+}
+
+.login .title-group {
+	margin: 0 auto;
+	display: table;
+	width: auto;
+}
+
+.login .user-icon {
+	background: url("../images/login.png") no-repeat;
+	width: 24px;
+	height: 24px;
+	display: inline-block;
+	vertical-align: sub;
+	margin-right: 5px;
+}
+
+.login .title {
+	font-weight: 600;
+	font-family: "Microsoft YaHei" !important;
+	font-size: 24px;
+	letter-spacing: 1px;
+}
+
+.login .login-form {
+	margin-top: 40px;
+}
+
+.login .control-group {
+	display: table;
+	width: auto;
+	margin-left: auto;
+	margin-right: auto;
+	margin-bottom: 10px;
+}
+
+.login .login-form .control-label {
+	width: 40px;
+	margin-right: 10px;
+}
+
+.login .login-form .controls {
+}
+
+.login .login-form .controls .username-input {
+	width: 240px;
+}
+
+.login .login-form .controls .password-input {
+	width: 240px;
+}
+
+.login .login-btn {
+    padding: 8px 45px;
+    box-shadow: 0 -4px 0 #2A6496 inset;
+    border-radius: 6px;
+    background-color: #4391e3;
+    color: #FFFFFF;
+    font-size: 18px;
+    letter-spacing: 10px;
+    border-width: 0;
+    margin-left: 50px;
+}
+
+.login .register-btn {
+	padding: 8px 20px;
+    box-shadow: 0 -4px 0 #2A6496 inset;
+    border-radius: 6px;
+    background-color: #4391e3;
+    color: #FFFFFF;
+    font-size: 18px;
+    border-width: 0;
+    margin-left: 50px;
+}
+
+.login .login-btn:hover, .login .register-btn:hover {
+	background-color: #5cb6f0;
+	box-shadow: 0 -4px 0 #3195dd inset;
+}
+
+.login .auto-login-text {
+	line-height: 42px;
+	font-size: 12px;
+}
+
+
+.form-horizontal .control-group {
+  margin-bottom: 20px;
+  width: 350px;
+}
+
+.form-horizontal .control-group:before,
+.form-horizontal .control-group:after {
+  display: table;
+  line-height: 0;
+  content: "";
+}
+
+.form-horizontal .control-group:after {
+  clear: both;
+}
+
+.form-horizontal .control-label {
+  float: left;
+  width: 160px;
+  padding-top: 5px;
+  text-align: right;
+}
+
+.form-horizontal .controls {
+  *display: inline-block;
+  *padding-left: 20px;
+  margin-left: 50px;
+  *margin-left: 0;
+}
+
+.form-horizontal .controls:first-child {
+  *padding-left: 180px;
+}
+/* end of 登录页面 */
+
+/* 注册页面 */
+
+.register {
+	padding-top: 70px;
+	margin: 0 auto;
+}
+
+.register .title-group {
+	margin: 0 auto;
+	display: table;
+	width: auto;
+}
+
+.register .user-icon {
+	background: url("../images/register.png") no-repeat;
+	width: 24px;
+	height: 24px;
+	display: inline-block;
+	vertical-align: sub;
+	margin-right: 5px;
+}
+
+.register .title {
+	font-weight: 600;
+	font-family: "Microsoft YaHei" !important;
+	font-size: 24px;
+	letter-spacing: 1px;
+}
+
+.register .register-form {
+	margin-top: 40px;
+}
+
+.register .control-group {
+	display: table;
+	margin-left: auto;
+	margin-right: auto;
+	margin-bottom: 10px;
+}
+
+.register .register-form .control-label {
+	width: 70px;
+	margin-right: 10px
+}
+
+.register .register-form .controls .username-input,
+.register .register-form .controls .password-input,
+.register .register-form .controls .confirm-input {
+	width: 260px;
+}
+
+.register .register-btn {
+ 	padding: 8px 8px;
+    box-shadow: 0 -4px 0 #2A6496 inset;
+    background-color: #4391e3;
+    border-radius: 4px;
+    color: #FFFFFF;
+    font-size: 18px;
+    border-width: 0;
+    margin-left: 80px;
+}
+
+.register .login-btn {
+	padding: 10px 37px;
+    box-shadow: 0 -4px 0 #2A6496 inset;
+    border-radius: 6px;
+    background-color: #4391e3;
+    color: #FFFFFF;
+    font-size: 18px;
+    letter-spacing: 0.5px;
+    border-width: 0;
+    margin-left: 80px;
+}
+
+.register .login-btn:hover, .register .register-btn:hover {
+	background-color: #5cb6f0;
+	box-shadow: 0 -4px 0 #3195dd inset;
+}
+
+.register .policy-text {
+	line-height: 49px;
+	font-size: 13px;
+}
+/* end of 注册页面 */
+
+/* 题库页面 */
+.exam-bank-page .item {
+	margin: 30px 18px 0;
+	width: 350px;
+	padding:10px 30px 6px;
+	background-color:#f4f9ff;
+	border-style: solid;
+	border-width: 1px;
+	border-color: #e4e9ff;
+	display: inline-block;
+}
+
+.exam-bank-page .exam-bank-icon {
+	height: 145px;
+	width: 125px;
+}
+
+.exam-bank-page .exam-bank-text {
+	display: inline-block;
+	margin-left: 30px;
+	vertical-align: top;
+	margin-top: 10px;
+}
+
+.exam-bank-page .title {
+	font-weight: 500;
+	font-size: 26px;
+	letter-spacing: 1px;
+}
+
+.exam-bank-page .paper-qty {
+	font-weight: 500;
+	font-size: 17px;
+	letter-spacing: 1px;
+	margin-top: 4px;
+}
+
+.exam-bank-page .question-qty {
+	font-weight: 500;
+	font-size: 17px;
+	letter-spacing: 1px;
+}
+
+.exam-bank-page .btn {
+    padding: 4px 10px 8px 10px;
+    box-shadow: 0 -4px 0 #2A6496 inset;
+    background-color: #4391e3;
+    color: #FFFFFF;
+    letter-spacing: 1px;
+    border-width: 0;
+    margin-top: 6px;
+    font-weight: 700;
+}
+
+.exam-bank-page .btn:hover {
+	background-color: #5cb6f0;
+	box-shadow: 0 -4px 0 #3195dd inset;
+}
+/* end of 题库页面 */

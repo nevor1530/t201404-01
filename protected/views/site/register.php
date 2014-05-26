@@ -23,21 +23,21 @@ $this->pageTitle=Yii::app()->name . ' - 注册';
 
 	<div class="register-form form-horizontal">
 		<div class="control-group">
-			<label class="control-label"><?php echo $form->labelEx($model,'username'); ?></label>
+			<?php echo $form->labelEx($model,'username', array('class'=>'control-label')); ?>
 			<div class="controls">
 				<input class="username-input" type="text" id="RegisterForm_username" name="RegisterForm[username]" placeholder="请输入邮箱">
 			</div>
 		</div>
 	
 		<div class="control-group">
-			<label class="control-label"><?php echo $form->labelEx($model,'password'); ?></label>
+			<?php echo $form->labelEx($model,'password', array('class'=>'control-label')); ?>
 			<div class="controls">
 				<input class="password-input" type="password" id="RegisterForm_password" name="RegisterForm[password]" placeholder="请输入6个以上字符">
 			</div>
 		</div>
 		
 		<div class="control-group">
-			<label class="control-label"><?php echo $form->labelEx($model,'confirm'); ?></label>
+			<?php echo $form->labelEx($model,'confirm', array('class'=>'control-label')); ?>
 			<div class="controls">
 				<input class="confirm-input" type="password" id="RegisterForm_confirm" name="RegisterForm[confirm]" placeholder="请输入6个以上字符">
 			</div>
@@ -50,7 +50,7 @@ $this->pageTitle=Yii::app()->name . ' - 注册';
 		</div>
 	
 		<div class="control-group">
-			<input class="login-btn" type="submit" value="已有账号？立即登录>>">
+			<input class="login-btn" type="button" onclick="location.href='<?php echo Yii::app()->createUrl('site/login');?>'" value="已有账号？立即登录>>">
 		</div>
 	</div> <!-- form -->
 </div>

@@ -11,12 +11,6 @@
 
 <body>
 	<div class="header-bg"></div>
-    <div class="expire-tip">
-    	<span class="expire-tip-content">
-            您的帐号将于<span class="expire-tip-time">2011年05月01日</span>过期，请提前续费
-            <a class="expire-tip-btn">立即续费</a>	
-        </span>
-    </div>
     <div class="container"> 
     	<!-- 顶部蓝底部分-->
     	<div id="header">
@@ -39,13 +33,7 @@
             <?php } ?>
         </div>
         <!-- end of 顶部蓝底部分 -->
-		<div class="header-divider"></div>
-        <!-- 页面的内容 -->
-        <div id="main">
-           	<?php echo $content; ?>
-        </div>
-        <!-- end of 页面的内容 -->
-        
+        <?php echo $content; ?>
         <div id="footer">
         </div>
     </div>	
