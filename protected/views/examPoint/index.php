@@ -8,15 +8,25 @@ $this->breadcrumbs=array(
 	'Login',
 );
 ?>
-<div class="point-practice-table-header">
-	<div class="name-column">专项训练</div>
-    <div class="button-column">随机练习</div>
-    <div class="rate-column">答题正确率</div>
-    <div class="done-questions-column">答题量</div>
-    <div class="process-column">答题进度</div>
-</div>
-<div class="exam-point-tree point-practice">
-<?php 
+
+<!-- 专项训练，真题模考，我的练习 单独的页面内容 -->
+<ul class="subfunction-list">
+	<li class="current"><a href="#">练习历史</a></li>
+    <li><a href="#">我的错题</a></li>
+    <li><a href="#">我的收藏</a></li>
+</ul>
+
+<div class="content">
+	<div class="point-practice-table-header">
+		<div class="name-column">专项训练</div>
+	    <div class="button-column">随机练习</div>
+	    <div class="rate-column">答题正确率</div>
+	    <div class="done-questions-column">答题量</div>
+	    <div class="process-column">答题进度</div>
+	</div>
+	
+	<div class="exam-point-tree point-practice">
+	<?php 
 	function genExamPointHtml($examPoint) {
 		$totalQuestionCount = $examPoint['question_count'];
 		$finishedQuestionCount = $examPoint['finished_question_count'];
@@ -30,7 +40,7 @@ $this->breadcrumbs=array(
 		$html .= '		<div class="rate-column">' . $correctRate . '</div>';
 		$html .= '		<div class="done-questions-column">' . $finishedQuestionCount . '道</div>';
 		$html .= '		<div class="process-column">';
-		$html .= '			<div class="process-bar"><div class="rate-bar" style="width: 20%"></div></div>';
+		$html .= '			<div class="process-bar"><div class="rate-bar" style="width:' . $correctRate * 100 . '%"></div></div>';
 		$html .= '		' . $finishedQuestionCount . '/' . $totalQuestionCount . '道';
 		$html .= '		</div>';
 		$html .= '	</div>';
@@ -48,5 +58,6 @@ $this->breadcrumbs=array(
 	foreach ($examPoints as $examPoint) {
 		echo genExamPointHtml($examPoint);
 	}
-?>
+	?>
+	</div>
 </div>

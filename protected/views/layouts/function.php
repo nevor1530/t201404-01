@@ -16,15 +16,7 @@
         <li class="current"><a href="#">我的练习</a></li>
     </ul>
     
-    <!-- 专项训练，真题模考，我的练习 单独的页面内容 -->
-	<ul class="subfunction-list">
-    	<li><a href="#">练习历史</a></li>
-        <li class="current"><a href="#">我的错题</a></li>
-        <li><a href="#">我的收藏</a></li>
-    </ul>
-    
-    <div class="content">
-    	<?php echo $content; ?>
-    </div>
+	<?php echo $content; ?>
+	
     <!-- end of 专项训练，真题模考，我的练习 单独的页面内容 -->
 <?php $this->endContent(); ?>

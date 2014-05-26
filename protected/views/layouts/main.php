@@ -21,22 +21,22 @@
     	<!-- 顶部蓝底部分-->
     	<div id="header">
     		<a class="logo"></a>
-
-			<span class="profile profile-user"><a href="#">注册</a> | <a href="#">登录</a></span>
+			<?php if (Yii::app()->user->isGuest) { ?>
+			<span class="profile profile-user"><a href="<?php echo Yii::app()->createUrl("/site/register")?>">注册</a> | <a href="<?php echo Yii::app()->createUrl("/site/login")?>">登录</a></span>
+			<?php } else {?>
             <span class="profile">
             	<div class="profile-user">
                     <span class="profile-avatar"></span>
-                    <a href="#">zhixingzeng@gmail.com</a>
+                    <a href="#"><?php echo Yii::app()->user->name; ?> </a>
                     <span class="profile-triangle"></span>
                 </div>
                 <ul>
                 	<li><a href="#">给当前题库续费</a></li>
-                    <li><a href="#">给当前题库续费</a></li>
-                    <li><a href="#">给当前题库续费</a></li>
-                    <li><a href="#">给当前题库续费</a></li>
-                    <li><a href="#">给当前题库续费</a></li>
+                    <li><a href="#">修改密码</a></li>
+                    <li><a href="<?php echo Yii::app()->createUrl("/site/logout")?>">退出</a></li>
                 </ul>
             </span>
+            <?php } ?>
         </div>
         <!-- end of 顶部蓝底部分 -->
 		<div class="header-divider"></div>
