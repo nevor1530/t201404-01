@@ -81,7 +81,6 @@ class ExamPointController extends Controller
 	}
 	
 	public function createExamPaper($examPointId) {
-		$criteria = new CDbCriteria();
 		$examPointRecord = ExamPointModel::model()->findByPk($examPointId);
 		
 		$subExamPoints = array();
@@ -101,6 +100,7 @@ class ExamPointController extends Controller
 		if ($questionRecords != null) {
 			$examPaperInstanceModel = new ExamPaperInstanceModel;
 			$examPaperInstanceModel->exam_paper_id = 0;
+			$examPaperInstanceModel->exam_point_id = $examPointId;
 			$examPaperInstanceModel->user_id = $userId = Yii::app()->user->id;
 			$examPaperInstanceModel->remain_time = 30;
 			
