@@ -1,4 +1,4 @@
-@charset "utf-8";
+﻿@charset "utf-8";
 /* CSS Document */
 * {
 	font-family: "Microsoft YaHei" ! important;
@@ -279,7 +279,7 @@ ul.subfunction-list li.current a {
 	padding-left: 20px;
 	background-image: url(../images/exam_point_tree_collaps.png);
 	background-repeat: no-repeat;
-	background-position-y: 7px;
+	background-position: 0 7px;
 }
 
 .exam-point-tree  .item:hover {
