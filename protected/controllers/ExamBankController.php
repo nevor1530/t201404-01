@@ -50,6 +50,10 @@ class ExamBankController extends Controller
 				$examBankId = $record->exam_bank_id;
 				$realExamPaperCount = $this->getRealExamPaperCountByExamBankId($examBankId);
 				$questionCount = $this->getQuestionCountByExamBankId($examBankId);
+				if ($realExamPaperCount == 0 || $questionCount == 0) {
+					continue;
+				}
+				
 				$examBank = array(
 					'id' => $examBankId,
 					'name' => $record->name,
