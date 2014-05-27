@@ -1,0 +1,587 @@
+@charset "utf-8";
+/* CSS Document */
+* {
+	font-family: "Microsoft YaHei" ! important;
+	font-size: 14px;
+}
+body, ul{
+	padding: 0;
+	margin: 0;
+}
+button {
+	border: none;
+}
+a {
+	color: #ffffff;
+	text-decoration: none;
+}
+a:hover,
+.profile ul li a:hover,
+ul.subject-list li a:hover,
+ul.subject-list li.current a:hover,
+ul.subfunction-list li a:hover,
+.exam-point-tree a:hover,
+.paper-item .title:hover {
+	color: #ff4b15;
+	text-decoration: underline;
+}
+.logo {
+	background-image: url("../images/logo.png");
+	width: 212px;
+	height: 89px;
+	display: inline-block;
+}
+.header-bg {
+	background-color: rgba(55,116,180,1);
+	height: 89px;
+	width: 100%;
+	position: absolute;
+	z-index: -1;
+}
+.container {
+	max-width: 900px;
+	margin: auto;
+	position: relative;
+}
+#header {
+	position: relative;
+}
+.profile {
+	position: absolute;
+	bottom: 0;
+	right: 0;
+	min-width: 180px;
+	text-align: right;
+}
+.profile-user {
+	margin-bottom: 5px;
+	font-size: 18px;
+	color: #ffffff;
+}
+.profile-avatar{
+	background-image: url("../images/profile_avatar.png");
+	width: 16px;
+	height: 15px;
+	display: inline-block;
+}
+.profile-triangle {
+	background-image: url("../images/profile_triangle.png");
+	width: 13px;
+	height: 13px;
+	display: inline-block;
+}
+/*用户菜单*/
+.profile ul {
+	display: none;
+	position: absolute;
+	width: 100%;
+	text-align: center;
+	border: 1px solid rgba(96, 170, 246, 1);
+	background-color: #ffffff;
+}
+.profile ul a {
+	color: #000000;
+}
+.profile:hover ul {
+	display: block;
+	font-size: 12px;
+}
+.profile ul li {
+	list-style: none;
+	padding: 5px 0;
+	border-top: 1px dashed rgba(96, 170, 246, 1);
+}
+.profile ul li:first-child {
+	border: none;
+}
+/*end 用户菜单*/
+.header-divider {
+	border: 1px solid rgba(175, 199, 225, 1);
+	height: 1px;
+	background-color: rgba(55, 116, 180, 1);
+	margin-top: 45px;
+}
+#main {
+	padding: 0 26px;
+}
+/*续费提示*/
+.expire-tip {
+	position: absolute;
+	top: 165px;
+	width: 100%;
+	text-align: center;
+}
+.expire-tip-content {
+	background-color: #b7bcc2;
+	padding: 11px 20px;
+	border-radius: 21px;
+}
+.expire-tip-time {
+	color: #ff4b15;
+}
+.expire-tip-btn {
+	padding: 6px 10px;
+	border-radius: 16px;
+	background-color: #4391e3;
+}
+.expire-tip-btn:hover {
+	background-color: #00b7ee;
+	color: #ffffff;
+	text-decoration: none;
+}
+.exam-bank-btn {
+	margin-top: -7px;
+	background-image: url(../images/exam_bank_bg.png);
+	background-repeat: repeat-x;
+	font-size: 20px;
+	padding: 8px 30px;
+	border-radius: 10px;
+	color: #ffffff;
+	display: inline-block;
+}
+/*学科导航*/
+.subject-list {
+	margin-top: 18px;
+	overflow: hidden;
+}
+ul.subject-list li {
+	list-style:none;
+	border: 1px solid #cbe3ff;
+	padding: 9px 8px;
+	display: inline-block;
+	float: left;
+}
+ul.subject-list li.current {
+	background-color: #a6cff8;
+	border-color: 1px solid #000000;
+}
+ul.subject-list li a {
+	color: #000000;
+	font-size: 20px;
+}
+ul.subject-list li.current a {
+	color: #ffffff;
+}
+/*end 学科导航*/
+ul.function-list {
+	margin-top: 1px;
+	overflow: hidden;
+}
+ul.function-list li {
+	list-style:none;
+	border: 1px solid #4391e3;
+	padding: 6px 40px;
+	display: inline-block;
+	float: left;
+	background-color: #d8e8fa;
+}
+ul.function-list li:hover {
+	background-color: #7ecef4;
+}
+ul.function-list li.current {
+	background-image: url("../images/function_current_bg.png");
+	background-repeat: repeat-x;
+}
+ul.function-list li a {
+	color: #000000;
+	font-size: 16px;
+}
+ul.function-list li.current a {
+	color: #ffffff;
+}
+ul.function-list li a:hover {
+	text-decoration: none;
+}
+/*subfunction list*/
+ul.subfunction-list {
+	margin-top: 12px;
+	overflow: hidden;
+}
+ul.subfunction-list li {
+	list-style:none;
+	border: 1px solid #cbe3ff;
+	padding: 6px 42px;
+	display: inline-block;
+	float: left;
+	position: relative;
+}
+ul.subfunction-list li.current {
+	border-bottom: 5px solid #00b7ee;
+	padding-bottom: 2px;
+}
+ul.subfunction-list li a {
+	color: #000000;
+}
+ul.subfunction-list li.current a {
+	font-weight: bold;
+}
+.content {
+<<<<<<< HEAD
+	padding: 10px 13px 10px 13px;
+	border-bottom: 1px solid #cbe3ff;
+=======
+	padding: 10px 13px 20px 13px;
+>>>>>>> 34a16db891505c9a2198b37720ee17d1ea065114
+}
+/*exam point tree*/
+.exam-point-tree {
+	border-top: 3px solid #96c7ff;
+	margin-top: 10px;
+	padding-top: 10px;
+	line-height: 28px;
+}
+.exam-point-tree > .level {
+	border-top: 1px dashed #62abfe;
+}
+.exam-point-tree > .level:first-child {
+	border-top: none;
+}
+.exam-point-tree, .exam-point-tree a{
+	color: #003f82;
+}
+.exam-point-tree .title {
+	padding-left: 20px;
+	background-image: url(../images/exam_point_tree_collaps.png);
+	background-repeat: no-repeat;
+	background-position: 0 7px;
+}
+.exam-point-tree  .item:hover {
+	background-color: #d5e8fd;
+}
+.exam-point-tree .expand > .item > .title {
+	background-image: url(../images/exam_point_tree_expand.png);
+}
+.exam-point-tree .button {
+	background-color: #60aaf6;
+	padding: 3px 30px;
+	color: #ffffff;
+	margin: 0 0 0 20px;
+}
+.exam-point-tree .button:hover {
+	background-color: #00b7ee;
+}
+.exam-point-tree .sublevel {
+	padding-left: 20px;
+	display: none;
+}
+/* end of exam-point-tree */
+/* point-practice */
+.point-practice .button {
+	margin: 0;
+}
+/* end of point-practice */
+.content .name-column {
+	display: inline-block;
+}
+.content .process-column {
+	width: 246px;
+	display: inline-block;
+	text-align: center;
+	float: right;
+}
+.content .done-questions-column {
+	width: 164px;
+	display: inline-block;
+	text-align: center;
+	float: right;
+}
+.content .rate-column {
+	width: 82px;
+	display: inline-block;
+	text-align: center;
+	float: right;
+}
+.content .button-column {
+	width: 100px;
+	display: inline-block;
+	text-align: center;
+	float: right;
+}
+.point-practice .process-bar {
+	width: 70%;
+	display: inline-block;
+	vertical-align: middle;
+}
+/* 登录页面 */
+.login {
+	padding-top: 70px;
+	margin: 0 auto;
+}
+.login .title-group {
+	margin: 0 auto;
+	display: table;
+	width: auto;
+}
+.login .user-icon {
+	background: url("../images/login.png") no-repeat;
+	width: 24px;
+	height: 24px;
+	display: inline-block;
+	vertical-align: sub;
+	margin-right: 5px;
+}
+.login .title {
+	font-weight: 600;
+	font-family: "Microsoft YaHei" !important;
+	font-size: 24px;
+	letter-spacing: 1px;
+}
+.login .login-form {
+	margin-top: 40px;
+}
+.login .control-group {
+	display: table;
+	width: auto;
+	margin-left: auto;
+	margin-right: auto;
+	margin-bottom: 10px;
+}
+.login .login-form .control-label {
+	width: 40px;
+	margin-right: 10px;
+}
+.login .login-form .controls .username-input {
+	width: 240px;
+}
+.login .login-form .controls .password-input {
+	width: 240px;
+}
+.login .login-btn {
+    padding: 8px 45px;
+    box-shadow: 0 -4px 0 #2A6496 inset;
+    border-radius: 6px;
+    background-color: #4391e3;
+    color: #FFFFFF;
+    font-size: 18px;
+    letter-spacing: 10px;
+    border-width: 0;
+    margin-left: 50px;
+}
+.login .register-btn {
+	padding: 8px 20px;
+    box-shadow: 0 -4px 0 #2A6496 inset;
+    border-radius: 6px;
+    background-color: #4391e3;
+    color: #FFFFFF;
+    font-size: 18px;
+    border-width: 0;
+    margin-left: 50px;
+}
+.login .login-btn:hover, .login .register-btn:hover {
+	background-color: #5cb6f0;
+	box-shadow: 0 -4px 0 #3195dd inset;
+}
+.login .auto-login-text {
+	line-height: 42px;
+	font-size: 12px;
+}
+.form-horizontal .control-group {
+  margin-bottom: 20px;
+  width: 350px;
+}
+.form-horizontal .control-group:before,
+.form-horizontal .control-group:after {
+  display: table;
+  line-height: 0;
+  content: "";
+}
+.form-horizontal .control-group:after {
+  clear: both;
+}
+.form-horizontal .control-label {
+  float: left;
+  width: 160px;
+  padding-top: 5px;
+  text-align: right;
+}
+.form-horizontal .controls {
+  *display: inline-block;
+  *padding-left: 20px;
+  margin-left: 50px;
+  *margin-left: 0;
+}
+.form-horizontal .controls:first-child {
+  *padding-left: 180px;
+}
+/* end of 登录页面 */
+/* 注册页面 */
+.register {
+	padding-top: 70px;
+	margin: 0 auto;
+}
+.register .title-group {
+	margin: 0 auto;
+	display: table;
+	width: auto;
+}
+.register .user-icon {
+	background: url("../images/register.png") no-repeat;
+	width: 24px;
+	height: 24px;
+	display: inline-block;
+	vertical-align: sub;
+	margin-right: 5px;
+}
+.register .title {
+	font-weight: 600;
+	font-family: "Microsoft YaHei" !important;
+	font-size: 24px;
+	letter-spacing: 1px;
+}
+.register .register-form {
+	margin-top: 40px;
+}
+.register .control-group {
+	display: table;
+	margin-left: auto;
+	margin-right: auto;
+	margin-bottom: 10px;
+}
+.register .register-form .control-label {
+	width: 70px;
+	margin-right: 10px
+}
+.register .register-form .controls .username-input,
+.register .register-form .controls .password-input,
+.register .register-form .controls .confirm-input {
+	width: 260px;
+}
+.register .register-btn {
+ 	padding: 8px 8px;
+    box-shadow: 0 -4px 0 #2A6496 inset;
+    background-color: #4391e3;
+    border-radius: 4px;
+    color: #FFFFFF;
+    font-size: 18px;
+    border-width: 0;
+    margin-left: 80px;
+}
+.register .login-btn {
+	padding: 10px 37px;
+    box-shadow: 0 -4px 0 #2A6496 inset;
+    border-radius: 6px;
+    background-color: #4391e3;
+    color: #FFFFFF;
+    font-size: 18px;
+    letter-spacing: 0.5px;
+    border-width: 0;
+    margin-left: 80px;
+}
+.register .login-btn:hover, .register .register-btn:hover {
+	background-color: #5cb6f0;
+	box-shadow: 0 -4px 0 #3195dd inset;
+}
+.register .policy-text {
+	line-height: 49px;
+	font-size: 13px;
+}
+/* end of 注册页面 */
+/* 题库页面 */
+.exam-bank-page .item {
+	margin: 30px 18px 0;
+	width: 350px;
+	padding:10px 30px 6px;
+	background-color:#f4f9ff;
+	border-style: solid;
+	border-width: 1px;
+	border-color: #e4e9ff;
+	display: inline-block;
+}
+.exam-bank-page .exam-bank-icon {
+	height: 145px;
+	width: 125px;
+}
+.exam-bank-page .exam-bank-text {
+	display: inline-block;
+	margin-left: 30px;
+	vertical-align: top;
+	margin-top: 10px;
+}
+.exam-bank-page .title {
+	font-weight: 500;
+	font-size: 26px;
+	letter-spacing: 1px;
+}
+.exam-bank-page .paper-qty {
+	font-weight: 500;
+	font-size: 17px;
+	letter-spacing: 1px;
+	margin-top: 4px;
+}
+.exam-bank-page .question-qty {
+	font-weight: 500;
+	font-size: 17px;
+	letter-spacing: 1px;
+}
+.exam-bank-page .btn {
+    padding: 4px 10px 8px 10px;
+    box-shadow: 0 -4px 0 #2A6496 inset;
+    background-color: #4391e3;
+    color: #FFFFFF;
+    letter-spacing: 1px;
+    border-width: 0;
+    margin-top: 6px;
+    font-weight: 700;
+}
+.exam-bank-page .btn:hover {
+	background-color: #5cb6f0;
+	box-shadow: 0 -4px 0 #3195dd inset;
+}
+/* end of 题库页面 */
+.paper-item {
+	padding: 15px 0;
+	border-bottom: 1px dashed #62abfe;
+	text-align: right;
+}
+.paper-item .paper-item-left {
+	width: 60%;
+}
+.paper-item .title {
+	color: #00479d;
+	font-size: 16px;
+	margin: 5px 0;
+	display: block;
+}
+.paper-item .practice-history-info {
+	font-size: 12px;
+}
+.paper-item .practice-time {
+	color: #00b4ea;
+	margin-right: 20px;
+}
+.paper-item .practice-status {
+	color: #ff4b15;
+}
+.paper-item .paper-item-opt {
+	width: 39%;
+}
+.paper-item .btn {
+	padding: 5px 35px;
+	border-radius: 5px;
+	color: #ffffff;
+	vertical-align: super;
+}
+.paper-item a.btn:hover {
+	text-decoration: none;
+}
+.paper-item .blue-btn {
+	background-color: #60aaf6;
+	margin-left: 10px;
+}
+.paper-item .blue-btn:hover {
+	background-color: #00b7ee;
+}
+.paper-item .red-btn {
+	background-color: #eb6877;
+	margin-left: 10px;
+}
+.paper-item .red-btn:hover {
+	background-color: #f64d61;
+}
+.paper-item .green-btn {
+	color: #ffffff;
+	background-color: #89c997;
+}
+.paper-item .green-btn:hover {
+	background-color: #5fb772;
+}

@@ -114,11 +114,144 @@ class PractiseController extends Controller
 	
 	public function actionFavorites($exam_bank_id, $subject_id = 0) {
 		$this->initial($exam_bank_id, $subject_id);
-		$this->render('favorites', array());
+		
+		$criteria = new CDbCriteria();
+		$criteria->condition = 'subject_id = ' . $subject_id;  
+		$examPointRecords = ExamPointModel::model()->top()->findAll($criteria);
+		
+		$examPoints = array();
+		$totalFavoriteQuestionCount = $this->countFavoriteQuestions($examPointRecords, $examPoints);
+		
+		$result = array(
+			'totalFavoriteQuestionCount' => $totalFavoriteQuestionCount,
+			'examPoints' => $examPoints,
+		);
+		
+		$this->render('favorites', $result);
 	}
 	
 	public function actionWrongQuestions($exam_bank_id, $subject_id = 0) {
 		$this->initial($exam_bank_id, $subject_id);
-		$this->render('wrong_questions', array());
+		
+		$criteria = new CDbCriteria();
+		$criteria->condition = 'subject_id = ' . $subject_id;  
+		$examPointRecords = ExamPointModel::model()->top()->findAll($criteria);
+		
+		$examPoints = array();
+		$totalWrongQuestionCount = $this->countWrongQuestions($examPointRecords, $examPoints);
+		
+		$result = array(
+			'totalWrongQuestionCount' => $totalWrongQuestionCount,
+			'examPoints' => $examPoints,
+		);
+		
+		$this->render('wrong_questions', $result);
+	}
+	
+	private function countFavoriteQuestions($examPointRecords, &$result) {
+		if ($examPointRecords == null || count($examPointRecords) == 0) {
+			return 0;
+		}
+		
+		$totalFavoriteQuestionCount = 0;
+		for ($i = 0; $i < count($examPointRecords); $i++) {
+			$examPointRecord = $examPointRecords[$i];
+			$examPointId = $examPointRecord->exam_point_id;
+			$result[$i] = array(
+				'id' => $examPointId,
+				'name' => $examPointRecord->name,
+				'exam_point_ids' => array($examPointId),
+			);
+			
+			if (!empty($examPointRecord->subExamPoints)){
+				$subExamPoints = array();
+				$this->countFavoriteQuestions($examPointRecord->subExamPoints, $subExamPoints);
+				$result[$i]['sub_exam_points'] = $subExamPoints;
+				
+				$subExamPointIds = array();
+				foreach ($subExamPoints as $subExamPoint) {
+					$subExamPointIds[] = $subExamPoint['id'];
+				}
+				$result[$i]['exam_point_ids'] = array_merge($result[$i]['exam_point_ids'], $subExamPointIds);
+			} else {
+				$result[$i]['sub_exam_points'] = array();
+			}
+			
+			$userId = Yii::app()->user->id;
+			$result[$i]['favorite_question_count'] = $this->calFavoriteQuestionCount($userId, $result[$i]['exam_point_ids']);
+			$totalFavoriteQuestionCount += $result[$i]['favorite_question_count'];
+		}
+		
+		return $totalFavoriteQuestionCount;
+	}
+	
+	private function calFavoriteQuestionCount($userId, $examPointIds) {
+		$sql = "SELECT count(DISTINCT(question_favorites.question_id)) as count FROM question_favorites,question,question_exam_point WHERE " .
+					"question_favorites.user_id=$userId AND " . 
+					"question_favorites.question_id=question_exam_point.question_id AND " .
+					"question_favorites.question_id=question.question_id AND " . 
+					"question_exam_point.question_id IN(" . implode(',' , $examPointIds) . ")";
+		$db = Yii::app()->db;
+		$command = $db->createCommand($sql);
+		$result = $command->queryAll(); 
+		if ($result != null && is_array($result) && count($result) > 0) {
+			return $result[0]['count'];
+		}
+		
+		return 0;
+	}
+	
+	private function countWrongQuestions($examPointRecords, &$result) {
+		if ($examPointRecords == null || count($examPointRecords) == 0) {
+			return 0;
+		}
+		
+		$totalWrongQuestionCount = 0;
+		for ($i = 0; $i < count($examPointRecords); $i++) {
+			$examPointRecord = $examPointRecords[$i];
+			$examPointId = $examPointRecord->exam_point_id;
+			$result[$i] = array(
+				'id' => $examPointId,
+				'name' => $examPointRecord->name,
+				'exam_point_ids' => array($examPointId),
+			);
+			
+			if (!empty($examPointRecord->subExamPoints)){
+				$subExamPoints = array();
+				$this->countWrongQuestions($examPointRecord->subExamPoints, $subExamPoints);
+				$result[$i]['sub_exam_points'] = $subExamPoints;
+				
+				$subExamPointIds = array();
+				foreach ($subExamPoints as $subExamPoint) {
+					$subExamPointIds[] = $subExamPoint['id'];
+				}
+				$result[$i]['exam_point_ids'] = array_merge($result[$i]['exam_point_ids'], $subExamPointIds);
+			} else {
+				$result[$i]['sub_exam_points'] = array();
+			}
+			
+			$userId = Yii::app()->user->id;
+			$result[$i]['wrong_question_count'] = $this->calWrongQuestionCount($userId, $result[$i]['exam_point_ids']);
+			$totalWrongQuestionCount += $result[$i]['wrong_question_count'];
+		}
+		
+		return $totalWrongQuestionCount;
+	}
+	
+	private function calWrongQuestionCount($userId, $examPointIds) {
+		$sql = "SELECT count(DISTINCT(question_instance.question_id)) as count FROM question_instance,question,question_exam_point WHERE " .
+					"question_instance.user_id=$userId AND " . 
+					"question_instance.question_id=question_exam_point.question_id AND " .
+					"question_instance.question_id=question.question_id AND " . 
+					"question_instance.myanswer!=question.answer AND " . 
+					"question_exam_point.question_id IN(" . implode(',' , $examPointIds) . ")";
+		$db = Yii::app()->db;
+		$command = $db->createCommand($sql);
+		$result = $command->queryAll(); 
+		if ($result != null && is_array($result) && count($result) > 0) {
+			return $result[0]['count'];
+		}
+		
+		return 0;
 	}
 }

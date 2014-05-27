@@ -6,4 +6,36 @@
 </ul>
 
 <div class="content">
+	<div class="bold">共<span style="color: #00a0e9"><?php echo $totalFavoriteQuestionCount; ?></span>道错题
+    <div class="exam-point-tree">
+    	<?php 
+		function genExamPointHtml($examPoint) {
+			$totalQuestionCount = $examPoint['question_count'];
+			$finishedQuestionCount = $examPoint['finished_question_count'];
+			$correctQuestionCount = $examPoint['correct_question_count'];
+			$correctRate = $totalQuestionCount == 0 ? 0 : $correctQuestionCount / $totalQuestionCount;
+			
+			$html = '<div class="level">';
+			$html .= '	<div class="item">';
+			$html .= '		<span class="title"><span class="bold">' . $examPoint['name'] . '</span><span class="font-size12">(共 ' . $examPoint['favorite_question_count'] . '道收藏)</span></span>';
+			$html .= '		<button class="pull-right button">练习</button>';
+			$html .= '		<a class="pull-right" href="#">查看题目</a>';
+			$html .= '	</div>';
+			
+			$subExamPoints = $examPoint['sub_exam_points'];
+			foreach ($subExamPoints as $subExamPoint) {
+				$html .= '	<div class="sublevel">';
+				$html .= genExamPointHtml($subExamPoint);
+				$html .= '	</div>';
+			}
+			$html .= '</div>';
+			return $html;
+		}
+		
+		foreach ($examPoints as $examPoint) {
+			echo genExamPointHtml($examPoint);
+		}
+		?>
+	</div>
 </div>
+
