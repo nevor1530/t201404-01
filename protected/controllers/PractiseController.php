@@ -86,17 +86,31 @@ class PractiseController extends Controller
 		if ($result != null && is_array($result) && count($result) > 0) {
 			$index = 0;	
 			foreach ($result as $record) {
-				$history[$index] = array (
-					'exam_paper_instance_id' => $record['exam_paper_instance_id'],
-					'start_time' =>$record['start_time'],
-				);
+				$history[$index] = array();
+				$history[$index]['exam_paper_instance_id'] = $record['exam_paper_instance_id'];
+				$history[$index]['start_time'] = Yii::app()->dateFormatter->format("yyyy-MM-dd HH:mm", $record['start_time']);
+				$history[$index]['is_completed'] = ($record['remain_time'] == 0 ? 'true' : 'false');
+				
+				if ($record['exam_paper_id'] == 0) {
+					$examPointId = $record['name'];
+					$examPointModel = ExamPointModel::model()->findByPk($examPointId);
+					if ($examPointModel != null) {
+						$history[$index]['name'] = '专项训练(' . $examPointModel->name . ')';
+					} else {
+						$history[$index]['name'] = '专项训练';
+					}
+				} else {
+					$history[$index]['name'] = $record['name'];
+				}
 				
 				$index++;
 			}
 		}
 		
+		//print_r($history);exit();
 		$this->render('history', $history);
 	}
+	
 	
 	public function actionFavorites($exam_bank_id, $subject_id = 0) {
 		$this->initial($exam_bank_id, $subject_id);

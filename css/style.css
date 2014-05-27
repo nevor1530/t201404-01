@@ -153,7 +153,7 @@ ul.subfunction-list li a:hover,
 }
 
 .exam-bank-btn {
-	margin-top: -7px;
+	margin-top: 7px;
 	background-image: url(../images/exam_bank_bg.png);
 	background-repeat: repeat-x;
 	font-size: 20px;
@@ -562,14 +562,14 @@ ul.subfunction-list li.current a {
 
 .register .policy-text {
 	line-height: 49px;
-	font-size: 13px;
+	font-size: 12px;
 }
 /* end of 注册页面 */
 
 /* 题库页面 */
 .exam-bank-page .item {
 	margin: 30px 18px 0;
-	width: 350px;
+	width: 340px;
 	padding:10px 30px 6px;
 	background-color:#f4f9ff;
 	border-style: solid;
