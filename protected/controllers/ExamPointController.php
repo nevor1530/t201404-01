@@ -80,7 +80,7 @@ class ExamPointController extends Controller
 		$this->render('index', $result);
 	}
 	
-	public function createExamPaper($examPointId) {
+	public function actionNewPractise($examPointId) {
 		$examPointRecord = ExamPointModel::model()->findByPk($examPointId);
 		
 		$subExamPoints = array();
@@ -136,7 +136,7 @@ class ExamPointController extends Controller
 			}
 		}
 		
-		$this->render('new_exam_paper', $questions);
+		$this->render('new_practise', $questions);
 	}
 	
 	private function getExamPoints($examPointRecords, &$result) {

@@ -6,7 +6,7 @@
 </ul>
 
 <div class="content">
-	<div class="bold">共<span style="color: #00a0e9"><?php echo $totalFavoriteQuestionCount; ?></span>道错题
+	<div class="bold">共<span style="color: #00a0e9"><?php echo $totalFavoriteQuestionCount; ?></span>道收藏
     <div class="exam-point-tree">
     	<?php 
 		function genExamPointHtml($examPoint) {
