@@ -17,7 +17,7 @@
 			$html = '<div class="level">';
 			$html .= '	<div class="item">';
 			$html .= '		<span class="title"><span class="bold">' . $examPoint['name'] . '</span><span class="font-size12">(共 ' . $examPoint['wrong_question_count'] . '道错题)</span></span>';
-			$html .= '		<button class="pull-right button">练习</button>';
+			$html .= '		<a class="pull-right button" href="#">练习</a>';
 			$html .= '		<a class="pull-right" href="#">查看题目</a>';
 			$html .= '	</div>';
 			

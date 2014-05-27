@@ -18,7 +18,7 @@
 		$html = '<div class="level">';
 		$html .= '	<div class="item">';
 		$html .= '		<div class="title name-column">' . $examPoint['name'] . '</div>';
-		$html .= '		<button class="button button-column" onclick="{location.href=' . Yii::app()->createUrl("/examPoint/newPractise", array("examPointId"=> $examPoint['id'])) . '}">练习</button>';
+		$html .= '		<a class="button button-column" href="' . Yii::app()->createUrl("/examPoint/newPractise", array("examPointId"=> $examPoint['id'])) . '">练习</a>';
 		$html .= '		<div class="rate-column">' . $correctRate . '</div>';
 		$html .= '		<div class="done-questions-column">' . $finishedQuestionCount . '道</div>';
 		$html .= '		<div class="process-column">';

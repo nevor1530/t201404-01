@@ -8,6 +8,9 @@ body, ul{
 	padding: 0;
 	margin: 0;
 }
+li {
+	list-style: none;
+}
 button {
 	border: none;
 }
@@ -21,10 +24,36 @@ ul.subject-list li a:hover,
 ul.subject-list li.current a:hover,
 ul.subfunction-list li a:hover,
 .exam-point-tree a:hover,
-.paper-item .title:hover {
+.paper-item .title:hover,
+ul.question-block li a:hover {
 	color: #ff4b15;
 	text-decoration: underline;
 }
+a.btn:hover {
+	text-decoration: none;
+}
+.blue-btn {
+	color: #ffffff;
+	background-color: #60aaf6;
+}
+.blue-btn:hover {
+	background-color: #00b7ee;
+}
+.red-btn {
+	color: #ffffff;
+	background-color: #eb6877;
+}
+.red-btn:hover {
+	background-color: #f64d61;
+}
+.green-btn {
+	color: #ffffff;
+	background-color: #89c997;
+}
+.green-btn:hover {
+	background-color: #5fb772;
+}
+
 .logo {
 	background-image: url("../images/logo.png");
 	width: 212px;
@@ -130,7 +159,6 @@ ul.subfunction-list li a:hover,
 	text-decoration: none;
 }
 .exam-bank-btn {
-	margin-top: -7px;
 	background-image: url(../images/exam_bank_bg.png);
 	background-repeat: repeat-x;
 	font-size: 20px;
@@ -217,14 +245,13 @@ ul.subfunction-list li.current a {
 }
 .content {
 	padding: 10px 13px 10px 13px;
-	border-bottom: 1px solid #cbe3ff;
+	border: 1px solid #cbe3ff;
 }
 /*exam point tree*/
 .exam-point-tree {
 	border-top: 3px solid #96c7ff;
 	margin-top: 10px;
 	padding-top: 10px;
-	line-height: 28px;
 }
 .exam-point-tree > .level {
 	border-top: 1px dashed #62abfe;
@@ -241,6 +268,10 @@ ul.subfunction-list li.current a {
 	background-repeat: no-repeat;
 	background-position: 0 7px;
 }
+.exam-point-tree .item {
+	padding: 5px 0 0 0;
+	height: 25px;
+}
 .exam-point-tree  .item:hover {
 	background-color: #d5e8fd;
 }
@@ -251,7 +282,10 @@ ul.subfunction-list li.current a {
 	background-color: #60aaf6;
 	padding: 3px 30px;
 	color: #ffffff;
-	margin: 0 0 0 20px;
+	margin: -3px 0 0 20px;
+}
+.exam-point-tree a.button:hover {
+	text-decoration: none;
 }
 .exam-point-tree .button:hover {
 	background-color: #00b7ee;
@@ -263,7 +297,8 @@ ul.subfunction-list li.current a {
 /* end of exam-point-tree */
 /* point-practice */
 .point-practice .button {
-	margin: 0;
+	margin: -3px 0 0 0;
+	padding: 3px 0;
 }
 /* end of point-practice */
 .content .name-column {
@@ -581,3 +616,52 @@ ul.subfunction-list li.current a {
 .paper-item .green-btn:hover {
 	background-color: #5fb772;
 }
+/*试卷页面*/
+.do-paper {
+	margin-top: 6px;
+}
+.paper-left-column {
+	width: 155px;
+	position: absolute;
+}
+.paper-right-column {
+	margin-left: 160px;
+	border: 1px solid #cbe3ff;
+}
+.clock {
+	border: 7px solid #b3d7ff;
+	width: 140px;
+	height: 140px;
+	text-align: center;
+	line-height: 140px;
+	font-size: 30px;
+}
+.paper-left-column .btn {
+	font-size: 18px;
+	text-align: center;
+	padding: 12px 0;
+	margin-top: 6px;
+}
+.do-paper .chapter-herder {
+	line-height: 30px;
+	background-image: url("../images/do_paper_title_bg.png");
+	background-repeat: repeat-x;
+}
+ul.question-block {
+	overflow: hidden;
+	border-bottom: 1px solid #cbe3ff;
+	color: #abe0fa;
+}
+ul.question-block li {
+	display: inline;
+}
+ul.question-block li a {
+	color: #000000;
+	padding: 5px 30px;
+	display: inline-block;
+}
+ul.question-block li.current a {
+	border-bottom: 3px solid #00b7ee;
+	padding-bottom: 2px;
+}
+/*end of 试卷页面*/
