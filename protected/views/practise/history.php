@@ -6,4 +6,29 @@
 </ul>
 
 <div class="content">
+	<div class="paper-item">
+		<div class="inline-block text-left paper-item-left">
+			<a class="title" href="#">试题名称</a>
+			<div class="practice-history-info">
+				练习时间：<span class="practice-time">2014-4-9 12:20</span>
+				练习情况：<span class="practice-status">未完成</span>
+			</div>
+		</div>
+		<div class="inline-block paper-item-opt">未完成<a class="btn blue-btn">继续练习</a>
+		</div>
+	</div>
+	<div class="paper-item">
+		<div class="inline-block text-left paper-item-left">
+			<a class="title" href="#">试题名称</a>
+			<div class="practice-history-info">
+				练习时间：<span class="practice-time">2014-4-9 12:20</span>
+				练习情况：<span class="practice-status">答对5道题/共12道题</span>
+			</div>
+		</div>
+		<div class="inline-block paper-item-opt">
+			<a class="btn red-btn" href="#">查看解析</a>
+			<a class="btn blue-btn" href="#">查看报告</a>
+		</div>
+	</div>
+	<!-- pagination -->
 </div>

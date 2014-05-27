@@ -9,6 +9,10 @@
 	font-size: 12px;
 }
 
+.font-size16 {
+	font-size: 16px;
+}
+
 .pull-right {
 	float: right;
 }
@@ -26,4 +30,19 @@
 	background-color: #3774b4;
 	border-radius: 10px;
 }
-	
+
+.inline-block {
+	display: inline-block;
+}
+
+.block {
+	display: block;
+}
+
+.text-right {
+	text-align: right;
+}
+
+.text-left {
+	text-align: left;
+}
