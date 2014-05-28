@@ -108,7 +108,7 @@ class PractiseController extends Controller
 		}
 		
 		//print_r($history);exit();
-		$this->render('history', $history);
+		$this->render('history', array('history' => $history));
 	}
 	
 	

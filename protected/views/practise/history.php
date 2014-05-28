@@ -6,6 +6,20 @@
 </ul>
 
 <div class="content">
+	<?php foreach ($history as $item) { ?>
+	<div class="paper-item">
+		<div class="inline-block text-left paper-item-left">
+			<a class="title" href="#"><?php echo $item['name']; ?></a>
+			<div class="practice-history-info">
+				练习时间：<span class="practice-time"><?php echo $item['start_time']; ?></span>
+				练习情况：<span class="practice-status">未完成</span>
+			</div>
+		</div>
+		<div class="inline-block paper-item-opt">未完成<a class="btn blue-btn">继续练习</a>
+	</div>
+	</div>
+	<?php } ?>
+	
 	<div class="paper-item">
 		<div class="inline-block text-left paper-item-left">
 			<a class="title" href="#">试题名称</a>
