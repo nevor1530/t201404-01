@@ -19,6 +19,7 @@ a {
 	text-decoration: none;
 }
 a:hover,
+a.hover-origen:hover,
 .profile ul li a:hover,
 ul.subject-list li a:hover,
 ul.subject-list li.current a:hover,
@@ -166,7 +167,7 @@ a.btn:hover {
 	border-radius: 10px;
 	color: #ffffff;
 	display: inline-block;
-	margin-top: 7px;
+	margin-top: 10px;
 }
 /*学科导航*/
 .subject-list {
@@ -664,5 +665,60 @@ ul.question-block li a {
 ul.question-block li.current a {
 	border-bottom: 3px solid #00b7ee;
 	padding-bottom: 2px;
+}
+.question {
+	border-bottom: 2px solid #62abfe;
+	padding: 10px 0;
+}
+.question:first-child {
+	padding: 0 0 10px 0;
+}
+.question:last-child {
+	padding: 10px 0 0 0;
+}
+.question .title {
+	margin: 7px 0;
+}
+.question .options,
+.question .answers {
+	border-bottom: 1px dashed #62abfe;
+}
+.question .options .option-item {
+	margin: 7px 0;
+}
+.question .answers {
+	padding: 0.8em 0;
+}
+.question .answers .answer-item {
+	padding: 0 1em;
+}
+.question .favorite {
+	float: right;
+	color: #60aaf6;
+	padding-left: 20px;
+	background-image: url("../images/star_hollow.png");
+	background-repeat: no-repeat;
+	background-position: 0 3px;
+	cursor: pointer;
+}
+.question .favorite-chosen {
+	background-image: url("../images/star_solid.png");
+}
+.question .material-popup {
+	cursor: pointer;
+	color: #60aaf6;
+}
+.question .material {
+	position: relative;
+}
+.question .material .material-mark {
+	width: 1em;
+	padding: 0.8em 0.7em;
+	background-color: #13b5b1;
+	float: left;
+	position: absolute;
+}
+.question .material-content {
+	margin-left: 3em;
 }
 /*end of 试卷页面*/
