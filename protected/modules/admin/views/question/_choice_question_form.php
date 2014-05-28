@@ -57,7 +57,7 @@
 if ($answerOptionCount > 0) {
 	foreach ($questionAnswerOptions as $questionAnswerOption) {
 ?>
-<div id="questionAnswerOption<?php echo $index;?>" name="ChoiceQuestionForm[answerOption<?php echo $questionAnswerOption['index'];?>]">
+<div name="ChoiceQuestionForm[answerOption<?php echo $questionAnswerOption['index'];?>]">
 	<div style="float:left"><?php echo chr($questionAnswerOption['index'] + 65); ?>. </div>
 	<div><?php echo $questionAnswerOption['description'];?></div>
 </div>
