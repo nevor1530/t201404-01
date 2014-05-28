@@ -68,6 +68,11 @@ class PractiseController extends Controller
 	public function actionHistory($exam_bank_id, $subject_id = 0) {
 		$this->initial($exam_bank_id, $subject_id);
 		
+		$countSql = "SELECT count(*) FROM exam_paper_instance WHERE user_id=" .  Yii::app()->user->id;
+		$numberOfRecords = Yii::app()->db->CreateCommand($countSql)->queryScalar();
+        $pages=new CPagination(intval($numberOfRecords));
+        $pages->pageSize = 1;
+        
 		$sql = "SELECT exam_paper_instance_id,exam_paper_id,exam_point_id as name,start_time,remain_time FROM exam_paper_instance WHERE " .
 					"user_id=" .  Yii::app()->user->id . " AND " .
 					"exam_paper_id=0" .
@@ -78,8 +83,10 @@ class PractiseController extends Controller
 					"subject_id=" . $this->curSubjectId .
 				" ORDER BY start_time DESC";
 		
-		$db = Yii::app()->db;
-		$command = $db->createCommand($sql);
+		$offset = $pages->currentPage * $pages->pageSize;
+		$limit = $pages->pageSize;
+		$command = Yii::app()->db->createCommand($sql . " LIMIT $offset,$limit");
+		
 		$result = $command->queryAll();
 		
 		$history = array(); 
@@ -89,7 +96,7 @@ class PractiseController extends Controller
 				$history[$index] = array();
 				$history[$index]['exam_paper_instance_id'] = $record['exam_paper_instance_id'];
 				$history[$index]['start_time'] = Yii::app()->dateFormatter->format("yyyy-MM-dd HH:mm", $record['start_time']);
-				$history[$index]['is_completed'] = ($record['remain_time'] == 0 ? 'true' : 'false');
+				$history[$index]['is_completed'] = ($record['remain_time'] == 0 ? 1 : 0);
 				
 				if ($record['exam_paper_id'] == 0) {
 					$examPointId = $record['name'];
@@ -103,12 +110,20 @@ class PractiseController extends Controller
 					$history[$index]['name'] = $record['name'];
 				}
 				
+				if ($history[$index]['is_completed'] == 1) {
+					$history[$index]['total_question_count'] = $this->countPaperQuestions($record['exam_paper_instance_id'],  $record['exam_paper_id']);
+					$history[$index]['correct_question_count'] = $this->countCorrectQuestions($record['exam_paper_instance_id']);
+				}
+				
 				$index++;
 			}
 		}
 		
 		//print_r($history);exit();
-		$this->render('history', array('history' => $history));
+		$this->render('history', array(
+			'history' => $history, 
+			'pages'=>$pages
+		));
 	}
 	
 	
@@ -146,6 +161,32 @@ class PractiseController extends Controller
 		);
 		
 		$this->render('wrong_questions', $result);
+	}
+	
+	private function countPaperQuestions($examPaperInstanceId, $examPaperId = 0) {
+		$criteria = new CDbCriteria();
+		if ($examPaperId == 0) {
+			$criteria->condition = 'exam_paper_instance_id = ' . $examPaperInstanceId;  
+			return QuestionInstanceModel::model()->count($criteria);
+		} else {
+			$criteria->condition = 'exam_paper_id = ' . $examPaperId;  
+			return ExamPaperQuestionModel::model()->count($criteria);
+		}
+	}
+	
+	private function countCorrectQuestions($examPaperInstanceId) {
+		$sql = "SELECT count(DISTINCT(question_instance.question_id)) as count FROM question_instance,question WHERE " .
+					"question_instance.exam_paper_instance_id=$examPaperInstanceId AND " .
+					"question_instance.question_id=question.question_id AND " . 
+					"question_instance.myanswer!=question.answer";
+		$db = Yii::app()->db;
+		$command = $db->createCommand($sql);
+		$result = $command->queryAll(); 
+		if ($result != null && is_array($result) && count($result) > 0) {
+			return $result[0]['count'];
+		}
+		
+		return 0;
 	}
 	
 	private function countFavoriteQuestions($examPointRecords, &$result) {

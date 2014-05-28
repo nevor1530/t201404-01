@@ -12,37 +12,37 @@
 			<a class="title" href="#"><?php echo $item['name']; ?></a>
 			<div class="practice-history-info">
 				练习时间：<span class="practice-time"><?php echo $item['start_time']; ?></span>
+				<?php if($item['is_completed'] == 0) { ?>
 				练习情况：<span class="practice-status">未完成</span>
-			</div>
-		</div>
-		<div class="inline-block paper-item-opt">未完成<a class="btn blue-btn">继续练习</a>
-	</div>
-	</div>
-	<?php } ?>
-	
-	<div class="paper-item">
-		<div class="inline-block text-left paper-item-left">
-			<a class="title" href="#">试题名称</a>
-			<div class="practice-history-info">
-				练习时间：<span class="practice-time">2014-4-9 12:20</span>
-				练习情况：<span class="practice-status">未完成</span>
-			</div>
-		</div>
-		<div class="inline-block paper-item-opt">未完成<a class="btn blue-btn">继续练习</a>
-		</div>
-	</div>
-	<div class="paper-item">
-		<div class="inline-block text-left paper-item-left">
-			<a class="title" href="#">试题名称</a>
-			<div class="practice-history-info">
-				练习时间：<span class="practice-time">2014-4-9 12:20</span>
-				练习情况：<span class="practice-status">答对5道题/共12道题</span>
+				<?php } else {?>
+				练习情况：<span class="practice-status">答对<?php echo $item['correct_question_count']; ?>道题/共<?php echo $item['total_question_count']; ?>道题</span>
+				<?php } ?>
 			</div>
 		</div>
 		<div class="inline-block paper-item-opt">
-			<a class="btn red-btn" href="#">查看解析</a>
-			<a class="btn blue-btn" href="#">查看报告</a>
+			<?php if($item['is_completed'] == 0) { ?>
+			未完成<a class="btn blue-btn">继续练习</a>
+			<?php } else {?>
+				<a class="btn green-btn" href="#">查看解析</a>
+				<a class="btn red-btn" href="#">查看报告</a>
+			<?php } ?>	
 		</div>
 	</div>
+	<?php } ?>
+	
 	<!-- pagination -->
+	<div id="pager" style="padding-top:30px;padding-bottom:40px;">    
+	<?php
+	$this->widget('CLinkPager',array(    
+		'header'=>'',    
+		'firstPageLabel' => '首页',    
+		'lastPageLabel' => '末页',    
+		'prevPageLabel' => '上一页',    
+		'nextPageLabel' => '下一页',    
+		'pages' => $pages,    
+		'maxButtonCount'=>6   
+	));?>    
+	</div>  
+
+	
 </div>
