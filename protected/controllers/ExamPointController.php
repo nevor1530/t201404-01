@@ -31,7 +31,7 @@ class ExamPointController extends Controller
 	{
 		return array(
 			array('allow', // allow authenticated user to perform 'create' and 'update' actions
-				'actions'=>array('index'),
+				'actions'=>array('index', 'newPractise'),
 				'users'=>array('@'),
 			),
 			array('deny',  // deny all users
@@ -41,29 +41,11 @@ class ExamPointController extends Controller
 	}
 	
 	public function actionIndex($exam_bank_id, $subject_id = 0) {
-		$this->curTab = Constants::$EXAM_POINT_TAB;
-		$examBankRecord = ExamBankModel::model()->findByPk($exam_bank_id);
-		$this->examBankName = $examBankRecord->name;
-		$this->examBankId = $exam_bank_id;
-		
-		$subjects = array();
-		$subjectRecords = $examBankRecord->subjects;
-		if ($subjectRecords != null) {
-			for ($i = 0; $i < count($subjectRecords); $i++) {
-				$subjectRecord = $subjectRecords[$i];
-				$subjects[] = array(
-					'id' => $subjectRecord->subject_id,
-					'name' => $subjectRecord->name,
-					'is_current' => (($subject_id == 0 && $i == 0) || $subject_id == $subjectRecord->subject_id),
-				);
-			}
-		}
-		$this->subjects = $subjects;
-		
-		if ($subject_id == 0 && count($subjects) == 0) {
+		$this->initial($exam_bank_id, $subject_id);
+		if ($subject_id == 0 && count($this->subjects) == 0) {
 			throw new CHttpException(404,'The requested page does not exist.');
 		} else if ($subject_id == 0) {
-			$subject_id = $subjects[0]['id'];
+			$subject_id = $this->subjects[0]['id'];
 		}
 		
 		$criteria = new CDbCriteria();
@@ -74,24 +56,27 @@ class ExamPointController extends Controller
 		$this->getExamPoints($examPointRecords, $examPoints);
 		
 		$result = array(
+			'examBankId' => $exam_bank_id,
+			'subjectId' => $subject_id,
 			'examPoints' => $examPoints,
 		);
 		
 		$this->render('index', $result);
 	}
 	
-	public function actionNewPractise($examPointId) {
-		$examPointRecord = ExamPointModel::model()->findByPk($examPointId);
+	public function actionNewPractise($exam_bank_id, $subject_id, $exam_point_id) {
+		$this->initial($exam_bank_id, $subject_id);
+		$examPointRecord = ExamPointModel::model()->findByPk($exam_point_id);
 		
 		$subExamPoints = array();
 		$this->getExamPoints($examPointRecord->subExamPoints, $subExamPoints);
 
-		$candidateQuestionIds = $this->getQuestionIdsByExamPointId($examPointId);
+		$candidateQuestionIds = $this->getQuestionIdsByExamPointId($exam_point_id);
 		foreach ($subExamPoints as $subExamPoint) {
 			$candidateQuestionIds = array_merge($candidateQuestionIds, $subExamPoint['question_ids']);
 		}
 		
-		$selectedQuestionIds = array_rand($candidateQuestionIds, 15);
+		$selectedQuestionIds = array_rand($candidateQuestionIds, min(count($candidateQuestionIds), 15));
 		$criteria = new CDbCriteria();
 		$criteria->addInCondition("question_id", $selectedQuestionIds);
 		$questionRecords = QuestionExamPointModel::model()->findAll($criteria);	
@@ -100,7 +85,7 @@ class ExamPointController extends Controller
 		if ($questionRecords != null) {
 			$examPaperInstanceModel = new ExamPaperInstanceModel;
 			$examPaperInstanceModel->exam_paper_id = 0;
-			$examPaperInstanceModel->exam_point_id = $examPointId;
+			$examPaperInstanceModel->exam_point_id = $exam_point_id;
 			$examPaperInstanceModel->user_id = $userId = Yii::app()->user->id;
 			$examPaperInstanceModel->remain_time = 30;
 			
@@ -137,6 +122,27 @@ class ExamPointController extends Controller
 		}
 		
 		$this->render('new_practise', $questions);
+	}
+	
+	private function initial($exam_bank_id, $subject_id) {
+		$this->curTab = Constants::$EXAM_POINT_TAB;
+		$examBankRecord = ExamBankModel::model()->findByPk($exam_bank_id);
+		$this->examBankName = $examBankRecord->name;
+		$this->examBankId = $exam_bank_id;
+		
+		$subjects = array();
+		$subjectRecords = $examBankRecord->subjects;
+		if ($subjectRecords != null) {
+			for ($i = 0; $i < count($subjectRecords); $i++) {
+				$subjectRecord = $subjectRecords[$i];
+				$subjects[] = array(
+					'id' => $subjectRecord->subject_id,
+					'name' => $subjectRecord->name,
+					'is_current' => (($subject_id == 0 && $i == 0) || $subject_id == $subjectRecord->subject_id),
+				);
+			}
+		}
+		$this->subjects = $subjects;
 	}
 	
 	private function getExamPoints($examPointRecords, &$result) {

@@ -9,7 +9,7 @@
 	
 	<div class="exam-point-tree point-practice">
 	<?php 
-	function genExamPointHtml($examPoint) {
+	function genExamPointHtml($examBankId, $subjectId, $examPoint) {
 		$totalQuestionCount = $examPoint['question_count'];
 		$finishedQuestionCount = $examPoint['finished_question_count'];
 		$correctQuestionCount = $examPoint['correct_question_count'];
@@ -18,7 +18,7 @@
 		$html = '<div class="level">';
 		$html .= '	<div class="item">';
 		$html .= '		<div class="title name-column">' . $examPoint['name'] . '</div>';
-		$html .= '		<a class="button button-column" href="' . Yii::app()->createUrl("/examPoint/newPractise", array("examPointId"=> $examPoint['id'])) . '">练习</a>';
+		$html .= '		<a class="button button-column" href="' . Yii::app()->createUrl("/examPoint/newPractise", array("exam_bank_id"=>$examBankId, "subject_id"=>$subjectId, "exam_point_id"=>$examPoint['id'])) . '">练习</a>';
 		$html .= '		<div class="rate-column">' . $correctRate . '</div>';
 		$html .= '		<div class="done-questions-column">' . $finishedQuestionCount . '道</div>';
 		$html .= '		<div class="process-column">';
@@ -30,7 +30,7 @@
 		$subExamPoints = $examPoint['sub_exam_points'];
 		foreach ($subExamPoints as $subExamPoint) {
 			$html .= '	<div class="sublevel">';
-			$html .= genExamPointHtml($subExamPoint);
+			$html .= genExamPointHtml($examBankId, $subjectId, $subExamPoint);
 			$html .= '	</div>';
 		}
 		$html .= '</div>';
@@ -38,7 +38,7 @@
 	}
 	
 	foreach ($examPoints as $examPoint) {
-		echo genExamPointHtml($examPoint);
+		echo genExamPointHtml($examBankId, $subjectId, $examPoint);
 	}
 	?>
 	</div>
