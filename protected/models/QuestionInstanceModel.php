@@ -10,7 +10,7 @@
  * @property integer $user_id
  * @property string $myanswer
  */
-class QuestionInstance extends CActiveRecord
+class QuestionInstanceModel extends CActiveRecord
 {
 	/**
 	 * @return string the associated database table name

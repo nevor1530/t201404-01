@@ -66,20 +66,17 @@ class ExamPointController extends Controller
 	
 	public function actionNewPractise($exam_bank_id, $subject_id, $exam_point_id) {
 		$this->initial($exam_bank_id, $subject_id);
-		$examPointRecord = ExamPointModel::model()->findByPk($exam_point_id);
+		$examPoint = ExamPointModel::model()->findByPk($exam_point_id);
+		$examPointName = $examPoint->name;
 		
-		$subExamPoints = array();
-		$this->getExamPoints($examPointRecord->subExamPoints, $subExamPoints);
-
-		$candidateQuestionIds = $this->getQuestionIdsByExamPointId($exam_point_id);
-		foreach ($subExamPoints as $subExamPoint) {
-			$candidateQuestionIds = array_merge($candidateQuestionIds, $subExamPoint['question_ids']);
-		}
+		$candidateQuestionIds = array();
+		$this->getQuestionIdsByExamPoint($examPoint, $candidateQuestionIds);
 		
 		$selectedQuestionIds = array_rand($candidateQuestionIds, min(count($candidateQuestionIds), 15));
 		$criteria = new CDbCriteria();
 		$criteria->addInCondition("question_id", $selectedQuestionIds);
-		$questionRecords = QuestionExamPointModel::model()->findAll($criteria);	
+		$criteria->order = 'material_id, question_id desc';
+		$questionRecords = QuestionModel::model()->findAll($criteria);	
 		
 		$questions = array();
 		if ($questionRecords != null) {
@@ -87,6 +84,7 @@ class ExamPointController extends Controller
 			$examPaperInstanceModel->exam_paper_id = 0;
 			$examPaperInstanceModel->exam_point_id = $exam_point_id;
 			$examPaperInstanceModel->user_id = $userId = Yii::app()->user->id;
+			$examPaperInstanceModel->start_time = date("Y-m-d H:i:s");
 			$examPaperInstanceModel->remain_time = 30;
 			
 			if ($examPaperInstanceModel->validate() && $examPaperInstanceModel->save()) {
@@ -100,28 +98,41 @@ class ExamPointController extends Controller
 					}
 					
 					$questionModel = $questionRecords[$index];
-					$question[$index]['id'] = $questionModel->question_id;
-					$question[$index]['content'] = $questionModel->questionExtra->title;
+					$questions[$index]['id'] = $questionModel->question_id;
+					$questions[$index]['content'] = $questionModel->questionExtra->title;
+					$questions[$index]['answerOptions'] = array();
+					$questions[$index]['questionType'] = $questionModel->question_type;
 					if ($questionModel->question_type == QuestionModel::SINGLE_CHOICE_TYPE || $questionModel->question_type == QuestionModel::MULTIPLE_CHOICE_TYPE) {
 						$questionAnswerOptions = $questionModel->questionAnswerOptions;
 						foreach ($questionAnswerOptions as $questionAnswerOption) {
-							$question[$index]['answerOptions'][] = array(
+							$questions[$index]['answerOptions'][] = array(
 								'index' => chr($questionAnswerOption->attributes['index'] + 65),
 								'description' => $questionAnswerOption->attributes['description'],
 							);
 						}
 					}  else if ($questionModel->question_type == QuestionModel::TRUE_FALSE_TYPE) {
-						$question[$index]['answerOptions'][] = array(
-							array('index' => 'A', 'description' => '正确'),
-							array('index' => 'B', 'description' => '错误'),
-						);
+						$questions[$index]['answerOptions'][] = array('index' => 'A', 'description' => '正确');
+						$questions[$index]['answerOptions'][] = array('index' => 'B', 'description' => '错误');
+					}
+					
+					$material_id = $questionModel->material_id;
+					if ($material_id != 0) {
+						$materialModel = MaterialModel::model()->findByPk($material_id);
+						if ($materialModel != null) {
+							$questions[$index]['material_id'] = $material_id;
+							$questions[$index]['material_content'] = $materialModel->content;
+						}
 					}
 				}
 				
 			}
 		}
 		
-		$this->render('new_practise', $questions);
+		//print_r($questions); exit();
+		$this->render('new_practise', array(
+			'examPointName' => $examPointName,
+			'questions' => $questions,
+		));
 	}
 	
 	private function initial($exam_bank_id, $subject_id) {
@@ -196,6 +207,18 @@ class ExamPointController extends Controller
 			}
 		}
 		return $questionIds;
+	}
+	
+	private function getQuestionIdsByExamPoint($examPoint, &$candidateQuestionIds) {
+		$questionIds = $this->getQuestionIdsByExamPointId($examPoint->exam_point_id);
+		$candidateQuestionIds = array_merge($candidateQuestionIds, $questionIds);
+		
+		$subExamPoints = $examPoint->subExamPoints;
+		if (!empty($subExamPoints)) {
+			foreach ($subExamPoints as $subExamPoint) {
+				$this->getQuestionIdsByExamPoint($subExamPoint, $candidateQuestionIds);
+			}
+		}
 	}
 	
 	private function getFinishedQuestionCount($userId, $examPointIds) {

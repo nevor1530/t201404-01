@@ -71,7 +71,7 @@ class PractiseController extends Controller
 		$countSql = "SELECT count(*) FROM exam_paper_instance WHERE user_id=" .  Yii::app()->user->id;
 		$numberOfRecords = Yii::app()->db->CreateCommand($countSql)->queryScalar();
         $pages=new CPagination(intval($numberOfRecords));
-        $pages->pageSize = 1;
+        $pages->pageSize = 5;
         
 		$sql = "SELECT exam_paper_instance_id,exam_paper_id,exam_point_id as name,start_time,remain_time FROM exam_paper_instance WHERE " .
 					"user_id=" .  Yii::app()->user->id . " AND " .
