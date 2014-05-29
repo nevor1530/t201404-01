@@ -9,11 +9,6 @@
     <div class="exam-point-tree">
     	<?php 
 		function genExamPointHtml($examPoint) {
-			$totalQuestionCount = $examPoint['question_count'];
-			$finishedQuestionCount = $examPoint['finished_question_count'];
-			$correctQuestionCount = $examPoint['correct_question_count'];
-			$correctRate = $totalQuestionCount == 0 ? 0 : $correctQuestionCount / $totalQuestionCount;
-			
 			$html = '<div class="level">';
 			$html .= '	<div class="item">';
 			$html .= '		<span class="title"><span class="bold">' . $examPoint['name'] . '</span><span class="font-size12">(共 ' . $examPoint['wrong_question_count'] . '道错题)</span></span>';
