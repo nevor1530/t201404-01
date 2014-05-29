@@ -26,7 +26,8 @@ ul.subject-list li.current a:hover,
 ul.subfunction-list li a:hover,
 .exam-point-tree a:hover,
 .paper-item .title:hover,
-ul.question-block li a:hover {
+ul.question-block li a:hover,
+.user-center .left-side .menu a:hover {
 	color: #ff4b15;
 	text-decoration: underline;
 }
@@ -722,3 +723,34 @@ ul.question-block li.current a {
 	margin-left: 3em;
 }
 /*end of 试卷页面*/
+/*用户中心*/
+.user-center {
+	margin-top: 45px;
+	position: relative;
+}
+.user-center .left-side {
+	position: absolute;
+	width: 220px;
+	text-align: center;	
+}
+.user-center .left-side .title {
+	border: 1px solid #4391e3;
+	background: url("../images/user_center_menu_title_bg.png") repeat-x;
+	line-height: 42px;
+	font-size: 16px;
+	color: #ffffff;
+}
+.user-center .left-side .menu {
+	border: 7px solid #c7def7;
+}
+.user-center .left-side .menu a{
+	color: #000000;
+	border-bottom: 1px solid #c7def7;
+	padding: 1em 0;
+	display: block;
+}
+.user-center .left-side ul.menu li.current {
+	list-style: inside;
+	list-style-image: url(../images/user_center_menu_current_icon.png);
+}
+/*end of 用户中心*/
