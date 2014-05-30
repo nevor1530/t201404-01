@@ -31,7 +31,7 @@ class ExamPointController extends Controller
 	{
 		return array(
 			array('allow', // allow authenticated user to perform 'create' and 'update' actions
-				'actions'=>array('index', 'newPractise'),
+				'actions'=>array('index', 'newPractise', 'ajaxAddQustionToFavorites'),
 				'users'=>array('@'),
 			),
 			array('deny',  // deny all users
@@ -133,6 +133,31 @@ class ExamPointController extends Controller
 			'examPointName' => $examPointName,
 			'questions' => $questions,
 		));
+	}
+	
+	public function actionAjaxAddQustionToFavorites($question_id) {
+		$criteria = new CDbCriteria();
+		$criteria->condition = 'user_id = ' . Yii::app()->user->id;  
+		$criteria->condition = 'question_id = ' . $question_id;  
+		$results = QuestionFavoritesModel::model()->findAll($criteria);
+		if ($results != null && count($results) > 0) {
+			foreach ($results as $record) {
+				$record->delete();
+			}
+			echo json_encode(array('status'=>0, 'action'=>'cancel'));
+			Yii::app()->end();
+		}
+		
+		$questionFavoritesModel = new QuestionFavoritesModel;
+		$questionFavoritesModel->user_id = Yii::app()->user->id;
+		$questionFavoritesModel->question_id = $question_id;
+		if ($questionFavoritesModel->validate()) {
+			$questionFavoritesModel->save();
+			echo json_encode(array('status'=>0, 'action' => 'add'));
+		} else {
+			echo json_encode(array('status'=>1, 'errMsg'=>CHtml::errorSummary($questionFavoritesModel)));
+		}
+		Yii::app()->end();
 	}
 	
 	private function initial($exam_bank_id, $subject_id) {

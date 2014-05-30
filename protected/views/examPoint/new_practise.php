@@ -55,7 +55,7 @@
 							</label>
 						<?php } ?>	
 					<?php } ?>
-					<a class="favorite favorite-chosen hover-origen">收藏本题</a>
+					<a class="favorite hover-origen" href="<?php echo Yii::app()->createUrl("/examPoint/ajaxAddQustionToFavorites", array("question_id"=>$question[id]));?>">收藏本题</a>
 				</div>
 			</div>
 			<?php } ?>
@@ -76,4 +76,20 @@ function second(){
 setInterval("second()",1000);
 function pauseclock(){clearInterval(s);}  
 function stopclock(){clearInterval(s);m=h=s=0;}  
+
+$(function(){
+	$(".favorite").on('click', function(e){
+		e.preventDefault();
+		$this = $(this);
+		$.post($this.attr("href"), function(data){
+			if (data.status === 0) {
+				if (data.action == 'cancel') {$this.className = 'favorite hover-origen';}
+				else if (data.action == 'add') {$this.className = 'favorite hover-origen favorite-chosen';}
+			} else {
+				alert(data.errMsg);
+			}
+		}, "json"); 	
+	}); 
+});
+
 </script>  
