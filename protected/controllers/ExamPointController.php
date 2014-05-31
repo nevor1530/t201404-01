@@ -31,7 +31,7 @@ class ExamPointController extends Controller
 	{
 		return array(
 			array('allow', // allow authenticated user to perform 'create' and 'update' actions
-				'actions'=>array('index', 'newPractise', 'ajaxAddQustionToFavorites'),
+				'actions'=>array('index', 'newPractise', 'ajaxAddQustionToFavorites', 'ajaxSubmitAnswer'),
 				'users'=>array('@'),
 			),
 			array('deny',  // deny all users
@@ -72,7 +72,12 @@ class ExamPointController extends Controller
 		$candidateQuestionIds = array();
 		$this->getQuestionIdsByExamPoint($examPoint, $candidateQuestionIds);
 		
-		$selectedQuestionIds = array_rand($candidateQuestionIds, min(count($candidateQuestionIds), 15));
+		$selectedQuestionIds = array();
+		if (count($candidateQuestionIds) > 0) {
+			$selectedQuestionIds = array_rand($candidateQuestionIds, min(count($candidateQuestionIds), 15));
+			$favoriteQuestionIds = $this->getFavoriteQuestionIds($selectedQuestionIds);
+		}
+		
 		$criteria = new CDbCriteria();
 		$criteria->addInCondition("question_id", $selectedQuestionIds);
 		$criteria->order = 'material_id, question_id desc';
@@ -89,6 +94,8 @@ class ExamPointController extends Controller
 			
 			if ($examPaperInstanceModel->validate() && $examPaperInstanceModel->save()) {
 				for ($index = 0; $index < count($questionRecords); $index++) {
+					$questionModel = $questionRecords[$index];
+					
 					$questionInstanceModel = new QuestionInstanceModel;
 					$questionInstanceModel->exam_paper_instance_id = $examPaperInstanceModel->exam_paper_instance_id;
 					$questionInstanceModel->question_id = $questionModel->question_id;
@@ -97,8 +104,8 @@ class ExamPointController extends Controller
 						$questionInstanceModel->save();
 					}
 					
-					$questionModel = $questionRecords[$index];
-					$questions[$index]['id'] = $questionModel->question_id;
+					$questions[$index]['questionInstanceId'] = $questionInstanceModel->question_instance_id;
+					$questions[$index]['questionId'] = $questionModel->question_id;
 					$questions[$index]['content'] = $questionModel->questionExtra->title;
 					$questions[$index]['answerOptions'] = array();
 					$questions[$index]['questionType'] = $questionModel->question_type;
@@ -106,15 +113,21 @@ class ExamPointController extends Controller
 						$questionAnswerOptions = $questionModel->questionAnswerOptions;
 						foreach ($questionAnswerOptions as $questionAnswerOption) {
 							$questions[$index]['answerOptions'][] = array(
-								'index' => chr($questionAnswerOption->attributes['index'] + 65),
+								'index' =>$questionAnswerOption->attributes['index'],
 								'description' => $questionAnswerOption->attributes['description'],
 							);
 						}
 					}  else if ($questionModel->question_type == QuestionModel::TRUE_FALSE_TYPE) {
-						$questions[$index]['answerOptions'][] = array('index' => 'A', 'description' => '正确');
-						$questions[$index]['answerOptions'][] = array('index' => 'B', 'description' => '错误');
+						$questions[$index]['answerOptions'][] = array('index' => '0', 'description' => '正确');
+						$questions[$index]['answerOptions'][] = array('index' => '1', 'description' => '错误');
 					}
 					
+					if (in_array($questions[$index]['questionId'], $favoriteQuestionIds)) {
+						$questions[$index]['is_favorite'] = true;
+					} else {
+						$questions[$index]['is_favorite'] = false;
+					}
+			
 					$material_id = $questionModel->material_id;
 					if ($material_id != 0) {
 						$materialModel = MaterialModel::model()->findByPk($material_id);
@@ -124,15 +137,19 @@ class ExamPointController extends Controller
 						}
 					}
 				}
-				
 			}
-		}
+			
+			//header("Content-type: text/html; charset=utf8"); 
+			//print_r($questions);exit();
 		
-		//print_r($questions); exit();
-		$this->render('new_practise', array(
-			'examPointName' => $examPointName,
-			'questions' => $questions,
-		));
+			$this->render('new_practise', array(
+				'examPointName' => $examPointName,
+				'examPaperInstanceId' => $examPaperInstanceModel->exam_paper_instance_id,
+				'questions' => $questions,
+			));
+		} else {
+			$this->redirect(array('index', 'exam_bank_id' => $exam_bank_id, 'subject_id' => $subject_id));
+		}
 	}
 	
 	public function actionAjaxAddQustionToFavorites($question_id) {
@@ -158,6 +175,48 @@ class ExamPointController extends Controller
 			echo json_encode(array('status'=>1, 'errMsg'=>CHtml::errorSummary($questionFavoritesModel)));
 		}
 		Yii::app()->end();
+	}
+	
+	public function actionAjaxSubmitAnswer() {
+		if(isset($_POST['answerForm'])) {
+			$userId = Yii::app()->user->id;
+			$examPaperInstanceId = $_POST['answerForm']['examPaperInstanceId'];
+			$questionInstanceId = $_POST['answerForm']['questionInstanceId'];
+			$questionId = $_POST['answerForm']['questionId'];
+			$answer = $_POST['answerForm']['answer'];
+			$time = $_POST['answerForm']['time'];
+			
+			
+			
+			$questionInstanceModel = QuestionInstanceModel::model()->findByPk($questionInstanceId);
+			if ($questionInstanceModel != null && $questionInstanceModel->user_id == $userId &&
+				$questionInstanceModel->exam_paper_instance_id == $examPaperInstanceId &&
+				$questionInstanceModel->question_id = $questionId) {
+				$questionInstanceModel->myanswer = $answer;
+				$questionInstanceModel->save();
+				echo json_encode(array('status'=>0));
+				Yii::app()->end();
+			} else {
+				echo json_encode(array('status'=>1, 'errMsg'=>CHtml::errorSummary($questionInstanceModel)));
+				Yii::app()->end();
+			}
+		} 
+		
+	}
+	
+	private function getFavoriteQuestionIds($questionIds) {
+		$criteria = new CDbCriteria();
+		$criteria->condition = 'user_id = ' . Yii::app()->user->id;  
+		$criteria->addInCondition('question_id', $questionIds);  
+		$results = QuestionFavoritesModel::model()->findAll($criteria);
+		
+		$favoriteQuestionIds = array();
+		if ($results != null) {
+			foreach ($results as $record) {
+				$favoriteQuestionIds[] = $record->question_id;
+			}
+		}
+		return $favoriteQuestionIds;
 	}
 	
 	private function initial($exam_bank_id, $subject_id) {

@@ -14,11 +14,19 @@
 		$finishedQuestionCount = $examPoint['finished_question_count'];
 		$correctQuestionCount = $examPoint['correct_question_count'];
 		$correctRate = $totalQuestionCount == 0 ? 0 : $correctQuestionCount / $totalQuestionCount;
+
+		if ($totalQuestionCount > 0) {
+			$newPractiseUrl = Yii::app()->createUrl("/examPoint/newPractise", array(
+				"exam_bank_id"=>$examBankId, 
+				"subject_id"=>$subjectId, 
+				"exam_point_id"=>$examPoint['id']
+			));
+		}		
 		
 		$html = '<div class="level">';
 		$html .= '	<div class="item">';
 		$html .= '		<div class="title name-column">' . $examPoint['name'] . '</div>';
-		$html .= '		<a class="button button-column" href="' . Yii::app()->createUrl("/examPoint/newPractise", array("exam_bank_id"=>$examBankId, "subject_id"=>$subjectId, "exam_point_id"=>$examPoint['id'])) . '">练习</a>';
+		$html .= '		<a class="button button-column" ' . ($totalQuestionCount > 0 ? 'href="'.$newPractiseUrl.'"' : ''). '>练习</a>';
 		$html .= '		<div class="rate-column">' . $correctRate . '</div>';
 		$html .= '		<div class="done-questions-column">' . $finishedQuestionCount . '道</div>';
 		$html .= '		<div class="process-column">';
