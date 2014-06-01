@@ -28,11 +28,11 @@ class ExamPaperInstanceModel extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('user_id, start_time, remain_time', 'required'),
-			array('exam_paper_id, exam_point_id, user_id, remain_time', 'numerical', 'integerOnly'=>true),
+			array('user_id, start_time, elapsed_time, is_completed', 'required'),
+			array('exam_paper_id, exam_point_id, user_id, elapsed_time, is_completed', 'numerical', 'integerOnly'=>true),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('exam_paper_instance_id, exam_paper_id, exam_point_id, user_id, start_time, remain_time', 'safe', 'on'=>'search'),
+			array('exam_paper_instance_id, exam_paper_id, exam_point_id, user_id, start_time, elapsed_time, is_completed', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -58,7 +58,8 @@ class ExamPaperInstanceModel extends CActiveRecord
 			'exam_point_id' => '如果试卷不是随机生成的，则0',
 			'user_id' => 'User',
 			'start_time' => 'Start Time',
-			'remain_time' => '剩余时间',
+			'elapsed_time' => '所耗时间',
+			'is_completed' => '是否已交卷'
 		);
 	}
 
@@ -85,7 +86,8 @@ class ExamPaperInstanceModel extends CActiveRecord
 		$criteria->compare('exam_point_id',$this->exam_point_id);
 		$criteria->compare('user_id',$this->user_id);
 		$criteria->compare('start_time',$this->start_time,true);
-		$criteria->compare('remain_time',$this->remain_time);
+		$criteria->compare('elapsed_time',$this->elapsed_time);
+		$criteria->compare('is_completed',$this->is_completed);
 
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,

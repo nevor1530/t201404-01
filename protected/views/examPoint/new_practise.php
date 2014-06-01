@@ -1,8 +1,12 @@
 <div class="do-paper">
 	<div class="paper-left-column">
 		<div id="clock" class="clock">00:00</div>
-		<div class="btn red-btn">交卷</div>
-		<div class="btn green-btn">下次再做</div>
+		<div class="btn red-btn">
+			<a href="<?php echo Yii::app()->createUrl("/examPoint/completePractise", array("exam_bank_id"=>$examBankId,'subject_id'=>$subjectId, "exam_paper_instance_id" => $examPaperInstanceId));?>">交卷</a>
+		</div>
+		<div class="btn green-btn">
+			<a href="<?php echo Yii::app()->createUrl("/examPoint/index", array("exam_bank_id"=>$examBankId,'subject_id'=>$subjectId));?>">下次再做</a>
+		</div>
 	</div>
 	<div class="paper-right-column">
 		<div class="chapter-herder">专项训练：【<?php echo $examPointName; ?>】</div>
@@ -14,6 +18,7 @@
 				<input type="hidden" id="answerForm[answer]" name="answerForm[answer]">
 				<input type="hidden" id="answerForm[time]" name="answerForm[time]">
 			</form>
+			
 			<?php 
 			$prev_material_id = null; 
 			foreach ($questions as $question) { 
@@ -22,6 +27,7 @@
 							$prev_material_id = $question['material_id'];
 			
 			?>
+			
 			<div class="question">
 				<div class="material">
 					<div class="material-mark">材料题</div>
@@ -57,7 +63,7 @@
 							</label>
 						<?php } else { ?>
 							<label class="checkbox inline" style="margin-right: 10px;">
-								<input type="checkbox" name="answer[<?php echo $question['questionInstanceId'];?>][]" value="<?php echo $answerOption['index'];?>">
+								<input type="checkbox" onclick="submitAnswer(<?php echo $question['questionId'];?>,<?php  echo $question['questionInstanceId'];?>)" name="answer[<?php echo $question['questionInstanceId'];?>]" value="<?php echo $answerOption['index'];?>">
 								<label><?php echo chr($answerOption['index'] + 65); ?></label>
 							</label>
 						<?php } ?>	
@@ -88,6 +94,12 @@ function stopclock(){clearInterval(s);m=h=s=0;}
 function submitAnswer(questionId, questionInstanceId) {
 	var radioName = 'answer[' + questionInstanceId + ']';
 	var answer = $("input[name='" + radioName + "']:checked").val();
+	
+	var answer = [];
+	$("input[name='" + radioName + "']:checked").each(function(){
+    	answer.push($(this).val());
+    });
+	
 	document.getElementById("answerForm[questionInstanceId]").value = questionInstanceId;
 	document.getElementById("answerForm[questionId]").value = questionId;
 	document.getElementById("answerForm[answer]").value = answer;

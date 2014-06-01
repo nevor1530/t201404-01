@@ -73,11 +73,11 @@ class PractiseController extends Controller
         $pages=new CPagination(intval($numberOfRecords));
         $pages->pageSize = 5;
         
-		$sql = "SELECT exam_paper_instance_id,exam_paper_id,exam_point_id as name,start_time,remain_time FROM exam_paper_instance WHERE " .
+		$sql = "SELECT exam_paper_instance_id,exam_paper_id,exam_point_id as name,start_time,is_completed FROM exam_paper_instance WHERE " .
 					"user_id=" .  Yii::app()->user->id . " AND " .
 					"exam_paper_id=0" .
 				" UNION " .
-				"SELECT exam_paper_instance_id,exam_paper.exam_paper_id as exam_paper_id,name,start_time,remain_time FROM exam_paper_instance,exam_paper WHERE " . 
+				"SELECT exam_paper_instance_id,exam_paper.exam_paper_id as exam_paper_id,name,start_time,is_completed FROM exam_paper_instance,exam_paper WHERE " . 
 					"user_id=" .  Yii::app()->user->id . " AND " .
 					"exam_paper_instance.exam_paper_id=exam_paper.exam_paper_id AND ".
 					"subject_id=" . $this->curSubjectId .
@@ -96,7 +96,7 @@ class PractiseController extends Controller
 				$history[$index] = array();
 				$history[$index]['exam_paper_instance_id'] = $record['exam_paper_instance_id'];
 				$history[$index]['start_time'] = Yii::app()->dateFormatter->format("yyyy-MM-dd HH:mm", $record['start_time']);
-				$history[$index]['is_completed'] = ($record['remain_time'] == 0 ? 1 : 0);
+				$history[$index]['is_completed'] = $record['is_completed'];
 				
 				if ($record['exam_paper_id'] == 0) {
 					$examPointId = $record['name'];
@@ -119,7 +119,9 @@ class PractiseController extends Controller
 			}
 		}
 		
+		//header("Content-type: text/html; charset=utf8"); 
 		//print_r($history);exit();
+		
 		$this->render('history', array(
 			'history' => $history, 
 			'pages'=>$pages

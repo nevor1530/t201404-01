@@ -31,7 +31,7 @@ class ExamPointController extends Controller
 	{
 		return array(
 			array('allow', // allow authenticated user to perform 'create' and 'update' actions
-				'actions'=>array('index', 'newPractise', 'ajaxAddQustionToFavorites', 'ajaxSubmitAnswer'),
+				'actions'=>array('index', 'newPractise', 'ajaxAddQustionToFavorites', 'ajaxSubmitAnswer', 'completePractise'),
 				'users'=>array('@'),
 			),
 			array('deny',  // deny all users
@@ -90,7 +90,8 @@ class ExamPointController extends Controller
 			$examPaperInstanceModel->exam_point_id = $exam_point_id;
 			$examPaperInstanceModel->user_id = $userId = Yii::app()->user->id;
 			$examPaperInstanceModel->start_time = date("Y-m-d H:i:s");
-			$examPaperInstanceModel->remain_time = 30;
+			$examPaperInstanceModel->elapsed_time = 0;
+			$examPaperInstanceModel->is_completed = 0;
 			
 			if ($examPaperInstanceModel->validate() && $examPaperInstanceModel->save()) {
 				for ($index = 0; $index < count($questionRecords); $index++) {
@@ -143,6 +144,8 @@ class ExamPointController extends Controller
 			//print_r($questions);exit();
 		
 			$this->render('new_practise', array(
+				'examBankId' => $exam_bank_id,
+				'subjectId' => $subject_id,
 				'examPointName' => $examPointName,
 				'examPaperInstanceId' => $examPaperInstanceModel->exam_paper_instance_id,
 				'questions' => $questions,
@@ -186,13 +189,21 @@ class ExamPointController extends Controller
 			$answer = $_POST['answerForm']['answer'];
 			$time = $_POST['answerForm']['time'];
 			
-			
+			$examPaperInstanceModel = ExamPaperInstanceModel::model()->findByPk($examPaperInstanceId);
+			if ($examPaperInstanceModel != null && $examPaperInstanceModel->user_id == $userId) {
+				if ($time > $examPaperInstanceModel->elapsed_time) {
+					$examPaperInstanceModel->elapsed_time = $time;
+					$examPaperInstanceModel->save();
+				}
+			}
 			
 			$questionInstanceModel = QuestionInstanceModel::model()->findByPk($questionInstanceId);
 			if ($questionInstanceModel != null && $questionInstanceModel->user_id == $userId &&
 				$questionInstanceModel->exam_paper_instance_id == $examPaperInstanceId &&
 				$questionInstanceModel->question_id = $questionId) {
-				$questionInstanceModel->myanswer = $answer;
+				$answer = explode(",", $answer);
+				$questionInstanceModel->myanswer = implode("|", $answer);
+				
 				$questionInstanceModel->save();
 				echo json_encode(array('status'=>0));
 				Yii::app()->end();
@@ -201,7 +212,17 @@ class ExamPointController extends Controller
 				Yii::app()->end();
 			}
 		} 
+	}
+	
+	public function actionCompletePractise($exam_bank_id, $subject_id, $exam_paper_instance_id) {
+		$userId = Yii::app()->user->id;
+		$examPaperInstanceModel = ExamPaperInstanceModel::model()->findByPk($exam_paper_instance_id);
+		if ($examPaperInstanceModel != null  && $examPaperInstanceModel->user_id == $userId) {
+			$examPaperInstanceModel->is_completed = 1;
+			$examPaperInstanceModel->save();
+		}
 		
+		$this->redirect(array('index', 'exam_bank_id' => $exam_bank_id, 'subject_id' => $subject_id));
 	}
 	
 	private function getFavoriteQuestionIds($questionIds) {
