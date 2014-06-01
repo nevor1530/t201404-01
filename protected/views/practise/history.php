@@ -9,7 +9,7 @@
 	<?php foreach ($history as $item) { ?>
 	<div class="paper-item">
 		<div class="inline-block text-left paper-item-left">
-			<a class="title" href="#"><?php echo $item['name']; ?></a>
+			<a class="title"><?php echo $item['name']; ?></a>
 			<div class="practice-history-info">
 				练习时间：<span class="practice-time"><?php echo $item['start_time']; ?></span>
 				<?php if($item['is_completed'] == 0) { ?>
@@ -43,6 +43,4 @@
 		'maxButtonCount'=>6   
 	));?>    
 	</div>  
-
-	
 </div>

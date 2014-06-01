@@ -233,7 +233,7 @@ class PractiseController extends Controller
 					"question_favorites.user_id=$userId AND " . 
 					"question_favorites.question_id=question_exam_point.question_id AND " .
 					"question_favorites.question_id=question.question_id AND " . 
-					"question_exam_point.question_id IN(" . implode(',' , $examPointIds) . ")";
+					"question_exam_point.exam_point_id IN(" . implode(',' , $examPointIds) . ")";
 		$db = Yii::app()->db;
 		$command = $db->createCommand($sql);
 		$result = $command->queryAll(); 
@@ -287,7 +287,7 @@ class PractiseController extends Controller
 					"question_instance.question_id=question_exam_point.question_id AND " .
 					"question_instance.question_id=question.question_id AND " . 
 					"question_instance.myanswer!=question.answer AND " . 
-					"question_exam_point.question_id IN(" . implode(',' , $examPointIds) . ")";
+					"question_exam_point.exam_point_id IN(" . implode(',' , $examPointIds) . ")";
 		$db = Yii::app()->db;
 		$command = $db->createCommand($sql);
 		$result = $command->queryAll(); 

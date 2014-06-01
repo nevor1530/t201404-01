@@ -74,7 +74,7 @@ class ExamPointController extends Controller
 		
 		$selectedQuestionIds = array();
 		if (count($candidateQuestionIds) > 0) {
-			$selectedQuestionIds = array_rand($candidateQuestionIds, min(count($candidateQuestionIds), 15));
+			$selectedQuestionIds = $this->randArray($candidateQuestionIds, 15);
 			$favoriteQuestionIds = $this->getFavoriteQuestionIds($selectedQuestionIds);
 		}
 		
@@ -224,11 +224,11 @@ class ExamPointController extends Controller
 				}
 				
 				$favoriteQuestionIds = $this->getFavoriteQuestionIds($questionIds);
-				foreach ($questions as $question) {
-					if (in_array($question['questionId'], $favoriteQuestionIds)) {
-						$question['is_favorite'] = true;
+				for ($index = 0; $index < count($questions); $index++) {
+					if (in_array($questions[$index]['questionId'], $favoriteQuestionIds)) {
+						$questions[$index]['is_favorite'] = true;
 					} else {
-						$question['is_favorite'] = false;
+						$questions[$index]['is_favorite'] = false;
 					}
 				}
 				
@@ -351,6 +351,17 @@ class ExamPointController extends Controller
 		$this->subjects = $subjects;
 	}
 	
+	private function randArray($array, $number) {
+		$result = array();
+		if (count($array) > 0 && $number >= 1) {
+			$selectedKeys = array_rand($array, min(count($array), $number));
+			foreach ($selectedKeys as $key) {
+				$result[] = $array[$key];
+			}
+		}
+		return $result;
+	}
+	
 	private function getExamPoints($examPointRecords, &$result) {
 		if ($examPointRecords == null || count($examPointRecords) == 0) {
 			return;
@@ -387,7 +398,7 @@ class ExamPointController extends Controller
 			
 			$userId = Yii::app()->user->id;
 			$result[$i]['finished_question_count'] = $this->getFinishedQuestionCount($userId, $result[$i]['exam_point_ids']);
-			$result[$i]['correct_question_count'] = $this->calCorrectQuestionCount($userId, $result[$i]['exam_point_ids']);
+			$result[$i]['correct_question_count'] = $result[$i]['finished_question_count'] - $this->calIncorrectQuestionCount($userId, $result[$i]['exam_point_ids']);
 		}
 	}
 	
@@ -432,12 +443,12 @@ class ExamPointController extends Controller
 		return 0;
 	}
 	
-	private function calCorrectQuestionCount($userId, $examPointIds) {
+	private function calIncorrectQuestionCount($userId, $examPointIds) {
 		$sql = "SELECT count(DISTINCT(question_instance.question_id)) as count FROM question_instance,question,question_exam_point WHERE " .
 					"question_instance.user_id=$userId AND " . 
 					"question_instance.question_id=question_exam_point.question_id AND " .
 					"question_instance.question_id=question.question_id AND " . 
-					"question_instance.myanswer=question.answer AND " . 
+					"question_instance.myanswer!=question.answer AND " . 
 					"question_exam_point.exam_point_id IN(" . implode(',' , $examPointIds) . ")";
 		$db = Yii::app()->db;
 		$command = $db->createCommand($sql);

@@ -1,5 +1,4 @@
 <?php
-
 class ExamBankController extends Controller
 {
 	/**

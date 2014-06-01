@@ -669,7 +669,7 @@ ul.question-block li.current a {
 }
 .question {
 	border-bottom: 2px solid #62abfe;
-	padding: 10px 0;
+	padding: 0px 0px 10px 0px;
 }
 .question:first-child {
 	padding: 0 0 10px 0;
@@ -754,3 +754,24 @@ ul.question-block li.current a {
 	list-style-image: url(../images/user_center_menu_current_icon.png);
 }
 /*end of 用户中心*/
+/*推荐真题*/
+.recommendation-info {
+	 font-size: 12px;
+}
+
+.recommendation-info .selected-star {
+	padding-left: 18px;
+	background-image: url("../images/selected_star.png");
+	background-repeat: no-repeat;
+	background-position: 0 3px;
+	cursor: pointer;
+}
+
+.recommendation-info .unselected-star {
+	padding-left: 18px;
+	background-image: url("../images/unselected_star.png");
+	background-repeat: no-repeat;
+	background-position: 0 3px;
+	cursor: pointer;
+}
+/*end of 推荐真题*/
