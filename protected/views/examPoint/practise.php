@@ -1,6 +1,6 @@
 <div class="do-paper">
 	<div class="paper-left-column">
-		<div id="clock" class="clock">00:00</div>
+		<div id="clock" class="clock"></div>
 		<div class="btn red-btn">
 			<a href="<?php echo Yii::app()->createUrl("/examPoint/completePractise", array("exam_bank_id"=>$examBankId,'subject_id'=>$subjectId, "exam_paper_instance_id" => $examPaperInstanceId));?>">交卷</a>
 		</div>
@@ -58,12 +58,12 @@
 					<?php foreach ($question['answerOptions'] as $answerOption) { ?>
 						<?php if ($question['questionType'] == 0 || $question['questionType'] == 2) { ?>
 							<label class="radio inline" style="margin-right: 10px;">
-								<input type="radio" onclick="submitAnswer(<?php echo $question['questionId'];?>,<?php  echo $question['questionInstanceId'];?>)" name="answer[<?php echo $question['questionInstanceId'];?>]" value="<?php echo $answerOption['index'];?>">
+								<input type="radio" <?php if ($answerOption['isSelected']) echo "checked=\"checked\""?> onclick="submitAnswer(<?php echo $question['questionId'];?>,<?php  echo $question['questionInstanceId'];?>)" name="answer[<?php echo $question['questionInstanceId'];?>]" value="<?php echo $answerOption['index'];?>">
 								<label><?php echo chr($answerOption['index'] + 65); ?></label>
 							</label>
 						<?php } else { ?>
 							<label class="checkbox inline" style="margin-right: 10px;">
-								<input type="checkbox" onclick="submitAnswer(<?php echo $question['questionId'];?>,<?php  echo $question['questionInstanceId'];?>)" name="answer[<?php echo $question['questionInstanceId'];?>]" value="<?php echo $answerOption['index'];?>">
+								<input type="checkbox" <?php if ($answerOption['isSelected']) echo "checked"?> onclick="submitAnswer(<?php echo $question['questionId'];?>,<?php  echo $question['questionInstanceId'];?>)" name="answer[<?php echo $question['questionInstanceId'];?>]" value="<?php echo $answerOption['index'];?>">
 								<label><?php echo chr($answerOption['index'] + 65); ?></label>
 							</label>
 						<?php } ?>	
@@ -78,7 +78,8 @@
 </div>
 
 <script type="text/javascript">
-var s=0,m=0; 
+var m=<?php echo floor($elapsedTime/60);?>;
+var s=<?php echo $elapsedTime%60;?>;
 function second(){  
 	if(s>0 && (s%60)==0){m+=1;s=0;}  
 	t = (s < 10 ? ("0" + s) : s);
@@ -87,6 +88,7 @@ function second(){
 	document.getElementById("clock").innerHTML =t;  
 	s+=1;  
 }  
+second();
 setInterval("second()",1000);
 function pauseclock(){clearInterval(s);}  
 function stopclock(){clearInterval(s);m=h=s=0;}  

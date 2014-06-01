@@ -31,7 +31,7 @@ class ExamPointController extends Controller
 	{
 		return array(
 			array('allow', // allow authenticated user to perform 'create' and 'update' actions
-				'actions'=>array('index', 'newPractise', 'ajaxAddQustionToFavorites', 'ajaxSubmitAnswer', 'completePractise'),
+				'actions'=>array('index', 'newPractise', 'ajaxAddQustionToFavorites', 'ajaxSubmitAnswer', 'completePractise', 'continuePractise'),
 				'users'=>array('@'),
 			),
 			array('deny',  // deny all users
@@ -116,11 +116,12 @@ class ExamPointController extends Controller
 							$questions[$index]['answerOptions'][] = array(
 								'index' =>$questionAnswerOption->attributes['index'],
 								'description' => $questionAnswerOption->attributes['description'],
+								'isSelected' => false,
 							);
 						}
 					}  else if ($questionModel->question_type == QuestionModel::TRUE_FALSE_TYPE) {
-						$questions[$index]['answerOptions'][] = array('index' => '0', 'description' => '正确');
-						$questions[$index]['answerOptions'][] = array('index' => '1', 'description' => '错误');
+						$questions[$index]['answerOptions'][] = array('index' => '0', 'description' => '正确', 'isSelected' => false);
+						$questions[$index]['answerOptions'][] = array('index' => '1', 'description' => '错误', 'isSelected' => false);
 					}
 					
 					if (in_array($questions[$index]['questionId'], $favoriteQuestionIds)) {
@@ -143,11 +144,12 @@ class ExamPointController extends Controller
 			//header("Content-type: text/html; charset=utf8"); 
 			//print_r($questions);exit();
 		
-			$this->render('new_practise', array(
+			$this->render('practise', array(
 				'examBankId' => $exam_bank_id,
 				'subjectId' => $subject_id,
 				'examPointName' => $examPointName,
 				'examPaperInstanceId' => $examPaperInstanceModel->exam_paper_instance_id,
+				'elapsedTime' => $examPaperInstanceModel->elapsed_time,
 				'questions' => $questions,
 			));
 		} else {
@@ -155,10 +157,98 @@ class ExamPointController extends Controller
 		}
 	}
 	
+	public function actionContinuePractise($exam_bank_id, $subject_id, $exam_paper_instance_id) {
+		$this->initial($exam_bank_id, $subject_id);
+		
+		$userId = Yii::app()->user->id;
+		$examPaperInstanceModel = ExamPaperInstanceModel::model()->findByPk($exam_paper_instance_id);
+		if ($examPaperInstanceModel != null && $examPaperInstanceModel->user_id == $userId && 
+			$examPaperInstanceModel->is_completed == 0) {
+			$examPointId = $examPaperInstanceModel->exam_point_id;
+			$examPoint = ExamPointModel::model()->findByPk($examPointId);
+			if ($examPointId != null) {
+				$examPointName = $examPoint->name;
+			}
+			
+			$criteria = new CDbCriteria();
+			$criteria->addCondition('user_id = ' . $userId);  
+			$criteria->addCondition('exam_paper_instance_id = ' . $exam_paper_instance_id);  
+			$criteria->order = 'question_instance_id asc';
+			$questionInstanceModels = QuestionInstanceModel::model()->findAll($criteria);
+			if ($questionInstanceModels != null) {
+				$questions = array();
+				$questionIds = array();
+				$index = 0;
+				foreach ($questionInstanceModels as $questionInstanceModel) {
+					$questionModel = QuestionModel::model()->findByPk($questionInstanceModel->question_id);	
+					if ($questionModel == null) {
+						continue;
+					}
+					
+					$questionIds[] = $questionInstanceModel->question_id;
+					$questions[$index]['questionInstanceId'] = $questionInstanceModel->question_instance_id;
+					$questions[$index]['questionId'] = $questionInstanceModel->question_id;
+					$questions[$index]['content'] = $questionModel->questionExtra->title;
+					$questions[$index]['answerOptions'] = array();
+					$questions[$index]['questionType'] = $questionModel->question_type;
+					
+					$myAnswers = array();
+					if ($questionInstanceModel->myanswer != null) {
+						$myAnswers = explode("|", $questionInstanceModel->myanswer);
+					}
+					
+					if ($questionModel->question_type == QuestionModel::SINGLE_CHOICE_TYPE || $questionModel->question_type == QuestionModel::MULTIPLE_CHOICE_TYPE) {
+						$questionAnswerOptions = $questionModel->questionAnswerOptions;
+						foreach ($questionAnswerOptions as $questionAnswerOption) {
+							$questions[$index]['answerOptions'][] = array(
+								'index' => $questionAnswerOption->index,
+								'description' => $questionAnswerOption->description,
+								'isSelected' => in_array($questionAnswerOption->index, $myAnswers),
+							);
+						}
+					}  else if ($questionModel->question_type == QuestionModel::TRUE_FALSE_TYPE) {
+						$questions[$index]['answerOptions'][] = array('index' => '0', 'description' => '正确', 'isSelected' => in_array(0, $myAnswers));
+						$questions[$index]['answerOptions'][] = array('index' => '1', 'description' => '错误', 'isSelected' => in_array(1, $myAnswers));
+					}
+					
+					$material_id = $questionModel->material_id;
+					if ($material_id != 0) {
+						$materialModel = MaterialModel::model()->findByPk($material_id);
+						if ($materialModel != null) {
+							$questions[$index]['material_id'] = $material_id;
+							$questions[$index]['material_content'] = $materialModel->content;
+						}
+					}
+					
+					$index++;
+				}
+				
+				$favoriteQuestionIds = $this->getFavoriteQuestionIds($questionIds);
+				foreach ($questions as $question) {
+					if (in_array($question['questionId'], $favoriteQuestionIds)) {
+						$question['is_favorite'] = true;
+					} else {
+						$question['is_favorite'] = false;
+					}
+				}
+				
+				$this->render('practise', array(
+					'examBankId' => $exam_bank_id,
+					'subjectId' => $subject_id,
+					'examPointName' => $examPointName,
+					'examPaperInstanceId' => $exam_paper_instance_id,
+					'elapsedTime' => $examPaperInstanceModel->elapsed_time,
+					'questions' => $questions,
+				));
+				Yii::app()->end();
+			}
+		}
+	}
+	
 	public function actionAjaxAddQustionToFavorites($question_id) {
 		$criteria = new CDbCriteria();
-		$criteria->condition = 'user_id = ' . Yii::app()->user->id;  
-		$criteria->condition = 'question_id = ' . $question_id;  
+		$criteria->addCondition('user_id = ' . Yii::app()->user->id);  
+		$criteria->addCondition('question_id = ' . $question_id);  
 		$results = QuestionFavoritesModel::model()->findAll($criteria);
 		if ($results != null && count($results) > 0) {
 			foreach ($results as $record) {
@@ -331,7 +421,7 @@ class ExamPointController extends Controller
 					"question_instance.myanswer IS NOT NULL AND " . 
 					"question_instance.user_id=$userId AND " . 
 					"question_instance.question_id=question_exam_point.question_id AND " .
-					"question_exam_point.question_id IN(" . implode(',' , $examPointIds) . ")";
+					"question_exam_point.exam_point_id IN(" . implode(',' , $examPointIds) . ")";
 		$db = Yii::app()->db;
 		$command = $db->createCommand($sql);
 		$result = $command->queryAll(); 
@@ -348,7 +438,7 @@ class ExamPointController extends Controller
 					"question_instance.question_id=question_exam_point.question_id AND " .
 					"question_instance.question_id=question.question_id AND " . 
 					"question_instance.myanswer=question.answer AND " . 
-					"question_exam_point.question_id IN(" . implode(',' , $examPointIds) . ")";
+					"question_exam_point.exam_point_id IN(" . implode(',' , $examPointIds) . ")";
 		$db = Yii::app()->db;
 		$command = $db->createCommand($sql);
 		$result = $command->queryAll(); 

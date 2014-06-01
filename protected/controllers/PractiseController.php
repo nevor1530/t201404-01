@@ -180,7 +180,7 @@ class PractiseController extends Controller
 		$sql = "SELECT count(DISTINCT(question_instance.question_id)) as count FROM question_instance,question WHERE " .
 					"question_instance.exam_paper_instance_id=$examPaperInstanceId AND " .
 					"question_instance.question_id=question.question_id AND " . 
-					"question_instance.myanswer!=question.answer";
+					"question_instance.myanswer=question.answer";
 		$db = Yii::app()->db;
 		$command = $db->createCommand($sql);
 		$result = $command->queryAll(); 

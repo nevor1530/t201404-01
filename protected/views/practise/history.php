@@ -21,7 +21,7 @@
 		</div>
 		<div class="inline-block paper-item-opt">
 			<?php if($item['is_completed'] == 0) { ?>
-			未完成<a class="btn blue-btn">继续练习</a>
+			未完成<a class="btn blue-btn" href="<?php echo Yii::app()->createUrl("/examPoint/ContinuePractise", array('exam_bank_id'=>$this->examBankId, 'subject_id'=>$this->curSubjectId, 'exam_paper_instance_id' => $item['exam_paper_instance_id']))?>">继续练习</a>
 			<?php } else {?>
 				<a class="btn green-btn" href="#">查看解析</a>
 				<a class="btn red-btn" href="#">查看报告</a>
