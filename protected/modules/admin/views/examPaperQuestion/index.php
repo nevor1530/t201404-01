@@ -74,7 +74,7 @@ Yii::app()->clientScript->registerCss(__CLASS__."#css", $cssScript);
 <?php
 $sequenceUrl = Yii::app()->createUrl('/admin/examPaperQuestion/sequence');
 $sequenceScript = <<< END
-jQuery(".js-sequence-btn").on("click", function(){
+jQuery(".js-sequence-btn").live("click", function(){
 	jQthis = jQuery(this);
 	var input = jQthis.parent().find(".js-sequence-input");
 	if (!/^\d+$/.test(input.val())){
@@ -107,7 +107,7 @@ jQuery(".js-sequence-btn").on("click", function(){
 	});
 });
 
-jQuery(".js-sequence-modify-btn").on("click", function(){
+jQuery(".js-sequence-modify-btn").live("click", function(){
 	var jQparent = jQuery(this).parents(".exam_paper-question-item-title");
 	var jQtextSpan = jQparent.find(".js-sequence-text-block");
 	var jQinputSpan = jQparent.find(".js-sequence-input-block");
@@ -118,7 +118,7 @@ jQuery(".js-sequence-modify-btn").on("click", function(){
 	jQinput.val(jQsequenceText.html());
 });
 
-jQuery(".js-exam-paper-question-delete").on("click", function(){
+jQuery(".js-exam-paper-question-delete").live("click", function(){
 	var jQthis = jQuery(this);
 	jQuery.ajax({
 		url: this.href,
@@ -135,7 +135,7 @@ jQuery(".js-exam-paper-question-delete").on("click", function(){
 	return false;
 });
 
-jQuery(".js-exam-paper-question-unsequence").on("click", function(){
+jQuery(".js-exam-paper-question-unsequence").live("click", function(){
 	var jQthis = jQuery(this);
 	jQuery.ajax({
 		url: this.href,

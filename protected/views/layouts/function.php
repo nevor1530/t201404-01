@@ -23,12 +23,12 @@
 	
 	<ul class="function-list">
 		<li class="<?php echo $this->curTab == Constants::$EXAM_POINT_TAB ? "current" : "" ?>">
-			<a href="<?php echo Yii::app()->createUrl("/examPoint/index", array('exam_bank_id'=>$this->examBankId, 'subject_id'=>$subject['id']))?>">专项训练</a>
+			<a href="<?php echo Yii::app()->createUrl("/examPoint/index", array('exam_bank_id'=>$this->examBankId, 'subject_id'=>$this->curSubjectId))?>">专项训练</a>
 	    <li class="<?php echo $this->curTab == Constants::$REAL_EXAM_PAPER_TAB ? "current" : "" ?>">
-	    	<a href="<?php echo Yii::app()->createUrl("/realExamPaper/recommendation", array('exam_bank_id'=>$this->examBankId, 'subject_id'=>$subject['id']))?>"">真题模考</a>
+	    	<a href="<?php echo Yii::app()->createUrl("/realExamPaper/list", array('exam_bank_id'=>$this->examBankId, 'subject_id'=>$this->curSubjectId))?>"">真题模考</a>
 	    </li>
 	    <li class="<?php echo $this->curTab == Constants::$PRACTISE_TAB ? "current" : "" ?>">
-	    	<a href="<?php echo Yii::app()->createUrl("/practise/history", array('exam_bank_id'=>$this->examBankId, 'subject_id'=>$subject['id']))?>">我的练习</a>
+	    	<a href="<?php echo Yii::app()->createUrl("/practise/history", array('exam_bank_id'=>$this->examBankId, 'subject_id'=>$this->curSubjectId))?>">我的练习</a>
 	    </li>
 	</ul>
 

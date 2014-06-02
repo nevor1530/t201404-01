@@ -88,7 +88,6 @@ class PractiseController extends Controller
 		$command = Yii::app()->db->createCommand($sql . " LIMIT $offset,$limit");
 		
 		$result = $command->queryAll();
-		
 		$history = array(); 
 		if ($result != null && is_array($result) && count($result) > 0) {
 			$index = 0;	
@@ -96,6 +95,7 @@ class PractiseController extends Controller
 				$history[$index] = array();
 				$history[$index]['exam_paper_instance_id'] = $record['exam_paper_instance_id'];
 				$history[$index]['start_time'] = Yii::app()->dateFormatter->format("yyyy-MM-dd HH:mm", $record['start_time']);
+				$history[$index]['is_real_exam_paper'] = ($record['exam_paper_id'] != 0);
 				$history[$index]['is_completed'] = $record['is_completed'];
 				
 				if ($record['exam_paper_id'] == 0) {
@@ -127,7 +127,6 @@ class PractiseController extends Controller
 			'pages'=>$pages
 		));
 	}
-	
 	
 	public function actionFavorites($exam_bank_id, $subject_id = 0) {
 		$this->initial($exam_bank_id, $subject_id);

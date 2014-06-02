@@ -11,6 +11,7 @@ class ExamPointController extends Controller
 	public $examBankName;
 	public $subjects;
 	public $curTab;
+	public $curSubjectId;
 	
 	/**
 	 * @return array action filters
@@ -75,7 +76,6 @@ class ExamPointController extends Controller
 		$selectedQuestionIds = array();
 		if (count($candidateQuestionIds) > 0) {
 			$selectedQuestionIds = $this->randArray($candidateQuestionIds, 15);
-			$favoriteQuestionIds = $this->getFavoriteQuestionIds($selectedQuestionIds);
 		}
 		
 		$criteria = new CDbCriteria();
@@ -88,19 +88,20 @@ class ExamPointController extends Controller
 			$examPaperInstanceModel = new ExamPaperInstanceModel;
 			$examPaperInstanceModel->exam_paper_id = 0;
 			$examPaperInstanceModel->exam_point_id = $exam_point_id;
-			$examPaperInstanceModel->user_id = $userId = Yii::app()->user->id;
+			$examPaperInstanceModel->user_id = Yii::app()->user->id;
 			$examPaperInstanceModel->start_time = date("Y-m-d H:i:s");
 			$examPaperInstanceModel->elapsed_time = 0;
 			$examPaperInstanceModel->is_completed = 0;
 			
 			if ($examPaperInstanceModel->validate() && $examPaperInstanceModel->save()) {
+				$userId = Yii::app()->user->id;
 				for ($index = 0; $index < count($questionRecords); $index++) {
 					$questionModel = $questionRecords[$index];
 					
 					$questionInstanceModel = new QuestionInstanceModel;
 					$questionInstanceModel->exam_paper_instance_id = $examPaperInstanceModel->exam_paper_instance_id;
 					$questionInstanceModel->question_id = $questionModel->question_id;
-					$questionInstanceModel->user_id = $userId = Yii::app()->user->id;
+					$questionInstanceModel->user_id = Yii::app()->user->id;
 					if ($questionInstanceModel->validate()) {
 						$questionInstanceModel->save();
 					}
@@ -110,6 +111,8 @@ class ExamPointController extends Controller
 					$questions[$index]['content'] = $questionModel->questionExtra->title;
 					$questions[$index]['answerOptions'] = array();
 					$questions[$index]['questionType'] = $questionModel->question_type;
+					$questions[$index]['is_favorite'] = $this->isFavoriteQuestion($userId, $questionModel->question_id);
+					
 					if ($questionModel->question_type == QuestionModel::SINGLE_CHOICE_TYPE || $questionModel->question_type == QuestionModel::MULTIPLE_CHOICE_TYPE) {
 						$questionAnswerOptions = $questionModel->questionAnswerOptions;
 						foreach ($questionAnswerOptions as $questionAnswerOption) {
@@ -124,12 +127,6 @@ class ExamPointController extends Controller
 						$questions[$index]['answerOptions'][] = array('index' => '1', 'description' => '错误', 'isSelected' => false);
 					}
 					
-					if (in_array($questions[$index]['questionId'], $favoriteQuestionIds)) {
-						$questions[$index]['is_favorite'] = true;
-					} else {
-						$questions[$index]['is_favorite'] = false;
-					}
-			
 					$material_id = $questionModel->material_id;
 					if ($material_id != 0) {
 						$materialModel = MaterialModel::model()->findByPk($material_id);
@@ -191,6 +188,7 @@ class ExamPointController extends Controller
 					$questions[$index]['content'] = $questionModel->questionExtra->title;
 					$questions[$index]['answerOptions'] = array();
 					$questions[$index]['questionType'] = $questionModel->question_type;
+					$questions[$index]['is_favorite'] = $this->isFavoriteQuestion($userId, $questionInstanceModel->question_id);
 					
 					$myAnswers = array();
 					if ($questionInstanceModel->myanswer != null) {
@@ -221,15 +219,6 @@ class ExamPointController extends Controller
 					}
 					
 					$index++;
-				}
-				
-				$favoriteQuestionIds = $this->getFavoriteQuestionIds($questionIds);
-				for ($index = 0; $index < count($questions); $index++) {
-					if (in_array($questions[$index]['questionId'], $favoriteQuestionIds)) {
-						$questions[$index]['is_favorite'] = true;
-					} else {
-						$questions[$index]['is_favorite'] = false;
-					}
 				}
 				
 				$this->render('practise', array(
@@ -280,11 +269,24 @@ class ExamPointController extends Controller
 			$time = $_POST['answerForm']['time'];
 			
 			$examPaperInstanceModel = ExamPaperInstanceModel::model()->findByPk($examPaperInstanceId);
-			if ($examPaperInstanceModel != null && $examPaperInstanceModel->user_id == $userId) {
+			if ($examPaperInstanceModel != null) {
+				if ($examPaperInstanceModel->user_id != $userId) {
+					echo json_encode(array('status'=>1, 'errMsg'=>'请您重新登录'));
+					Yii::app()->end();
+				}
+				
+				if ($examPaperInstanceModel->is_completed == 1) {
+					echo json_encode(array('status'=>1, 'errMsg'=>'试卷已不提交，不能继续作答'));
+					Yii::app()->end();
+				}
+				
 				if ($time > $examPaperInstanceModel->elapsed_time) {
 					$examPaperInstanceModel->elapsed_time = $time;
 					$examPaperInstanceModel->save();
-				}
+				} 
+			} else {
+				echo json_encode(array('status'=>1, 'errMsg'=>'request page does not exist'));
+				Yii::app()->end();
 			}
 			
 			$questionInstanceModel = QuestionInstanceModel::model()->findByPk($questionInstanceId);
@@ -315,26 +317,20 @@ class ExamPointController extends Controller
 		$this->redirect(array('index', 'exam_bank_id' => $exam_bank_id, 'subject_id' => $subject_id));
 	}
 	
-	private function getFavoriteQuestionIds($questionIds) {
+	private function isFavoriteQuestion($userId, $questionId) {
 		$criteria = new CDbCriteria();
-		$criteria->condition = 'user_id = ' . Yii::app()->user->id;  
-		$criteria->addInCondition('question_id', $questionIds);  
-		$results = QuestionFavoritesModel::model()->findAll($criteria);
-		
-		$favoriteQuestionIds = array();
-		if ($results != null) {
-			foreach ($results as $record) {
-				$favoriteQuestionIds[] = $record->question_id;
-			}
-		}
-		return $favoriteQuestionIds;
+		$criteria->addCondition('user_id = ' . $userId);  
+		$criteria->addCondition('question_id = ' . $questionId); 
+		return (QuestionFavoritesModel::model()->count($criteria) > 0);
 	}
 	
 	private function initial($exam_bank_id, $subject_id) {
+		$this->examBankId = $exam_bank_id;
 		$this->curTab = Constants::$EXAM_POINT_TAB;
+		$this->curSubjectId = $subject_id;
+		
 		$examBankRecord = ExamBankModel::model()->findByPk($exam_bank_id);
 		$this->examBankName = $examBankRecord->name;
-		$this->examBankId = $exam_bank_id;
 		
 		$subjects = array();
 		$subjectRecords = $examBankRecord->subjects;

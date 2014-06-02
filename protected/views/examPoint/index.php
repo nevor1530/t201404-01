@@ -14,7 +14,7 @@
 		$finishedQuestionCount = $examPoint['finished_question_count'];
 		$correctQuestionCount = $examPoint['correct_question_count'];
 		$finishedQuestionRate = $totalQuestionCount == 0 ? 0 : $finishedQuestionCount / $totalQuestionCount;
-		$correctQuestionRate = $totalQuestionCount == 0 ? 0 : $correctQuestionCount / $totalQuestionCount;
+		$correctQuestionRate = round($totalQuestionCount == 0 ? 0 : $correctQuestionCount / $totalQuestionCount, 3);
 
 		if ($totalQuestionCount > 0) {
 			$newPractiseUrl = Yii::app()->createUrl("/examPoint/newPractise", array(
