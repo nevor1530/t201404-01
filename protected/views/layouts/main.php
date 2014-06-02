@@ -26,6 +26,7 @@
                 </div>
                 <ul>
                 	<li><a href="#">给当前题库续费</a></li>
+                	<li><a href="<?php echo Yii::app()->createUrl("/site/index")?>">选择其他题库</a></li>
                     <li><a href="#">修改密码</a></li>
                     <li><a href="<?php echo Yii::app()->createUrl("/site/logout")?>">退出</a></li>
                 </ul>

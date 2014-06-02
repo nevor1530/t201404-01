@@ -43,6 +43,7 @@ class RealExamPaperController extends Controller
 	public function actionList($exam_bank_id, $subject_id, $is_recommendation = true) {
 		$this->initial($exam_bank_id, $subject_id);
 		
+		$examPaperModels = array();
 		if ($is_recommendation) {
 			$criteria = new CDbCriteria();
 			$criteria->addCondition('subject_id = ' . $subject_id);  
