@@ -30,7 +30,7 @@ class QuestionFavoritesModel extends CActiveRecord
 			array('user_id, question_id', 'numerical', 'integerOnly'=>true),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('question_favorite_id, user_id, question_id', 'safe', 'on'=>'search'),
+			array('question_favorites_id, user_id, question_id', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -51,7 +51,7 @@ class QuestionFavoritesModel extends CActiveRecord
 	public function attributeLabels()
 	{
 		return array(
-			'question_favorite_id' => 'Question Favorite',
+			'question_favorites_id' => 'Question Favorite',
 			'user_id' => 'User',
 			'question_id' => 'Question',
 		);
@@ -75,7 +75,7 @@ class QuestionFavoritesModel extends CActiveRecord
 
 		$criteria=new CDbCriteria;
 
-		$criteria->compare('question_favorite_id',$this->question_favorite_id);
+		$criteria->compare('question_favorites_id',$this->question_favorite_id);
 		$criteria->compare('user_id',$this->user_id);
 		$criteria->compare('question_id',$this->question_id);
 
