@@ -47,6 +47,7 @@ class ExamPointController extends Controller
 			throw new CHttpException(404,'The requested page does not exist.');
 		} else if ($subject_id == 0) {
 			$subject_id = $this->subjects[0]['id'];
+			$this->curSubjectId = $subject_id;
 		}
 		
 		$criteria = new CDbCriteria();
