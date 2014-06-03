@@ -775,3 +775,27 @@ ul.question-block li.current a {
 	cursor: pointer;
 }
 /*end of 推荐真题*/
+/*解析*/
+.analysis {
+	border-left: 1px solid #c9c9c9;
+	padding: 0.8em 0;
+}
+.analysis .analysis-item {
+	position: relative;	
+}
+.analysis .analysis-item .analysis-item-title {
+	position: absolute;
+	background: url("../images/analysis_item_bg.png") no-repeat;
+	width: 75px;
+	padding-left: 6px;
+	text-align: center;
+	color: #ffffff;
+	font-size: 12px;
+	line-height: 20px;
+}
+.analysis .analysis-item .analysis-item-content {
+	margin-left: 90px;
+	font-size: 12px;
+	line-height: 20px;
+}
+/*end of 解析*/
