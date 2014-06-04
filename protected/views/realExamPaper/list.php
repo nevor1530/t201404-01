@@ -26,7 +26,7 @@
 			<?php if($realExamPaper['practise_times'] > 0) { ?>
 			已做过<?php echo $realExamPaper['practise_times']; ?>次
 			<?php } ?>
-			<a class="btn blue-btn" href="<?php echo Yii::app()->createUrl("/realExamPaper/practise", array('exam_bank_id'=>$this->examBankId, 'subject_id'=>$this->curSubjectId, 'exam_paper_id' => $realExamPaper['id']))?>">开始模考</a>
+			<a class="btn blue-btn" href="<?php echo Yii::app()->createUrl("/realExamPaper/newPractise", array('exam_bank_id'=>$this->examBankId, 'subject_id'=>$this->curSubjectId, 'exam_paper_id' => $realExamPaper['id'], "return_url" => urlencode(Yii::app()->request->url)))?>">开始模考</a>
 		</div>
 	</div>
 	<?php } ?>

@@ -1,15 +1,6 @@
 <?php
-class RealExamPaperController extends Controller
+class RealExamPaperController extends FunctionController
 {
-	/**
-	 * @var string the default layout for the views. Defaults to '//layouts/column2', meaning
-	 * using two-column layout. See 'protected/views/layouts/column2.php'.
-	 */
-	public $layout='//layouts/function';
-	public $examBankId;
-	public $examBankName;
-	public $subjects;
-	public $curSubjectId;
 	public $curTab;
 
 	/**
@@ -31,7 +22,7 @@ class RealExamPaperController extends Controller
 	{
 		return array(
 			array('allow', // allow authenticated user to perform 'create' and 'update' actions
-				'actions'=>array('list', 'practise', 'ajaxSubmitAnswer', 'continuePractise', 'completePractise'),
+				'actions'=>array('list', 'newPractise', 'ajaxSubmitAnswer', 'continuePractise', 'completePractise'),
 				'users'=>array('@'),
 			),
 			array('deny',  // deny all users
@@ -41,7 +32,7 @@ class RealExamPaperController extends Controller
 	}
 	
 	public function actionList($exam_bank_id, $subject_id, $is_recommendation = true) {
-		$this->initial($exam_bank_id, $subject_id);
+		$this->initial($exam_bank_id, $subject_id, Constants::$REAL_EXAM_PAPER_TAB);
 		
 		$examPaperModels = array();
 		if ($is_recommendation) {
@@ -50,7 +41,7 @@ class RealExamPaperController extends Controller
 			$count = PaperRecommendationModel::model()->count($criteria);  
 			
 			$pager = new CPagination($count);    
-			$pager->pageSize = 2;             
+			$pager->pageSize = 5;             
 			$pager->applyLimit($criteria);  
 			
 			$paperRecommendationModels = PaperRecommendationModel::model()->findAll($criteria);
@@ -102,8 +93,8 @@ class RealExamPaperController extends Controller
 		
 	}
 	
-	public function actionPractise($exam_bank_id, $subject_id, $exam_paper_id) {
-		$this->initial($exam_bank_id, $subject_id);
+	public function actionNewPractise($exam_bank_id, $subject_id, $exam_paper_id, $return_url = null) {
+		$this->initial($exam_bank_id, $subject_id, Constants::$REAL_EXAM_PAPER_TAB);
 		
 		$examPaperModel = ExamPaperModel::model()->findByPk($exam_paper_id);
 		if ($examPaperModel == null) {
@@ -111,6 +102,7 @@ class RealExamPaperController extends Controller
 		}
 		
 		$examPaperInstanceModel = new ExamPaperInstanceModel;
+		$examPaperInstanceModel->instance_type = ExamPaperInstanceModel::REAL_EXAM_PAPER_TYPE;
 		$examPaperInstanceModel->exam_paper_id = $exam_paper_id;
 		$examPaperInstanceModel->exam_point_id = 0;
 		$examPaperInstanceModel->user_id = $userId = Yii::app()->user->id;
@@ -140,18 +132,23 @@ class RealExamPaperController extends Controller
 			}
 			
 			$this->render('practise',array(
+				'returnUrl' => $return_url,
 				'examPaperInstanceId' => $examPaperInstanceModel->exam_paper_instance_id,
 				'remainTime' =>  $examPaperModel->time_length,
 				'paperName' => $examPaperModel->name,
 				'questionBlocks' => $questionBlocks,
 			));
 		}  else {
-			$this->redirect(array('recommendation', 'exam_bank_id' => $exam_bank_id, 'subject_id' => $subject_id));
+			if ($return_url != null) {
+				$this->redirect(urldecode($return_url));
+			} else {
+				$this->redirect(array('recommendation', 'exam_bank_id' => $exam_bank_id, 'subject_id' => $subject_id));
+			}
 		}
 	}
 	
-	public function actionContinuePractise($exam_bank_id, $subject_id, $exam_paper_instance_id) {
-		$this->initial($exam_bank_id, $subject_id);
+	public function actionContinuePractise($exam_bank_id, $subject_id, $exam_paper_instance_id, $return_url = null) {
+		$this->initial($exam_bank_id, $subject_id, Constants::$REAL_EXAM_PAPER_TAB);
 		
 		$userId = Yii::app()->user->id;
 		$examPaperInstanceModel = ExamPaperInstanceModel::model()->findByPk($exam_paper_instance_id);
@@ -184,12 +181,19 @@ class RealExamPaperController extends Controller
 			}
 			
 			$this->render('practise',array(
+				'returnUrl' => $return_url,
 				'examPaperInstanceId' => $examPaperInstanceModel->exam_paper_instance_id,
 				'remainTime' =>  $examPaperModel->time_length - $examPaperInstanceModel->elapsed_time,
 				'paperName' => $examPaperModel->name,
 				'questionBlocks' => $questionBlocks,
 			));
 			Yii::app()->end();
+		} else {
+			if ($return_url != null) {
+				$this->redirect(urldecode($return_url));
+			} else {
+				$this->redirect(array('recommendation', 'exam_bank_id' => $exam_bank_id, 'subject_id' => $subject_id));
+			}	
 		}
 	}
 	
@@ -250,15 +254,14 @@ class RealExamPaperController extends Controller
 		} 
 	}
 	
-	public function actionCompletePractise($exam_bank_id, $subject_id, $exam_paper_instance_id) {
+	public function actionCompletePractise($exam_bank_id, $subject_id, $exam_paper_instance_id, $return_url = null) {
 		$userId = Yii::app()->user->id;
-		$examPaperInstanceModel = ExamPaperInstanceModel::model()->findByPk($exam_paper_instance_id);
-		if ($examPaperInstanceModel != null  && $examPaperInstanceModel->user_id == $userId) {
-			$examPaperInstanceModel->is_completed = 1;
-			$examPaperInstanceModel->save();
-		}
-		
-		$this->redirect(array('recommendation', 'exam_bank_id' => $exam_bank_id, 'subject_id' => $subject_id));
+		$this->completePractise($userId, $exam_paper_instance_id);
+		if ($return_url != null) {
+			$this->redirect(urldecode($return_url));
+		} else {
+			$this->redirect(array('list', 'exam_bank_id' => $exam_bank_id, 'subject_id' => $subject_id));
+		}	
 	}
 	
 	private function getQuestions($examPaperId, $questionBlockId, $examPaperInstanceId = -1) {
@@ -275,43 +278,17 @@ class RealExamPaperController extends Controller
 				$questionId = $examPaperQuestion->question_id;
 				$questionModel = QuestionModel::model()->findByPk($questionId);	
 				if ($questionModel != null) {
-					$questions[$index]['questionId'] = $questionId;
-					$questions[$index]['content'] = $questionModel->questionExtra->title;
-					$questions[$index]['answerOptions'] = array();
-					$questions[$index]['questionType'] = $questionModel->question_type;
-					$questions[$index]['is_favorite'] = $this->isFavoriteQuestion($userId, $questionId);
-					
-					$myAnswers = array();
+					$myAnswer = array();
 					if ($examPaperInstanceId != -1) {
 						$myAnswerRawStr = $this->getQuestionAnswer($questionId, $examPaperInstanceId);
 						if ($myAnswerRawStr != null) {
-							$myAnswers = explode("|", $myAnswerRawStr);
+							$myAnswer = explode("|", $myAnswerRawStr);
 						}
 					}
 					
-					if ($questionModel->question_type == QuestionModel::SINGLE_CHOICE_TYPE || $questionModel->question_type == QuestionModel::MULTIPLE_CHOICE_TYPE) {
-						$questionAnswerOptions = $questionModel->questionAnswerOptions;
-						foreach ($questionAnswerOptions as $questionAnswerOption) {
-							$questions[$index]['answerOptions'][] = array(
-								'index' =>$questionAnswerOption->attributes['index'],
-								'description' => $questionAnswerOption->attributes['description'],
-								'isSelected' => in_array($questionAnswerOption->index, $myAnswers),
-							);
-						}
-					}  else if ($questionModel->question_type == QuestionModel::TRUE_FALSE_TYPE) {
-						$questions[$index]['answerOptions'][] = array('index' => '0', 'description' => '正确', 'isSelected' => in_array(0, $myAnswers));
-						$questions[$index]['answerOptions'][] = array('index' => '1', 'description' => '错误', 'isSelected' => in_array(1, $myAnswers));
-					}
-					
-					$material_id = $questionModel->material_id;
-					if ($material_id != 0) {
-						$materialModel = MaterialModel::model()->findByPk($material_id);
-						if ($materialModel != null) {
-							$questions[$index]['material_id'] = $material_id;
-							$questions[$index]['material_content'] = $materialModel->content;
-						}
-					}
-					
+					$question = $this->getQuestionDetailFromModel($questionModel, $myAnswer, false);
+					$question['is_favorite'] = $this->isFavoriteQuestion($userId, $questionId);
+					$questions[$index] = $question;
 					$index++;
 				}
 			}
@@ -330,13 +307,6 @@ class RealExamPaperController extends Controller
 		return null;
 	}
 	
-	private function isFavoriteQuestion($userId, $questionId) {
-		$criteria = new CDbCriteria();
-		$criteria->addCondition('user_id = ' . $userId);  
-		$criteria->addCondition('question_id = ' . $questionId); 
-		return (QuestionFavoritesModel::model()->count($criteria) > 0);
-	}
-	
 	private function getRealExamPaperPractiseTimes($examPaperId, $userId) {
 		$criteria = new CDbCriteria();
 		$criteria->addCondition('user_id = ' . $userId);  
@@ -344,32 +314,4 @@ class RealExamPaperController extends Controller
 		return ExamPaperInstanceModel::model()->count($criteria);
 	}
 	
-	private function initial($exam_bank_id, $subject_id) {
-		$this->curTab = Constants::$REAL_EXAM_PAPER_TAB;
-		$examBankRecord = ExamBankModel::model()->findByPk($exam_bank_id);
-		$this->examBankName = $examBankRecord->name;
-		$this->examBankId = $exam_bank_id;
-		
-		$subjects = array();
-		$subjectRecords = $examBankRecord->subjects;
-		if ($subjectRecords != null) {
-			for ($i = 0; $i < count($subjectRecords); $i++) {
-				$subjectRecord = $subjectRecords[$i];
-				$subjects[] = array(
-					'id' => $subjectRecord->subject_id,
-					'name' => $subjectRecord->name,
-					'is_current' => (($subject_id == 0 && $i == 0) || $subject_id == $subjectRecord->subject_id),
-				);
-			}
-		}
-		$this->subjects = $subjects;
-		
-		if ($subject_id == 0 && count($subjects) == 0) {
-			throw new CHttpException(404,'The requested page does not exist.');
-		} else if ($subject_id == 0) {
-			$this->curSubjectId = $subjects[0]['id'];
-		} else {
-			$this->curSubjectId = $subject_id;
-		}
-	}
 }

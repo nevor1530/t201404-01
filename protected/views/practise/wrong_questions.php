@@ -8,18 +8,34 @@
 	<div class="bold">共<span style="color: #00a0e9"><?php echo $totalWrongQuestionCount; ?></span>道错题
     <div class="exam-point-tree">
     	<?php 
-		function genExamPointHtml($examPoint) {
+		function genExamPointHtml($examBankId, $subjectId, $examPoint) {
+			$wrongQuestionCount = $examPoint['wrong_question_count'];
+			if ($wrongQuestionCount > 0) {
+				$newPractiseUrl = Yii::app()->createUrl("/practise/newWrongQuestionPractise", array(
+					"exam_bank_id"=>$examBankId, 
+					"subject_id"=>$subjectId, 
+					"exam_point_id"=>$examPoint['id'],
+					'return_url'=>urlencode(Yii::app()->request->url),
+				));
+				
+				$viewWrongQuestionsUrl = Yii::app()->createUrl("/practise/viewWrongQuestionAnalysis", array(
+					"exam_bank_id"=>$examBankId, 
+					"subject_id"=>$subjectId, 
+					"exam_point_id"=>$examPoint['id']
+				));
+			}
+		
 			$html = '<div class="level">';
 			$html .= '	<div class="item">';
-			$html .= '		<span class="title"><span class="bold">' . $examPoint['name'] . '</span><span class="font-size12">(共 ' . $examPoint['wrong_question_count'] . '道错题)</span></span>';
-			$html .= '		<a class="pull-right button" href="#">练习</a>';
-			$html .= '		<a class="pull-right" href="#">查看题目</a>';
+			$html .= '		<span class="title"><span class="bold">' . $examPoint['name'] . '</span><span class="font-size12">(共 ' . $wrongQuestionCount . '道错题)</span></span>';
+			$html .= '		<a class="pull-right button" ' . ($wrongQuestionCount > 0 ? 'href="'.$newPractiseUrl.'"' : '') . '>练习</a>';
+			$html .= '		<a class="pull-right" ' . ($wrongQuestionCount > 0 ? 'href="'.$viewWrongQuestionsUrl.'"' : '') . '>查看题目</a>';
 			$html .= '	</div>';
 			
 			$subExamPoints = $examPoint['sub_exam_points'];
 			foreach ($subExamPoints as $subExamPoint) {
 				$html .= '	<div class="sublevel">';
-				$html .= genExamPointHtml($subExamPoint);
+				$html .= genExamPointHtml($examBankId, $subjectId, $subExamPoint);
 				$html .= '	</div>';
 			}
 			$html .= '</div>';
@@ -27,7 +43,7 @@
 		}
 		
 		foreach ($examPoints as $examPoint) {
-			echo genExamPointHtml($examPoint);
+			echo genExamPointHtml($this->examBankId, $this->curSubjectId, $examPoint);
 		}
 		?>
 	</div>
