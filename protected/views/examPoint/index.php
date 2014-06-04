@@ -18,9 +18,10 @@
 
 		if ($totalQuestionCount > 0) {
 			$newPractiseUrl = Yii::app()->createUrl("/examPoint/newPractise", array(
-				"exam_bank_id"=>$examBankId, 
-				"subject_id"=>$subjectId, 
-				"exam_point_id"=>$examPoint['id']
+				"exam_bank_id" => $examBankId, 
+				"subject_id" => $subjectId, 
+				"exam_point_id" => $examPoint['id'],
+				"return_url" => urlencode(Yii::app()->request->url),
 			));
 		}		
 		

@@ -2,14 +2,14 @@
 	<div class="paper-left-column">
 		<div id="clock" class="clock"></div>
 		<div class="btn red-btn">
-			<a href="<?php echo Yii::app()->createUrl("/examPoint/completePractise", array("exam_bank_id"=>$examBankId,'subject_id'=>$subjectId, "exam_paper_instance_id" => $examPaperInstanceId));?>">交卷</a>
+			<a href="<?php echo Yii::app()->createUrl("/examPoint/completePractise", array("exam_bank_id"=>$this->examBankId,'subject_id'=>$this->curSubjectId, "exam_paper_instance_id" => $examPaperInstanceId, "return_url" => $returnUrl));?>">交卷</a>
 		</div>
 		<div class="btn green-btn">
-			<a href="<?php echo Yii::app()->createUrl("/examPoint/index", array("exam_bank_id"=>$examBankId,'subject_id'=>$subjectId));?>">下次再做</a>
+			<a href="<?php echo ($returnUrl != null? urldecode($returnUrl) : Yii::app()->createUrl("/examPoint/index", array("exam_bank_id"=>$this->examBankId,'subject_id'=>$this->curSubjectId)));?>">下次再做</a>
 		</div>
 	</div>
 	<div class="paper-right-column">
-		<div class="chapter-herder">专项训练：【<?php echo $examPointName; ?>】</div>
+		<div class="chapter-herder"><?php echo $practiseName; ?></div>
 		<div class="content">
 			<form id="answerForm" method="post" action="<?php echo Yii::app()->createUrl("/examPoint/ajaxSubmitAnswer");?>">
 				<input type="hidden" name="answerForm[examPaperInstanceId]" value="<?php echo $examPaperInstanceId;?>">
