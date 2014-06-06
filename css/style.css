@@ -1,4 +1,4 @@
-@charset "utf-8";
+﻿@charset "utf-8";
 /* CSS Document */
 * {
 	font-family: "Microsoft YaHei" ! important;
@@ -649,6 +649,8 @@ ul.subfunction-list li.current a {
 	line-height: 30px;
 	background-image: url("../images/do_paper_title_bg.png");
 	background-repeat: repeat-x;
+	font-weight: bold;
+	padding: 0 13px;
 }
 ul.question-block {
 	overflow: hidden;
@@ -781,7 +783,11 @@ ul.question-block li.current a {
 	padding: 0.8em 0;
 }
 .analysis .analysis-item {
-	position: relative;	
+	position: relative;
+	margin-top: 1em;
+}
+.analysis .analysis-item:first-child {
+	margin-top: 0;
 }
 .analysis .analysis-item .analysis-item-title {
 	position: absolute;
@@ -799,3 +805,41 @@ ul.question-block li.current a {
 	line-height: 20px;
 }
 /*end of 解析*/
+/*报告*/
+.paper-report .practice-time{
+	border: 1px solid #9dcbfd;
+	background-color: #dfeefe;
+	line-height: 30px;
+	margin-top: 9px;
+	padding: 0 13px;
+}
+.paper-report .half {
+	width: 49%;
+}
+.paper-report .message {
+	font-size: 18px;
+}
+.paper-report .status {
+	color: #60aaf6;
+	font-size: 24px;
+}
+.paper-report .number {
+	font-size: 72px;
+	margin-right: 30px;
+}
+.answer-card-title {
+	background: url(../images/datika_bg.png) no-repeat;
+	line-height: 40px;
+	width: 127px;
+	text-align: center;
+	display: inline-block;
+	font-size: 16px;
+	color: #ffffff;
+	margin-top: -19px;
+}
+/*endof 报告*/
+.btn-question {
+	width: 25px;
+	height: 25px;
+	padding: 0;
+}
