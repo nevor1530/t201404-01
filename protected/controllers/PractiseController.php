@@ -226,7 +226,6 @@ class PractiseController extends FunctionController
 				}
 					
 				$question = $this->getQuestionDetailFromModel($questionModel, $answer, true);
-				$question['questionInstanceId'] = $questionInstanceModel->question_instance_id;
 				$question['is_favorite'] = $this->isFavoriteQuestion($userId, $questionModel->question_id);
 				$questions[] = $question;
 			}
@@ -329,7 +328,6 @@ class PractiseController extends FunctionController
 				}
 					
 				$question = $this->getQuestionDetailFromModel($questionModel, $answer, true);
-				$question['questionInstanceId'] = $questionInstanceModel->question_instance_id;
 				$question['is_favorite'] = $this->isFavoriteQuestion($userId, $questionModel->question_id);
 				$questions[] = $question;
 			}
