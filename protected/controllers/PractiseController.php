@@ -220,7 +220,12 @@ class PractiseController extends FunctionController
 		$questions = array();
 		if ($questionModels != null) {
 			foreach ($questionModels as $questionModel) {
-				$question = $this->getQuestionDetailFromModel($questionModel, null, true);
+				$answer = array();
+				if ($questionModel->answer != null) {
+					$answer = explode("|", $questionModel->answer);
+				}
+					
+				$question = $this->getQuestionDetailFromModel($questionModel, $answer, true);
 				$question['questionInstanceId'] = $questionInstanceModel->question_instance_id;
 				$question['is_favorite'] = $this->isFavoriteQuestion($userId, $questionModel->question_id);
 				$questions[] = $question;
@@ -228,7 +233,7 @@ class PractiseController extends FunctionController
 		}
 		
 		$this->render('analysis', array(
-			'pageName' => '错题解析',
+			'pageName' => '收藏题解析',
 			'analysisName' => '错题查看：【' . $examPointName . '】',
 			'questions' => $questions,
 		));
@@ -302,7 +307,39 @@ class PractiseController extends FunctionController
 	}
 	
 	public function actionViewFavoriteQuestionAnalysis($exam_bank_id, $subject_id, $exam_point_id) {
+		$this->initial($exam_bank_id, $subject_id, Constants::$PRACTISE_TAB);
+		$examPoint = ExamPointModel::model()->findByPk($exam_point_id);
+		$examPointName = $examPoint->name;
 		
+		$favoriteQuestionIds = array();
+		$userId = Yii::app()->user->id;
+		$this->getFavoriteQuestionIdsByExamPoint($userId, $examPoint, $favoriteQuestionIds);
+		
+		$criteria = new CDbCriteria();
+		$criteria->addInCondition("question_id", $favoriteQuestionIds);
+		$criteria->order = 'material_id, question_id desc';
+		$questionModels = QuestionModel::model()->findAll($criteria);	
+		
+		$questions = array();
+		if ($questionModels != null) {
+			foreach ($questionModels as $questionModel) {
+				$answer = array();
+				if ($questionModel->answer != null) {
+					$answer = explode("|", $questionModel->answer);
+				}
+					
+				$question = $this->getQuestionDetailFromModel($questionModel, $answer, true);
+				$question['questionInstanceId'] = $questionInstanceModel->question_instance_id;
+				$question['is_favorite'] = $this->isFavoriteQuestion($userId, $questionModel->question_id);
+				$questions[] = $question;
+			}
+		}
+		
+		$this->render('analysis', array(
+			'pageName' => '收藏题解析',
+			'analysisName' => '收藏题查看：【' . $examPointName . '】',
+			'questions' => $questions,
+		));
 	}
 	
 	private function getWrongQuestionIdsByExamPoint($userId, $examPoint, &$result) {

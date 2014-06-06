@@ -35,27 +35,14 @@
 				</div>
 				<div class="options">
 					<?php foreach ($question['answerOptions'] as $answerOption) { ?>
-						<div class="option-item">
+						<div class="option-item" style="<?php echo $answerOption['isSelected'] ? "color:#00b7ee" : "";?>">
 							<div style="float:left"><?php echo  chr($answerOption['index'] + 65);?>. </div>
 							<div> <?php echo $answerOption['description'];?></div>
 						</div>
 					<?php } ?>
 				</div>
 				<div class="answers">
-					<?php foreach ($question['answerOptions'] as $answerOption) { ?>
-						<?php if ($question['questionType'] == 0 || $question['questionType'] == 2) { ?>
-							<label class="radio inline" style="margin-right: 10px;">
-								<input type="radio" <?php if ($answerOption['isSelected']) echo "checked=\"checked\""?> onclick="submitAnswer(<?php echo $question['questionId'];?>,<?php  echo $question['questionInstanceId'];?>)" name="answer[<?php echo $question['questionInstanceId'];?>]" value="<?php echo $answerOption['index'];?>">
-								<label><?php echo chr($answerOption['index'] + 65); ?></label>
-							</label>
-						<?php } else { ?>
-							<label class="checkbox inline" style="margin-right: 10px;">
-								<input type="checkbox" <?php if ($answerOption['isSelected']) echo "checked"?> onclick="submitAnswer(<?php echo $question['questionId'];?>,<?php  echo $question['questionInstanceId'];?>)" name="answer[<?php echo $question['questionInstanceId'];?>]" value="<?php echo $answerOption['index'];?>">
-								<label><?php echo chr($answerOption['index'] + 65); ?></label>
-							</label>
-						<?php } ?>	
-					<?php } ?>
-					</form>
+					<span>本题正确答案是：<?php foreach ($question['answerOptions'] as $answerOption) { echo $answerOption['isSelected'] ? (chr($answerOption['index'] + 65) . "&nbsp") : ""; }?><span>
 					<a class="favorite hover-origen <?php echo ($question['is_favorite'] ? "favorite-chosen" : ""); ?>" href="<?php echo Yii::app()->createUrl("/practise/ajaxAddQustionToFavorites", array("question_id"=>$question['questionId']));?>">收藏本题</a>
 				</div>
 				<div class="analysis">

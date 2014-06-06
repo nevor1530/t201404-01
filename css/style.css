@@ -647,6 +647,7 @@ ul.subfunction-list li.current a {
 }
 .do-paper .chapter-herder {
 	line-height: 30px;
+	padding-left: 13px;
 	background-image: url("../images/do_paper_title_bg.png");
 	background-repeat: repeat-x;
 }
@@ -781,7 +782,11 @@ ul.question-block li.current a {
 	padding: 0.8em 0;
 }
 .analysis .analysis-item {
+	margin-top: 1em;
 	position: relative;	
+}
+.analysis .analysis-item:first-child {
+	margin-top: 0;
 }
 .analysis .analysis-item .analysis-item-title {
 	position: absolute;
