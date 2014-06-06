@@ -154,10 +154,10 @@ class PractiseController extends FunctionController
 		$criteria = new CDbCriteria();
 		$criteria->addInCondition("question_id", $selectedQuestionIds);
 		$criteria->order = 'material_id, question_id desc';
-		$questionRecords = QuestionModel::model()->findAll($criteria);	
+		$questionModels = QuestionModel::model()->findAll($criteria);	
 		
 		$questions = array();
-		if ($questionRecords != null) {
+		if ($questionModels != null) {
 			$examPaperInstanceModel = new ExamPaperInstanceModel;
 			$examPaperInstanceModel->instance_type = ExamPaperInstanceModel::WRONG_QUESTION_PRACTISE_TYPE;
 			$examPaperInstanceModel->exam_paper_id = 0;
@@ -169,8 +169,8 @@ class PractiseController extends FunctionController
 			
 			if ($examPaperInstanceModel->validate() && $examPaperInstanceModel->save()) {
 				$userId = Yii::app()->user->id;
-				for ($index = 0; $index < count($questionRecords); $index++) {
-					$questionModel = $questionRecords[$index];
+				for ($index = 0; $index < count($questionModels); $index++) {
+					$questionModel = $questionModels[$index];
 					
 					$questionInstanceModel = new QuestionInstanceModel;
 					$questionInstanceModel->exam_paper_instance_id = $examPaperInstanceModel->exam_paper_instance_id;
@@ -204,7 +204,34 @@ class PractiseController extends FunctionController
 	}
 	
 	public function actionViewWrongQuestionAnalysis($exam_bank_id, $subject_id, $exam_point_id) {
+		$this->initial($exam_bank_id, $subject_id, Constants::$PRACTISE_TAB);
+		$examPoint = ExamPointModel::model()->findByPk($exam_point_id);
+		$examPointName = $examPoint->name;
 		
+		$wrongQuestionIds = array();
+		$userId = Yii::app()->user->id;
+		$this->getWrongQuestionIdsByExamPoint($userId, $examPoint, $wrongQuestionIds);
+		
+		$criteria = new CDbCriteria();
+		$criteria->addInCondition("question_id", $wrongQuestionIds);
+		$criteria->order = 'material_id, question_id desc';
+		$questionModels = QuestionModel::model()->findAll($criteria);	
+		
+		$questions = array();
+		if ($questionModels != null) {
+			foreach ($questionModels as $questionModel) {
+				$question = $this->getQuestionDetailFromModel($questionModel, null, true);
+				$question['questionInstanceId'] = $questionInstanceModel->question_instance_id;
+				$question['is_favorite'] = $this->isFavoriteQuestion($userId, $questionModel->question_id);
+				$questions[] = $question;
+			}
+		}
+		
+		$this->render('analysis', array(
+			'pageName' => '错题解析',
+			'analysisName' => '错题查看：【' . $examPointName . '】',
+			'questions' => $questions,
+		));
 	}
 	
 	public function actionNewFavoriteQuestionPractise($exam_bank_id, $subject_id, $exam_point_id, $return_url = null) {
@@ -225,10 +252,10 @@ class PractiseController extends FunctionController
 		$criteria = new CDbCriteria();
 		$criteria->addInCondition("question_id", $selectedFavoriteQuestionIds);
 		$criteria->order = 'material_id, question_id desc';
-		$questionRecords = QuestionModel::model()->findAll($criteria);	
+		$questionModels = QuestionModel::model()->findAll($criteria);	
 		
 		$questions = array();
-		if ($questionRecords != null) {
+		if ($questionModels != null) {
 			$examPaperInstanceModel = new ExamPaperInstanceModel;
 			$examPaperInstanceModel->instance_type = ExamPaperInstanceModel::FAVORITE_QUESTION_PRACTISE_TYPE;
 			$examPaperInstanceModel->exam_paper_id = 0;
@@ -240,8 +267,8 @@ class PractiseController extends FunctionController
 			
 			if ($examPaperInstanceModel->validate() && $examPaperInstanceModel->save()) {
 				$userId = Yii::app()->user->id;
-				for ($index = 0; $index < count($questionRecords); $index++) {
-					$questionModel = $questionRecords[$index];
+				for ($index = 0; $index < count($questionModels); $index++) {
+					$questionModel = $questionModels[$index];
 					
 					$questionInstanceModel = new QuestionInstanceModel;
 					$questionInstanceModel->exam_paper_instance_id = $examPaperInstanceModel->exam_paper_instance_id;
