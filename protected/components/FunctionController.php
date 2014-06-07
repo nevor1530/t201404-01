@@ -89,6 +89,17 @@ class FunctionController extends Controller
 				$question['material_content'] = $materialModel->content;
 			}
 		}
+		
+		if ($withAnalysis) {
+			$question['analysis'] = $questionModel->questionExtra->analysis;
+			$questionExamPoints = $questionModel->questionExamPoints;
+			foreach ($questionExamPoints as $questionExamPoint) {
+				$examPointId = $questionExamPoint['exam_point_id'];
+				$examPointModel = ExamPointModel::model()->findByPk($examPointId);
+				$question['questionExamPoints'][] = $examPointModel['name'];
+			}
+		}
+		
 		return $question;
 	}
 	
