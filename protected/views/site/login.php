@@ -28,6 +28,7 @@ $this->breadcrumbs=array(
 			<?php echo $form->labelEx($model,'username', array('class'=>'control-label')); ?>
 			<div class="controls">
 				<input class="username-input" type="text" id="LoginForm_username" name="LoginForm[username]" placeholder="请输入邮箱">
+				<!-- <div class="error">用户名不存在</div> -->
 			</div>
 		</div>
 	
@@ -35,6 +36,7 @@ $this->breadcrumbs=array(
 			<?php echo $form->labelEx($model,'password', array('class'=>'control-label')); ?>
 			<div class="controls">
 				<input class="password-input" type="password" id="LoginForm_password" name="LoginForm[password]" placeholder="请输入6个以上字符">
+				<!-- <div class="error">密码不正确</div> -->
 			</div>
 		</div>
 	

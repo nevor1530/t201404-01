@@ -12,6 +12,9 @@ body, ul{
 	padding: 0;
 	margin: 0;
 }
+.error {
+	color: red;
+}
 li {
 	list-style: none;
 }
@@ -81,7 +84,7 @@ a.btn:hover {
 	display: inline-block;
 }
 .header-bg {
-	background-color: rgba(55,116,180,1);
+	background-color: #3774b4;
 	height: 89px;
 	width: 100%;
 	position: absolute;
@@ -125,8 +128,9 @@ a.btn:hover {
 	position: absolute;
 	width: 100%;
 	text-align: center;
-	border: 1px solid rgba(96, 170, 246, 1);
+	border: 1px solid #60aaf6;
 	background-color: #ffffff;
+	z-index: 2;
 }
 .profile ul a {
 	color: #000000;
@@ -138,16 +142,16 @@ a.btn:hover {
 .profile ul li {
 	list-style: none;
 	padding: 5px 0;
-	border-top: 1px dashed rgba(96, 170, 246, 1);
+	border-top: 1px dashed #60aaf6;
 }
 .profile ul li:first-child {
 	border: none;
 }
 /*end 用户菜单*/
 .header-divider {
-	border: 1px solid rgba(175, 199, 225, 1);
+	border: 1px solid #afc7e1;
 	height: 1px;
-	background-color: rgba(55, 116, 180, 1);
+	background-color: #3774b4;
 	margin-top: 45px;
 }
 #main {
@@ -888,5 +892,6 @@ ul.question-block li.current a {
 	width: 129px;
 	height: 34px;
 	vertical-align: -10px;
+	border: 1px solid #e3e3e3;
 }
 /* end of 支付页面*/
