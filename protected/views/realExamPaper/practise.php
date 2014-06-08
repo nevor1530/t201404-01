@@ -85,7 +85,7 @@
 							<?php } ?>	
 						<?php } ?>
 						</form>
-						<a class="favorite hover-origen <?php echo ($question['is_favorite'] ? "favorite-chosen" : ""); ?>" href="<?php echo Yii::app()->createUrl("/examPoint/ajaxAddQustionToFavorites", array("question_id"=>$question['questionId']));?>">收藏本题</a>
+						<a class="favorite hover-origen <?php echo ($question['is_favorite'] ? "favorite-chosen" : ""); ?>" href="<?php echo Yii::app()->createUrl("/realExamPaper/ajaxAddQustionToFavorites", array("question_id"=>$question['questionId']));?>">收藏本题</a>
 					</div>
 				</div>
 				<?php } ?>
