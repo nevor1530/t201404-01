@@ -89,10 +89,13 @@
 						<div class="analysis-item">
 							<div class="analysis-item-title">考点</div>
 							<div class="analysis-item-content">
-								<?php if (isset($question['questionExamPoints']) && $question['questionExamPoints'] != null) {
+								<?php 
+								if (isset($question['questionExamPoints']) && $question['questionExamPoints'] != null) {
 									foreach ($question['questionExamPoints'] as $examPoint) {
 										echo $examPoint . '&nbsp';
 									}
+								} else { 
+									echo '暂无考点';
 								} ?>
 							</div>
 						</div>
