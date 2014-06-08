@@ -89,7 +89,7 @@
 						<div class="analysis-item">
 							<div class="analysis-item-title">考点</div>
 							<div class="analysis-item-content">
-								<?php if ($question['questionExamPoints']) {
+								<?php if (isset($question['questionExamPoints']) && $question['questionExamPoints'] != null) {
 									foreach ($question['questionExamPoints'] as $examPoint) {
 										echo $examPoint . '&nbsp';
 									}
