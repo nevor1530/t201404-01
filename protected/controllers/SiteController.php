@@ -131,4 +131,14 @@ class SiteController extends Controller
 		Yii::app()->user->logout();
 		$this->redirect(Yii::app()->homeUrl);
 	}
+	
+	public function actionCharge(){
+		$this->layout = 'main';
+		$this->render('charge');
+	}
+	
+	public function actionPay(){
+		$this->layout = 'main';
+		$this->render('pay');
+	}
 }
