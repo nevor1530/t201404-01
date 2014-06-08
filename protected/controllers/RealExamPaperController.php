@@ -22,7 +22,7 @@ class RealExamPaperController extends FunctionController
 	{
 		return array(
 			array('allow', // allow authenticated user to perform 'create' and 'update' actions
-				'actions'=>array('list', 'newPractise', 'ajaxSubmitAnswer', 'continuePractise', 'completePractise'),
+				'actions'=>array('list', 'newPractise', 'ajaxSubmitAnswer', 'continuePractise', 'ajaxAddQustionToFavorites', 'completePractise', 'viewAnalysis'),
 				'users'=>array('@'),
 			),
 			array('deny',  // deny all users
@@ -264,7 +264,59 @@ class RealExamPaperController extends FunctionController
 		}	
 	}
 	
-	private function getQuestions($examPaperId, $questionBlockId, $examPaperInstanceId = -1) {
+	public function actionViewAnalysis($exam_bank_id, $subject_id, $exam_paper_instance_id) {
+		$this->initial($exam_bank_id, $subject_id, Constants::$PRACTISE_TAB);
+		
+		$userId = Yii::app()->user->id;
+		$examPaperInstanceModel = ExamPaperInstanceModel::model()->findByPk($exam_paper_instance_id);
+		if ($examPaperInstanceModel != null && $examPaperInstanceModel->user_id == $userId && 
+			$examPaperInstanceModel->is_completed == 1) {
+			$exam_paper_id = $examPaperInstanceModel->exam_paper_id;
+			$examPaperModel = ExamPaperModel::model()->findByPk($exam_paper_id);
+			if ($examPaperModel == null) {
+				throw new CHttpException(404,'The requested page does not exist.');
+			}
+				
+			$criteria = new CDbCriteria();
+			$criteria->addCondition('exam_paper_id = ' . $exam_paper_id);  
+			$criteria->order = 'sequence asc';
+			$questionBlockModels = QuestionBlockModel::model()->findAll($criteria);	
+			
+			$questionBlocks = array();
+			if ($questionBlockModels != null) {
+				for ($i = 0; $i < count($questionBlockModels) ;$i++) {
+					$questionBlockModel = $questionBlockModels[$i];
+					$question_block_id = $questionBlockModel->question_block_id;
+					
+					$questions = $this->getQuestions($exam_paper_id, $question_block_id, $exam_paper_instance_id, true, true);
+					for ($index = 0; $index < count($questions); $index++) {
+						$question = $questions[$index];
+						$questionModel = QuestionModel::model()->findByPk($question['questionId']);	
+						$question['my_answer'] = $this->getQuestionAnswer($question['questionId'], $exam_paper_instance_id);
+						$question['correct_answer'] = $questionModel->answer;
+						$question['is_favorite'] = $this->isFavoriteQuestion($userId, $questionModel->question_id);
+						$question['is_correct'] = ($questionModel->answer == $question['my_answer']);
+						$questions[$index] = $question;
+					}
+					
+					$questionBlocks[] = array(
+						'id' => $questionBlockModel->question_block_id,
+						'name' => $questionBlockModel->name,
+						'description' => $questionBlockModel->description,
+						'questions' => $questions,
+					);
+				}	
+			}
+			
+			$this->render('analysis', array(
+				'pageName' => '查看解析',
+				'analysisName' =>  $examPaperModel->name,
+				'questionBlocks' => $questionBlocks,
+			));
+		}			
+	}
+	
+	private function getQuestions($examPaperId, $questionBlockId, $examPaperInstanceId = -1, $withCorrectAnswer = false, $withAnalysis = false) {
 		$questions = array();
 		$criteria = new CDbCriteria();
 		$criteria->addCondition('exam_paper_id = ' . $examPaperId);  
@@ -278,15 +330,19 @@ class RealExamPaperController extends FunctionController
 				$questionId = $examPaperQuestion->question_id;
 				$questionModel = QuestionModel::model()->findByPk($questionId);	
 				if ($questionModel != null) {
-					$myAnswer = array();
-					if ($examPaperInstanceId != -1) {
+					$answer = array();
+					if ($withCorrectAnswer) {
+						if ($questionModel->answer != null) {
+							$answer = explode("|", $questionModel->answer);
+						}
+					} else if ($examPaperInstanceId != -1) {
 						$myAnswerRawStr = $this->getQuestionAnswer($questionId, $examPaperInstanceId);
 						if ($myAnswerRawStr != null) {
-							$myAnswer = explode("|", $myAnswerRawStr);
+							$answer = explode("|", $myAnswerRawStr);
 						}
 					}
 					
-					$question = $this->getQuestionDetailFromModel($questionModel, $myAnswer, false);
+					$question = $this->getQuestionDetailFromModel($questionModel, $answer, $withAnalysis);
 					$question['is_favorite'] = $this->isFavoriteQuestion($userId, $questionId);
 					$questions[$index] = $question;
 					$index++;

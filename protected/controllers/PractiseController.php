@@ -22,7 +22,8 @@ class PractiseController extends FunctionController
 	{
 		return array(
 			array('allow', // allow authenticated user to perform 'create' and 'update' actions
-				'actions'=>array('history', 'wrongQuestions', 'newWrongQuestionPractise', 'viewWrongQuestionAnalysis', 'favorites', 'newFavoriteQuestionPractise', 'viewFavoriteQuestionAnalysis'),
+				'actions'=>array('history', 'wrongQuestions', 'newWrongQuestionPractise', 'viewWrongQuestionAnalysis', 
+					'favorites', 'ajaxAddQustionToFavorites', 'newFavoriteQuestionPractise', 'viewFavoriteQuestionAnalysis', 'viewPractiseAnalysis',),
 				'users'=>array('@'),
 			),
 			array('deny',  // deny all users
@@ -232,7 +233,7 @@ class PractiseController extends FunctionController
 		}
 		
 		$this->render('analysis', array(
-			'pageName' => '收藏题解析',
+			'pageName' => '错题解析',
 			'analysisName' => '错题查看：【' . $examPointName . '】',
 			'questions' => $questions,
 		));
@@ -336,6 +337,69 @@ class PractiseController extends FunctionController
 		$this->render('analysis', array(
 			'pageName' => '收藏题解析',
 			'analysisName' => '收藏题查看：【' . $examPointName . '】',
+			'questions' => $questions,
+		));
+	}
+	
+	public function actionViewPractiseAnalysis($exam_bank_id, $subject_id, $exam_paper_instance_id) {
+		$this->initial($exam_bank_id, $subject_id, Constants::$PRACTISE_TAB);
+		
+		$examPaperInstanceModel = ExamPaperInstanceModel::model()->findByPk($exam_paper_instance_id);
+		$userId = Yii::app()->user->id;
+		if ($examPaperInstanceModel != null && $examPaperInstanceModel->user_id == $userId && 
+			$examPaperInstanceModel->instance_type != ExamPaperInstanceModel::REAL_EXAM_PAPER_TYPE) {
+			$examPointModel = ExamPointModel::model()->findByPk($examPaperInstanceModel->exam_point_id);
+			if ($examPointModel != null) {
+				if ($examPaperInstanceModel->instance_type == ExamPaperInstanceModel::NORMAL_PRACTISE_TYPE) {
+					$analysisName = '专项训练:【' . $examPointModel->name . '】';
+				} else if ($examPaperInstanceModel->instance_type == ExamPaperInstanceModel::WRONG_QUESTION_PRACTISE_TYPE) {
+					$analysisName = '错题训练:【' . $examPointModel->name . '】';
+				} else if ($examPaperInstanceModel->instance_type == ExamPaperInstanceModel::FAVORITE_QUESTION_PRACTISE_TYPE) {
+					$analysisName = '收藏题训练:【' . $examPointModel->name . '】';
+				}
+			} else {
+				$analysisName = '专项训练';
+			}
+			
+			if ($examPaperInstanceModel->is_completed == 0) {
+				throw new CHttpException(404, '试卷尚未提交，不能查看解析.');
+			}
+			
+			$criteria = new CDbCriteria();
+			$criteria->addCondition('user_id = ' . $userId);  
+			$criteria->addCondition('exam_paper_instance_id = ' . $exam_paper_instance_id);  
+			$criteria->order = 'question_instance_id asc';
+			$questionInstanceModels = QuestionInstanceModel::model()->findAll($criteria);
+			$questions = array();
+			if ($questionInstanceModels != null) {
+				$index = 0;
+				foreach ($questionInstanceModels as $questionInstanceModel) {
+					$questionModel = QuestionModel::model()->findByPk($questionInstanceModel->question_id);	
+					if ($questionModel == null) {
+						continue;
+					}
+					
+					$answer = array();
+					if ($questionModel->answer != null) {
+						$answer = explode("|", $questionModel->answer);
+					}
+						
+					$question = $this->getQuestionDetailFromModel($questionModel, $answer, true);
+					$question['my_answer'] = $questionInstanceModel->myanswer;
+					$question['correct_answer'] = $questionModel->answer;
+					$question['is_favorite'] = $this->isFavoriteQuestion($userId, $questionModel->question_id);
+					$question['is_correct'] = ($questionModel->answer == $questionInstanceModel->myanswer);
+					$questions[] = $question;
+					
+					$questions[$index] = $question;
+					$index++;
+				}
+			}
+		}
+		
+		$this->render('analysis', array(
+			'pageName' => '查看解析',
+			'analysisName' => $analysisName,
 			'questions' => $questions,
 		));
 	}
