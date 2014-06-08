@@ -1,8 +1,12 @@
-@charset "utf-8";
+﻿@charset "utf-8";
 /* CSS Document */
+.theme-origen {
+	color: #fe4a15;
+}
 * {
 	font-family: "Microsoft YaHei" ! important;
 	font-size: 14px;
+	color: #2d2d46;
 }
 body, ul{
 	padding: 0;
@@ -55,7 +59,21 @@ a.btn:hover {
 .green-btn:hover {
 	background-color: #5fb772;
 }
-
+.btn1 {
+	padding: 8px 45px;
+	text-align: center;
+	box-shadow: 0 -4px 0 #2A6496 inset;
+	border-radius: 6px;
+	background-color: #4391e3;
+	color: #FFFFFF;
+	font-size: 18px;
+	letter-spacing: 10px;
+	border-width: 0;
+}
+.btn1:hover {
+	background-color: #5cb6f0;
+	box-shadow: 0 -4px 0 #3195dd inset;
+}
 .logo {
 	background-image: url("../images/logo.png");
 	width: 212px;
@@ -647,7 +665,6 @@ ul.subfunction-list li.current a {
 }
 .do-paper .chapter-herder {
 	line-height: 30px;
-	padding-left: 13px;
 	background-image: url("../images/do_paper_title_bg.png");
 	background-repeat: repeat-x;
 	font-weight: bold;
@@ -784,8 +801,8 @@ ul.question-block li.current a {
 	padding: 0.8em 0;
 }
 .analysis .analysis-item {
+	position: relative;
 	margin-top: 1em;
-	position: relative;	
 }
 .analysis .analysis-item:first-child {
 	margin-top: 0;
@@ -844,3 +861,32 @@ ul.question-block li.current a {
 	height: 25px;
 	padding: 0;
 }
+/*充值页面*/
+.charge-table {
+	margin: 70px auto;
+}
+.charge-table .title {
+	color: #898989;
+}
+.charge-table tr {
+	height: 60px;
+}
+.charge-table * {
+	font-size: 24px;
+}
+.charge-table .exam-bank {
+	color: #00b7ee;
+}
+/*endo fo 充值页面*/
+/* 支付页面*/
+.pay-item {
+	display: inline-block;
+	width: 24%;
+	margin: 5px 0;
+}
+.pay-item .pay-image {
+	width: 129px;
+	height: 34px;
+	vertical-align: -10px;
+}
+/* end of 支付页面*/
