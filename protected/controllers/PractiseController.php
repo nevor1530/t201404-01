@@ -404,7 +404,7 @@ class PractiseController extends FunctionController
 		}
 		
 		$this->render('analysis', array(
-			'pageName' => '查看解析',
+			'exam_paper_instance_id' => $exam_paper_instance_id,
 			'analysisName' => $analysisName,
 			'questions' => $questions,
 		));
@@ -413,8 +413,162 @@ class PractiseController extends FunctionController
 	public function actionViewReport($exam_bank_id, $subject_id, $exam_paper_instance_id) {
 		$this->initial($exam_bank_id, $subject_id, Constants::$PRACTISE_TAB);
 		
-		$this->render('report', array(
-		));
+		$examPaperInstanceModel = ExamPaperInstanceModel::model()->findByPk($exam_paper_instance_id);
+		$userId = Yii::app()->user->id;
+		if ($examPaperInstanceModel != null && $examPaperInstanceModel->user_id == $userId && 
+			$examPaperInstanceModel->instance_type != ExamPaperInstanceModel::REAL_EXAM_PAPER_TYPE) {
+			if ($examPaperInstanceModel->is_completed == 0) {
+				throw new CHttpException(404, '试卷尚未提交，不能查看解析.');
+			}
+			
+			$examPointModel = ExamPointModel::model()->findByPk($examPaperInstanceModel->exam_point_id);
+			if ($examPointModel != null) {
+				if ($examPaperInstanceModel->instance_type == ExamPaperInstanceModel::NORMAL_PRACTISE_TYPE) {
+					$examPaperName = '专项训练:【' . $examPointModel->name . '】';
+				} else if ($examPaperInstanceModel->instance_type == ExamPaperInstanceModel::WRONG_QUESTION_PRACTISE_TYPE) {
+					$examPaperName = '错题训练:【' . $examPointModel->name . '】';
+				} else if ($examPaperInstanceModel->instance_type == ExamPaperInstanceModel::FAVORITE_QUESTION_PRACTISE_TYPE) {
+					$examPaperName = '收藏题训练:【' . $examPointModel->name . '】';
+				}
+			} else {
+				$examPaperName = '专项训练';
+			}
+			
+			$criteria = new CDbCriteria();
+			$criteria->addCondition('user_id = ' . $userId);  
+			$criteria->addCondition('exam_paper_instance_id = ' . $exam_paper_instance_id);  
+			$criteria->order = 'question_instance_id asc';
+			$questionInstanceModels = QuestionInstanceModel::model()->findAll($criteria);
+			
+			$totalQuestionCount = 0;
+			$correctQuestionCount = 0;
+			$questions = array();
+			if ($questionInstanceModels != null) {
+				foreach ($questionInstanceModels as $questionInstanceModel) {
+					$questionModel = QuestionModel::model()->findByPk($questionInstanceModel->question_id);	
+					if ($questionModel == null) {
+						continue;
+					}
+					
+					$questions[] = array(
+						'my_answer' => $questionInstanceModel->myanswer,
+						'is_correct' => $questionModel->answer == $questionInstanceModel->myanswer
+					);
+					
+					$totalQuestionCount++;
+					if ($questionInstanceModel->myanswer != null && $questionModel->answer == $questionInstanceModel->myanswer) {
+						$correctQuestionCount++;	
+					}
+				}
+			}
+			
+			$criteria = new CDbCriteria();
+			$criteria->condition = 'subject_id = ' . $subject_id;  
+			$examPointRecords = ExamPointModel::model()->top()->findAll($criteria);
+			
+			$examPoints = array();
+			$this->getExamPoints($examPointRecords, $exam_paper_instance_id, $examPoints);
+			
+			$this->render('report', array(
+				'exam_paper_instance_id' => $exam_paper_instance_id,
+				'examPaperName' => $examPaperName,
+				'practiseStartTime' => Yii::app()->dateFormatter->format("yyyy-MM-dd", $examPaperInstanceModel->start_time),
+				'totalQuestionCount' => $totalQuestionCount,
+				'correctQuestionCount' => $correctQuestionCount,
+				'practiseElapsedTime' => ceil($examPaperInstanceModel->elapsed_time / 60),
+				'questions' => $questions,
+				'examPoints' => $examPoints
+			));
+		}
+	}
+	
+	private function getExamPoints($examPointRecords, $examPaperInstanceId, &$result) {
+		if ($examPointRecords == null || count($examPointRecords) == 0) {
+			return;
+		}
+		
+		for ($i = 0; $i < count($examPointRecords); $i++) {
+			$examPointRecord = $examPointRecords[$i];
+			$examPointId = $examPointRecord->exam_point_id;
+			$result[$i] = array(
+				'id' => $examPointId,
+				'name' => $examPointRecord->name,
+				'exam_point_ids' => array($examPointId),
+			);
+			
+			$examPointIds = array($examPointId);
+			if (!empty($examPointRecord->subExamPoints)){
+				$subExamPoints = array();
+				$this->getExamPoints($examPointRecord->subExamPoints, $examPaperInstanceId, $subExamPoints);
+				$result[$i]['sub_exam_points'] = $subExamPoints;
+				foreach ($subExamPoints as $subExamPoint) {
+					$examPointIds[] = $subExamPoint['id'];
+				}
+			} else {
+				$result[$i]['sub_exam_points'] = array();
+			}
+			
+			$result[$i]['exam_point_ids'] = $examPointIds;
+			$result[$i]['question_ids'] = $this->getQuestionIds($examPointIds, $examPaperInstanceId);
+			$result[$i]['question_count'] = count($result[$i]['question_ids']);
+			
+			$userId = Yii::app()->user->id;
+			$result[$i]['finished_question_count'] = $this->getFinishedQuestionCount($examPaperInstanceId, $examPointIds);
+			$result[$i]['correct_question_count'] = $this->calCorrectQuestionCount($examPaperInstanceId, $examPointIds);
+		}
+	}
+	
+	private function getQuestionIds($examPointIds, $examPaperInstanceId) {
+		$sql = "SELECT DISTINCT(question_instance.question_id) as question_id FROM question_instance,question_exam_point WHERE " .
+			"question_instance.exam_paper_instance_id=$examPaperInstanceId AND " . 
+			"question_exam_point.question_id=question_instance.question_id AND " . 
+			"question_exam_point.exam_point_id IN (" . implode(',', $examPointIds) . ")";
+					
+		$db = Yii::app()->db;
+		$command = $db->createCommand($sql);
+		$result = $command->queryAll(); 
+		
+		$questionIds = array();
+		if ($result != null && is_array($result) && count($result) > 0) {
+			foreach ($result as $record) {
+				$questionIds[] = $record['question_id'];
+			}
+		}
+		
+		return $questionIds;
+	}
+	
+	private function getFinishedQuestionCount($examPaperInstanceId, $examPointIds) {
+		$sql = "SELECT count(DISTINCT(question_instance.question_id)) as count FROM question_instance,question_exam_point WHERE " .
+					"question_instance.exam_paper_instance_id=$examPaperInstanceId AND " . 
+					"question_instance.myanswer IS NOT NULL AND " . 
+					"question_instance.question_id=question_exam_point.question_id AND " .
+					"question_exam_point.exam_point_id IN(" . implode(',' , $examPointIds) . ")";
+		$db = Yii::app()->db;
+		$command = $db->createCommand($sql);
+		$result = $command->queryAll(); 
+		if ($result != null && is_array($result) && count($result) > 0) {
+			return $result[0]['count'];
+		}
+		
+		return 0;
+	}
+	
+	private function calCorrectQuestionCount($examPaperInstanceId, $examPointIds) {
+		$sql = "SELECT count(DISTINCT(question_instance.question_id)) as count FROM question_instance,question,question_exam_point WHERE " .
+					"question_instance.exam_paper_instance_id=$examPaperInstanceId AND " . 
+					"question_instance.question_id=question_exam_point.question_id AND " .
+					"question_instance.question_id=question.question_id AND " . 
+					"question_instance.myanswer=question.answer AND " . 
+					"question_exam_point.exam_point_id IN(" . implode(',' , $examPointIds) . ")";
+		$db = Yii::app()->db;
+		$command = $db->createCommand($sql);
+		$result = $command->queryAll(); 
+		if ($result != null && is_array($result) && count($result) > 0) {
+			return $result[0]['count'];
+		}
+		
+		return 0;
 	}
 	
 	private function getWrongQuestionsByExamPoint($userId, $examPoint, &$result) {

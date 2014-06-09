@@ -414,7 +414,7 @@ class RealExamPaperController extends FunctionController
 			}
 			
 			$result[$i]['exam_point_ids'] = $examPointIds;
-			$result[$i]['question_ids'] = $this->getQuestionIdsByExamPointId($examPointIds, $examPaperId);
+			$result[$i]['question_ids'] = $this->getQuestionIds($examPointIds, $examPaperId);
 			$result[$i]['question_count'] = count($result[$i]['question_ids']);
 			
 			$userId = Yii::app()->user->id;
@@ -423,7 +423,7 @@ class RealExamPaperController extends FunctionController
 		}
 	}
 	
-	private function getQuestionIdsByExamPointId($examPointIds, $examPaperId) {
+	private function getQuestionIds($examPointIds, $examPaperId) {
 		$sql = "SELECT DISTINCT(exam_paper_question.question_id) as question_id FROM exam_paper_question,question_exam_point WHERE " .
 			"exam_paper_question.exam_paper_id=$examPaperId AND " . 
 			"question_exam_point.question_id=exam_paper_question.question_id AND " . 
