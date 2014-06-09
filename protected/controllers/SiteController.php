@@ -132,7 +132,7 @@ class SiteController extends Controller
 		$this->redirect(Yii::app()->homeUrl);
 	}
 	
-	public function actionCharge(){
+	public function actionCharge($exam_bank_id){
 		$this->layout = 'main';
 		$this->render('charge');
 	}

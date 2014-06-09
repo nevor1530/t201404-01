@@ -26,7 +26,9 @@
                     <span class="profile-triangle"></span>
                 </div>
                 <ul>
-                	<li><a href="#">给当前题库续费</a></li>
+                	<?php if (isset($_REQUEST['exam_bank_id']) && $_REQUEST['exam_bank_id']):?>
+                	<li><a href="<?php echo Yii::app()->createUrl('charge/index', array('exam_bank_id'=>htmlspecialchars($_REQUEST['exam_bank_id'])));?>">给当前题库续费</a></li>
+                	<?php endif;?>
                 	<li><a href="<?php echo Yii::app()->createUrl("/site/index")?>">选择其他题库</a></li>
                     <li><a href="#">修改密码</a></li>
                     <li><a href="<?php echo Yii::app()->createUrl("/site/logout")?>">退出</a></li>
