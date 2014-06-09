@@ -309,8 +309,8 @@ class ExamPointController extends FunctionController
 	
 	private function getFinishedQuestionCount($userId, $examPointIds) {
 		$sql = "SELECT count(DISTINCT(question_instance.question_id)) as count FROM question_instance,question_exam_point WHERE " .
-					"question_instance.myanswer IS NOT NULL AND " . 
 					"question_instance.user_id=$userId AND " . 
+					"question_instance.myanswer IS NOT NULL AND " . 
 					"question_instance.question_id=question_exam_point.question_id AND " .
 					"question_exam_point.exam_point_id IN(" . implode(',' , $examPointIds) . ")";
 		$db = Yii::app()->db;

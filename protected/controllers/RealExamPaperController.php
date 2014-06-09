@@ -314,7 +314,7 @@ class RealExamPaperController extends FunctionController
 			}
 			
 			$this->render('analysis', array(
-				'pageName' => '查看解析',
+				'exam_paper_instance_id' => $exam_paper_instance_id,
 				'analysisName' =>  $examPaperModel->name,
 				'questionBlocks' => $questionBlocks,
 			));
@@ -332,15 +332,14 @@ class RealExamPaperController extends FunctionController
 				throw new CHttpException(404, '试卷尚未提交，不能查看解析.');
 			}
 			
-			
-			$exam_paper_id = $examPaperInstanceModel->exam_paper_id;
-			$examPaperModel = ExamPaperModel::model()->findByPk($exam_paper_id);
+			$examPaperId = $examPaperInstanceModel->exam_paper_id;
+			$examPaperModel = ExamPaperModel::model()->findByPk($examPaperId);
 			if ($examPaperModel == null) {
 				throw new CHttpException(404,'The requested page does not exist.');
 			}
 			
 			$criteria = new CDbCriteria();
-			$criteria->addCondition('exam_paper_id = ' . $exam_paper_id);  
+			$criteria->addCondition('exam_paper_id = ' . $examPaperId);  
 			$criteria->order = 'sequence asc';
 			$questionBlockModels = QuestionBlockModel::model()->findAll($criteria);	
 			
@@ -351,7 +350,7 @@ class RealExamPaperController extends FunctionController
 				for ($i = 0; $i < count($questionBlockModels) ;$i++) {
 					$questionBlockModel = $questionBlockModels[$i];
 					$questionBlockId = $questionBlockModel->question_block_id;
-					$questions = $this->generateAnswerCard($exam_paper_id, $questionBlockId, $exam_paper_instance_id);
+					$questions = $this->generateAnswerCard($examPaperId, $questionBlockId, $exam_paper_instance_id);
 					$totalQuestionCount += count($questions);
 					foreach ($questions as $question) {
 						if ($question['my_answer'] != null && $question['is_correct']) {
@@ -368,15 +367,113 @@ class RealExamPaperController extends FunctionController
 				}
 			}
 			
+			$criteria = new CDbCriteria();
+			$criteria->condition = 'subject_id = ' . $subject_id;  
+			$examPointRecords = ExamPointModel::model()->top()->findAll($criteria);
+		
+			$examPoints = array();
+			$this->getExamPoints($examPointRecords, $examPaperId, $exam_paper_instance_id, $examPoints);
+		
 			$this->render('report', array(
+				'exam_paper_instance_id' => $exam_paper_instance_id,
 				'examPaperName' =>  $examPaperModel->name,
 				'practiseStartTime' => Yii::app()->dateFormatter->format("yyyy-MM-dd", $examPaperInstanceModel->start_time),
 				'totalQuestionCount' => $totalQuestionCount,
 				'correctQuestionCount' => $correctQuestionCount,
 				'practiseElapsedTime' => ceil($examPaperInstanceModel->elapsed_time / 60),
-				'questionBlocks' => $questionBlocks
+				'questionBlocks' => $questionBlocks,
+				'examPoints' => $examPoints
 			));
 		}
+	}
+	
+	private function getExamPoints($examPointRecords, $examPaperId, $examPaperInstanceId, &$result) {
+		if ($examPointRecords == null || count($examPointRecords) == 0) {
+			return;
+		}
+		
+		for ($i = 0; $i < count($examPointRecords); $i++) {
+			$examPointRecord = $examPointRecords[$i];
+			$examPointId = $examPointRecord->exam_point_id;
+			$result[$i] = array(
+				'id' => $examPointId,
+				'name' => $examPointRecord->name,
+				'exam_point_ids' => array($examPointId),
+			);
+			
+			$examPointIds = array($examPointId);
+			if (!empty($examPointRecord->subExamPoints)){
+				$subExamPoints = array();
+				$this->getExamPoints($examPointRecord->subExamPoints, $examPaperId, $examPaperInstanceId, $subExamPoints);
+				$result[$i]['sub_exam_points'] = $subExamPoints;
+				foreach ($subExamPoints as $subExamPoint) {
+					$examPointIds[] = $subExamPoint['id'];
+				}
+			} else {
+				$result[$i]['sub_exam_points'] = array();
+			}
+			
+			$result[$i]['exam_point_ids'] = $examPointIds;
+			$result[$i]['question_ids'] = $this->getQuestionIdsByExamPointId($examPointIds, $examPaperId);
+			$result[$i]['question_count'] = count($result[$i]['question_ids']);
+			
+			$userId = Yii::app()->user->id;
+			$result[$i]['finished_question_count'] = $this->getFinishedQuestionCount($examPaperInstanceId, $examPointIds);
+			$result[$i]['correct_question_count'] = $this->calCorrectQuestionCount($examPaperInstanceId, $examPointIds);
+		}
+	}
+	
+	private function getQuestionIdsByExamPointId($examPointIds, $examPaperId) {
+		$sql = "SELECT DISTINCT(exam_paper_question.question_id) as question_id FROM exam_paper_question,question_exam_point WHERE " .
+			"exam_paper_question.exam_paper_id=$examPaperId AND " . 
+			"question_exam_point.question_id=exam_paper_question.question_id AND " . 
+			"question_exam_point.exam_point_id IN (" . implode(',', $examPointIds) . ")";
+					
+		$db = Yii::app()->db;
+		$command = $db->createCommand($sql);
+		$result = $command->queryAll(); 
+		
+		$questionIds = array();
+		if ($result != null && is_array($result) && count($result) > 0) {
+			foreach ($result as $record) {
+				$questionIds[] = $record['question_id'];
+			}
+		}
+		
+		return $questionIds;
+	}
+	
+	private function getFinishedQuestionCount($examPaperInstanceId, $examPointIds) {
+		$sql = "SELECT count(DISTINCT(question_instance.question_id)) as count FROM question_instance,question_exam_point WHERE " .
+					"question_instance.exam_paper_instance_id=$examPaperInstanceId AND " . 
+					"question_instance.myanswer IS NOT NULL AND " . 
+					"question_instance.question_id=question_exam_point.question_id AND " .
+					"question_exam_point.exam_point_id IN(" . implode(',' , $examPointIds) . ")";
+		$db = Yii::app()->db;
+		$command = $db->createCommand($sql);
+		$result = $command->queryAll(); 
+		if ($result != null && is_array($result) && count($result) > 0) {
+			return $result[0]['count'];
+		}
+		
+		return 0;
+	}
+	
+	private function calCorrectQuestionCount($examPaperInstanceId, $examPointIds) {
+		$sql = "SELECT count(DISTINCT(question_instance.question_id)) as count FROM question_instance,question,question_exam_point WHERE " .
+					"question_instance.exam_paper_instance_id=$examPaperInstanceId AND " . 
+					"question_instance.question_id=question_exam_point.question_id AND " .
+					"question_instance.question_id=question.question_id AND " . 
+					"question_instance.myanswer=question.answer AND " . 
+					"question_exam_point.exam_point_id IN(" . implode(',' , $examPointIds) . ")";
+		$db = Yii::app()->db;
+		$command = $db->createCommand($sql);
+		$result = $command->queryAll(); 
+		if ($result != null && is_array($result) && count($result) > 0) {
+			return $result[0]['count'];
+		}
+		
+		return 0;
 	}
 	
 	private function generateAnswerCard($examPaperId, $questionBlockId, $examPaperInstanceId) {

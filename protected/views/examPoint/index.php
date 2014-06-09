@@ -29,7 +29,7 @@
 		$html .= '	<div class="item">';
 		$html .= '		<div class="title name-column">' . $examPoint['name'] . '</div>';
 		$html .= '		<a class="button button-column" ' . ($totalQuestionCount > 0 ? 'href="'.$newPractiseUrl.'"' : ''). '>练习</a>';
-		$html .= '		<div class="rate-column">' . $correctQuestionRate . '</div>';
+		$html .= '		<div class="rate-column">' . $correctQuestionRate * 100 . '%</div>';
 		$html .= '		<div class="done-questions-column">' . $finishedQuestionCount . '道</div>';
 		$html .= '		<div class="process-column">';
 		$html .= '			<div class="process-bar"><div class="rate-bar" style="width:' . $finishedQuestionRate * 100 . '%"></div></div>';
