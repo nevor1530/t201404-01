@@ -667,6 +667,9 @@ ul.subfunction-list li.current a {
 	padding: 12px 0;
 	margin-top: 6px;
 }
+.paper-left-column .btn a {
+    font-size: 18px;
+}
 .do-paper .chapter-herder {
 	line-height: 30px;
 	background-image: url("../images/do_paper_title_bg.png");

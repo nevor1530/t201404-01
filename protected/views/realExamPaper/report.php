@@ -1,7 +1,9 @@
 <div class="do-paper">
 	<div class="paper-left-column">
 		<div class="btn red-btn">查看报告</div>
-		<div class="btn green-btn">查看解析</div>
+		<div class="btn green-btn">
+			<a href="<?php echo Yii::app()->createUrl("/realExamPaper/viewAnalysis", array('exam_bank_id'=>$this->examBankId, 'subject_id'=>$this->curSubjectId, 'exam_paper_instance_id' => $exam_paper_instance_id))?>">查看解析</a>
+		</div>
 	</div>
 	<div class="paper-right-column paper-report">
 		<div class="chapter-herder"><?php echo $examPaperName; ?></div>

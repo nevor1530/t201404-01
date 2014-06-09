@@ -375,6 +375,7 @@ class RealExamPaperController extends FunctionController
 			$this->getExamPoints($examPointRecords, $examPaperId, $exam_paper_instance_id, $examPoints);
 		
 			$this->render('report', array(
+				'exam_paper_instance_id' => $exam_paper_instance_id,
 				'examPaperName' =>  $examPaperModel->name,
 				'practiseStartTime' => Yii::app()->dateFormatter->format("yyyy-MM-dd", $examPaperInstanceModel->start_time),
 				'totalQuestionCount' => $totalQuestionCount,
