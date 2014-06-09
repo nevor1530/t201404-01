@@ -314,7 +314,7 @@ class RealExamPaperController extends FunctionController
 			}
 			
 			$this->render('analysis', array(
-				'pageName' => '查看解析',
+				'exam_paper_instance_id' => $exam_paper_instance_id,
 				'analysisName' =>  $examPaperModel->name,
 				'questionBlocks' => $questionBlocks,
 			));
