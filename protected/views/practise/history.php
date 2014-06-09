@@ -32,7 +32,12 @@
 				<?php } else if ($item['is_real_exam_paper'] == 1) {?>
 				<a class="btn green-btn" href="<?php echo Yii::app()->createUrl("/realExamPaper/viewAnalysis", array('exam_bank_id'=>$this->examBankId, 'subject_id'=>$this->curSubjectId, 'exam_paper_instance_id' => $item['exam_paper_instance_id']))?>">查看解析</a>
 				<?php } ?>
-				<a class="btn red-btn" href="#">查看报告</a>
+				
+				<?php if($item['is_real_exam_paper'] == 0) { ?>
+				<a class="btn red-btn" href="<?php echo Yii::app()->createUrl("/practise/viewReport", array('exam_bank_id'=>$this->examBankId, 'subject_id'=>$this->curSubjectId, 'exam_paper_instance_id' => $item['exam_paper_instance_id']))?>">查看报告</a>
+				<?php } else if ($item['is_real_exam_paper'] == 1) {?>
+				<a class="btn red-btn" href="<?php echo Yii::app()->createUrl("/realExamPaper/viewReport", array('exam_bank_id'=>$this->examBankId, 'subject_id'=>$this->curSubjectId, 'exam_paper_instance_id' => $item['exam_paper_instance_id']))?>">查看报告</a>
+				<?php } ?>
 			<?php } ?>	
 		</div>
 	</div>

@@ -23,7 +23,8 @@ class PractiseController extends FunctionController
 		return array(
 			array('allow', // allow authenticated user to perform 'create' and 'update' actions
 				'actions'=>array('history', 'wrongQuestions', 'newWrongQuestionPractise', 'viewWrongQuestionAnalysis', 
-					'favorites', 'ajaxAddQustionToFavorites', 'newFavoriteQuestionPractise', 'viewFavoriteQuestionAnalysis', 'viewPractiseAnalysis',),
+					'favorites', 'ajaxAddQustionToFavorites', 'newFavoriteQuestionPractise', 'viewFavoriteQuestionAnalysis', 
+					'viewPractiseAnalysis', 'viewReport'),
 				'users'=>array('@'),
 			),
 			array('deny',  // deny all users
@@ -348,6 +349,10 @@ class PractiseController extends FunctionController
 		$userId = Yii::app()->user->id;
 		if ($examPaperInstanceModel != null && $examPaperInstanceModel->user_id == $userId && 
 			$examPaperInstanceModel->instance_type != ExamPaperInstanceModel::REAL_EXAM_PAPER_TYPE) {
+			if ($examPaperInstanceModel->is_completed == 0) {
+				throw new CHttpException(404, '试卷尚未提交，不能查看解析.');
+			}
+			
 			$examPointModel = ExamPointModel::model()->findByPk($examPaperInstanceModel->exam_point_id);
 			if ($examPointModel != null) {
 				if ($examPaperInstanceModel->instance_type == ExamPaperInstanceModel::NORMAL_PRACTISE_TYPE) {
@@ -359,10 +364,6 @@ class PractiseController extends FunctionController
 				}
 			} else {
 				$analysisName = '专项训练';
-			}
-			
-			if ($examPaperInstanceModel->is_completed == 0) {
-				throw new CHttpException(404, '试卷尚未提交，不能查看解析.');
 			}
 			
 			$criteria = new CDbCriteria();
@@ -401,6 +402,13 @@ class PractiseController extends FunctionController
 			'pageName' => '查看解析',
 			'analysisName' => $analysisName,
 			'questions' => $questions,
+		));
+	}
+	
+	public function actionViewReport($exam_bank_id, $subject_id, $exam_paper_instance_id) {
+		$this->initial($exam_bank_id, $subject_id, Constants::$PRACTISE_TAB);
+		
+		$this->render('report', array(
 		));
 	}
 	

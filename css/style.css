@@ -864,6 +864,7 @@ ul.question-block li.current a {
 	width: 25px;
 	height: 25px;
 	padding: 0;
+	margin-right: 15px;
 }
 /*充值页面*/
 .charge-table {

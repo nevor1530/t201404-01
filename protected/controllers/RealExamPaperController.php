@@ -22,7 +22,8 @@ class RealExamPaperController extends FunctionController
 	{
 		return array(
 			array('allow', // allow authenticated user to perform 'create' and 'update' actions
-				'actions'=>array('list', 'newPractise', 'ajaxSubmitAnswer', 'continuePractise', 'ajaxAddQustionToFavorites', 'completePractise', 'viewAnalysis'),
+				'actions'=>array('list', 'newPractise', 'ajaxSubmitAnswer', 'continuePractise', 'ajaxAddQustionToFavorites', 
+					'completePractise', 'viewAnalysis', 'viewReport'),
 				'users'=>array('@'),
 			),
 			array('deny',  // deny all users
@@ -270,7 +271,11 @@ class RealExamPaperController extends FunctionController
 		$userId = Yii::app()->user->id;
 		$examPaperInstanceModel = ExamPaperInstanceModel::model()->findByPk($exam_paper_instance_id);
 		if ($examPaperInstanceModel != null && $examPaperInstanceModel->user_id == $userId && 
-			$examPaperInstanceModel->is_completed == 1) {
+			$examPaperInstanceModel->instance_type == ExamPaperInstanceModel::REAL_EXAM_PAPER_TYPE) {
+			if ($examPaperInstanceModel->is_completed == 0) {
+				throw new CHttpException(404, '试卷尚未提交，不能查看解析.');
+			}
+			
 			$exam_paper_id = $examPaperInstanceModel->exam_paper_id;
 			$examPaperModel = ExamPaperModel::model()->findByPk($exam_paper_id);
 			if ($examPaperModel == null) {
@@ -286,9 +291,9 @@ class RealExamPaperController extends FunctionController
 			if ($questionBlockModels != null) {
 				for ($i = 0; $i < count($questionBlockModels) ;$i++) {
 					$questionBlockModel = $questionBlockModels[$i];
-					$question_block_id = $questionBlockModel->question_block_id;
+					$questionBlockId = $questionBlockModel->question_block_id;
 					
-					$questions = $this->getQuestions($exam_paper_id, $question_block_id, $exam_paper_instance_id, true, true);
+					$questions = $this->getQuestions($exam_paper_id, $questionBlockId, $exam_paper_instance_id, true, true);
 					for ($index = 0; $index < count($questions); $index++) {
 						$question = $questions[$index];
 						$questionModel = QuestionModel::model()->findByPk($question['questionId']);	
@@ -316,6 +321,86 @@ class RealExamPaperController extends FunctionController
 		}			
 	}
 	
+	public function actionViewReport($exam_bank_id, $subject_id, $exam_paper_instance_id) {
+		$this->initial($exam_bank_id, $subject_id, Constants::$PRACTISE_TAB);
+		
+		$userId = Yii::app()->user->id;
+		$examPaperInstanceModel = ExamPaperInstanceModel::model()->findByPk($exam_paper_instance_id);
+		if ($examPaperInstanceModel != null && $examPaperInstanceModel->user_id == $userId && 
+			$examPaperInstanceModel->instance_type == ExamPaperInstanceModel::REAL_EXAM_PAPER_TYPE) {
+			if ($examPaperInstanceModel->is_completed == 0) {
+				throw new CHttpException(404, '试卷尚未提交，不能查看解析.');
+			}
+			
+			
+			$exam_paper_id = $examPaperInstanceModel->exam_paper_id;
+			$examPaperModel = ExamPaperModel::model()->findByPk($exam_paper_id);
+			if ($examPaperModel == null) {
+				throw new CHttpException(404,'The requested page does not exist.');
+			}
+			
+			$criteria = new CDbCriteria();
+			$criteria->addCondition('exam_paper_id = ' . $exam_paper_id);  
+			$criteria->order = 'sequence asc';
+			$questionBlockModels = QuestionBlockModel::model()->findAll($criteria);	
+			
+			$questionBlocks = array();
+			$totalQuestionCount = 0;
+			$correctQuestionCount = 0;
+			if ($questionBlockModels != null) {
+				for ($i = 0; $i < count($questionBlockModels) ;$i++) {
+					$questionBlockModel = $questionBlockModels[$i];
+					$questionBlockId = $questionBlockModel->question_block_id;
+					$questions = $this->generateAnswerCard($exam_paper_id, $questionBlockId, $exam_paper_instance_id);
+					$totalQuestionCount += count($questions);
+					foreach ($questions as $question) {
+						if ($question['my_answer'] != null && $question['is_correct']) {
+							$correctQuestionCount++;	
+						}
+					}
+					
+					$questionBlocks[] = array(
+						'id' => $questionBlockModel->question_block_id,
+						'name' => $questionBlockModel->name,
+						'description' => $questionBlockModel->description,
+						'questions' => $questions,
+					);
+				}
+			}
+			
+			$this->render('report', array(
+				'examPaperName' =>  $examPaperModel->name,
+				'practiseStartTime' => Yii::app()->dateFormatter->format("yyyy-MM-dd", $examPaperInstanceModel->start_time),
+				'totalQuestionCount' => $totalQuestionCount,
+				'correctQuestionCount' => $correctQuestionCount,
+				'practiseElapsedTime' => ceil($examPaperInstanceModel->elapsed_time / 60),
+				'questionBlocks' => $questionBlocks
+			));
+		}
+	}
+	
+	private function generateAnswerCard($examPaperId, $questionBlockId, $examPaperInstanceId) {
+		$questions = array();
+		$criteria = new CDbCriteria();
+		$criteria->addCondition('exam_paper_id = ' . $examPaperId);  
+		$criteria->addCondition('question_block_id = ' . $questionBlockId);  
+		$criteria->order = 'sequence asc';
+		$examPaperQuestionModels = ExamPaperQuestionModel::model()->findAll($criteria);
+		if ($examPaperQuestionModels != null) {
+			foreach ($examPaperQuestionModels as $examPaperQuestion) {
+				$questionId = $examPaperQuestion->question_id;
+				$questionModel = QuestionModel::model()->findByPk($questionId);	
+				if ($questionModel != null) {
+					$question = array();
+					$question['my_answer'] = $this->getQuestionAnswer($questionId, $examPaperInstanceId);
+					$question['is_correct'] = ($questionModel->answer == $question['my_answer']);
+					$questions[] = $question;
+				}
+			}
+		}
+		return $questions;
+	}
+	
 	private function getQuestions($examPaperId, $questionBlockId, $examPaperInstanceId = -1, $withCorrectAnswer = false, $withAnalysis = false) {
 		$questions = array();
 		$criteria = new CDbCriteria();
@@ -324,7 +409,6 @@ class RealExamPaperController extends FunctionController
 		$criteria->order = 'sequence asc';
 		$examPaperQuestionModels = ExamPaperQuestionModel::model()->findAll($criteria);
 		if ($examPaperQuestionModels != null) {
-			$index = 0;
 			$userId = Yii::app()->user->id;
 			foreach ($examPaperQuestionModels as $examPaperQuestion) {
 				$questionId = $examPaperQuestion->question_id;
@@ -344,8 +428,7 @@ class RealExamPaperController extends FunctionController
 					
 					$question = $this->getQuestionDetailFromModel($questionModel, $answer, $withAnalysis);
 					$question['is_favorite'] = $this->isFavoriteQuestion($userId, $questionId);
-					$questions[$index] = $question;
-					$index++;
+					$questions[] = $question;
 				}
 			}
 		}
