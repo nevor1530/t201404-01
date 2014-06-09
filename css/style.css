@@ -859,6 +859,22 @@ ul.question-block li.current a {
 	color: #ffffff;
 	margin-top: -19px;
 }
+.report-table-header {
+	border-top: 3px solid #96c7ff;
+	margin-top: 10px;
+	padding-top: 10px;
+}
+.report-exam-point-tree {
+	margin-top: 0;
+	padding-top: 0;
+	border-top: none;
+}
+.sina-weibo {
+	background: url(../images/weibo.png) no-repeat;
+	display: inline-block;
+	width: 18px;
+	height: 18px;
+}
 /*endof 报告*/
 .btn-question {
 	width: 25px;

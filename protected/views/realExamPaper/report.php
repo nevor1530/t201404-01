@@ -43,13 +43,13 @@
 			<!-- 本次考试情况 -->
 			<div class="chapter">
 				<div class="font-size16 bold">本次考试情况</div>
-				<div class="point-practice-table-header">
+				<div class="point-practice-table-header report-table-header">
 					<div class="name-column">专项名称</div>
 				    <div class="rate-column">答题正确率</div>
 				    <div class="done-questions-column">作答数量</div>
 				    <div class="done-questions-column">涉及题目</div>
 				</div>
-				<div class="exam-point-tree point-practice">
+				<div class="exam-point-tree point-practice report-exam-point-tree">
 				<?php 
 				function genExamPointHtml($examBankId, $subjectId, $examPoint) {
 					$totalQuestionCount = $examPoint['question_count'];
@@ -82,7 +82,10 @@
 				</div>
 			</div>
 			<!-- 分享 -->
-			<div class="chapter"></div>
+			<div class="chapter">
+				<span>分享报告：</span>
+				<div class="sina-weibo"></div>
+			</div>
 		</div>
 	</div>
 </div>
