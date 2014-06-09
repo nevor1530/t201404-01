@@ -26,11 +26,11 @@ class WrongQuestionModel extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('user_id, question_id', 'required'),
+			array('user_id, question_id, myanswer', 'required'),
 			array('user_id, question_id', 'numerical', 'integerOnly'=>true),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('wrong_question_id, user_id, question_id', 'safe', 'on'=>'search'),
+			array('wrong_question_id, user_id, question_id, myanswer', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -54,6 +54,7 @@ class WrongQuestionModel extends CActiveRecord
 			'wrong_question_id' => 'Wrong Question',
 			'user_id' => 'User',
 			'question_id' => 'Question',
+			'myanswer' => 'MyAnswer',
 		);
 	}
 
@@ -78,6 +79,7 @@ class WrongQuestionModel extends CActiveRecord
 		$criteria->compare('wrong_question_id',$this->wrong_question_id);
 		$criteria->compare('user_id',$this->user_id);
 		$criteria->compare('question_id',$this->question_id);
+		$criteria->compare('myanswer',$this->myanswer);
 
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,

@@ -210,10 +210,11 @@ class PractiseController extends FunctionController
 		$examPoint = ExamPointModel::model()->findByPk($exam_point_id);
 		$examPointName = $examPoint->name;
 		
-		$wrongQuestionIds = array();
+		$wrongQuestions = array();
 		$userId = Yii::app()->user->id;
-		$this->getWrongQuestionIdsByExamPoint($userId, $examPoint, $wrongQuestionIds);
+		$this->getWrongQuestionsByExamPoint($userId, $examPoint, $wrongQuestions);
 		
+		$wrongQuestionIds = array_keys($wrongQuestions);
 		$criteria = new CDbCriteria();
 		$criteria->addInCondition("question_id", $wrongQuestionIds);
 		$criteria->order = 'material_id, question_id desc';
@@ -229,6 +230,8 @@ class PractiseController extends FunctionController
 					
 				$question = $this->getQuestionDetailFromModel($questionModel, $answer, true);
 				$question['correct_answer'] = $questionModel->answer;
+				$question['my_answer'] = $wrongQuestions[$question['questionId']];
+				$question['is_correct'] = ($questionModel->answer == $question['my_answer']);
 				$question['is_favorite'] = $this->isFavoriteQuestion($userId, $questionModel->question_id);
 				$questions[] = $question;
 			}
@@ -414,20 +417,24 @@ class PractiseController extends FunctionController
 		));
 	}
 	
-	private function getWrongQuestionIdsByExamPoint($userId, $examPoint, &$result) {
-		$questionIds = $this->getWrongQuestionIdsByExamPointId($userId, $examPoint->exam_point_id);
-		$result = array_merge($result, $questionIds);
+	private function getWrongQuestionsByExamPoint($userId, $examPoint, &$result) {
+		$questions = $this->getWrongQuestionsByExamPointId($userId, $examPoint->exam_point_id);
+		foreach ($questions as $questionId => $myanswer) {
+			if (!array_key_exists($questionId, $result)) {
+				$result[$questionId] = $myanswer;
+			}
+		}
 		
 		$subExamPoints = $examPoint->subExamPoints;
 		if (!empty($subExamPoints)) {
 			foreach ($subExamPoints as $subExamPoint) {
-				$this->getWrongQuestionIdsByExamPoint($userId, $subExamPoint, $result);
+				$this->getWrongQuestionsByExamPoint($userId, $subExamPoint, $result);
 			}
 		}
 	}
 	
-	private function getWrongQuestionIdsByExamPointId($userId, $examPointId) {
-		$sql = "SELECT DISTINCT(wrong_question.question_id) as question_id FROM wrong_question,question,question_exam_point WHERE " .
+	private function getWrongQuestionsByExamPointId($userId, $examPointId) {
+		$sql = "SELECT wrong_question.question_id as question_id,myanswer FROM wrong_question,question,question_exam_point WHERE " .
 					"wrong_question.user_id=$userId AND " . 
 					"wrong_question.question_id=question_exam_point.question_id AND " .
 					"wrong_question.question_id=question.question_id AND " . 
@@ -437,14 +444,14 @@ class PractiseController extends FunctionController
 		$command = $db->createCommand($sql);
 		$result = $command->queryAll(); 
 		
-		$questionIds = array();
+		$questions = array();
 		if ($result != null && is_array($result) && count($result) > 0) {
 			foreach ($result as $record) {
-				$questionIds[] = $record['question_id'];
+				$questions[$record['question_id']] = $record['myanswer'];
 			}
 		}
 		
-		return $questionIds;
+		return $questions;
 	}
 	
 	private function getFavoriteQuestionIdsByExamPoint($userId, $examPoint, &$result) {

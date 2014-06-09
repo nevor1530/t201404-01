@@ -50,21 +50,24 @@
 					$correctAnswer = implode(',', $correctAnswer);
 					?>
 					<span>本题正确答案是：<?php echo $correctAnswer; ?></span>
-					<?php if ($question['my_answer'] != null) { 
-						$myanswer = explode('|', $question['my_answer']);
-						for ($index = 0; $index < count($myanswer); $index++) {
-							$myanswer[$index] = chr($myanswer[$index] + 65);
-						}
-						$myanswer = implode(',', $myanswer);
-					?>
-					<span style="margin-left:10px;">你的答案是：<?php echo $myanswer; ?></span>
-					<?php } else { ?>
-					<span style="margin-left:10px;">你没有回答这道题 </span>
+					<?php 
+					if (isset($question['my_answer'])) {
+						if ($question['my_answer'] != null) { 
+							$myanswer = explode('|', $question['my_answer']);
+							for ($index = 0; $index < count($myanswer); $index++) {
+								$myanswer[$index] = chr($myanswer[$index] + 65);
+							}
+							$myanswer = implode(',', $myanswer);
+						?>
+						<span style="margin-left:10px;">你的答案是：<?php echo $myanswer; ?></span>
+						<?php } else { ?>
+						<span style="margin-left:10px;">你没有回答这道题 </span>
+						<?php } ?>
+						<span style="margin-left:10px;">
+							<?php if ($question['my_answer'] != null && $question['is_correct']) { echo '回答正确'; } ?>
+							<?php if ($question['my_answer'] != null && !$question['is_correct']) { echo '回答错误'; } ?>
+						</span>
 					<?php } ?>
-					<span style="margin-left:10px;">
-						<?php if ($question['my_answer'] != null && $question['is_correct']) { echo '回答正确'; } ?>
-						<?php if ($question['my_answer'] != null && !$question['is_correct']) { echo '回答错误'; } ?>
-					</span>
 					<a class="favorite hover-origen <?php echo ($question['is_favorite'] ? "favorite-chosen" : ""); ?>" href="<?php echo Yii::app()->createUrl("/practise/ajaxAddQustionToFavorites", array("question_id"=>$question['questionId']));?>">收藏本题</a>
 				</div>
 				<div class="analysis">

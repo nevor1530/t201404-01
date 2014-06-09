@@ -120,8 +120,9 @@ class FunctionController extends Controller
 	}
 	
 	protected function recordWrongQuestions($userId, $examPaperInstanceId) {
-		$sql = "SELECT DISTINCT(question_instance.question_id) as question_id FROM question_instance,question WHERE " .
+		$sql = "SELECT question_instance.question_id as question_id,myanswer FROM question_instance,question WHERE " .
 					"question_instance.user_id=$userId AND " . 
+					"question_instance.exam_paper_instance_id=$examPaperInstanceId AND " . 
 					"question_instance.question_id=question.question_id AND " . 
 					"question_instance.myanswer IS NOT NULL AND " . 
 					"question_instance.myanswer!=question.answer";
@@ -133,15 +134,24 @@ class FunctionController extends Controller
 		if ($result != null && is_array($result) && count($result) > 0) {
 			foreach ($result as $record) {
 				$questionId = $record['question_id'];
+				$myanswer = $record['myanswer'];
+				
 				$criteria = new CDbCriteria();
 				$criteria->addCondition('question_id = ' . $questionId);
 				$criteria->addCondition('user_id = ' . $userId);
-				$wrongQuestionModel = WrongQuestionModel::model()->findAll($criteria);
-				if ($wrongQuestionModel == null) {
+				$wrongQuestionModels = WrongQuestionModel::model()->findAll($criteria);
+				if ($wrongQuestionModels == null) {
 					$wrongQuestionModel = new WrongQuestionModel;
 					$wrongQuestionModel->user_id = $userId;
 					$wrongQuestionModel->question_id = $questionId;
+					$wrongQuestionModel->myanswer = $myanswer;
 					$wrongQuestionModel->save();
+				} else {
+					if (count($wrongQuestionModels) > 0) {
+						$wrongQuestionModel = $wrongQuestionModels[0];
+						$wrongQuestionModel->myanswer = $myanswer;
+						$wrongQuestionModel->save();
+					}
 				}
 			}
 		}
