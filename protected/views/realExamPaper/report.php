@@ -43,6 +43,43 @@
 			<!-- 本次考试情况 -->
 			<div class="chapter">
 				<div class="font-size16 bold">本次考试情况</div>
+				<div class="point-practice-table-header">
+					<div class="name-column">专项名称</div>
+				    <div class="rate-column">答题正确率</div>
+				    <div class="done-questions-column">作答数量</div>
+				    <div class="done-questions-column">涉及题目</div>
+				</div>
+				<div class="exam-point-tree point-practice">
+				<?php 
+				function genExamPointHtml($examBankId, $subjectId, $examPoint) {
+					$totalQuestionCount = $examPoint['question_count'];
+					$finishedQuestionCount = $examPoint['finished_question_count'];
+					$correctQuestionCount = $examPoint['correct_question_count'];
+					$correctQuestionRate = round($finishedQuestionCount == 0 ? 0 : $correctQuestionCount / $finishedQuestionCount, 3);
+			
+					$html = '<div class="level">';
+					$html .= '	<div class="item">';
+					$html .= '		<div class="title name-column">' . $examPoint['name'] . '</div>';
+					$html .= '		<div class="rate-column">' . $correctQuestionRate * 100 . '%</div>';
+					$html .= '		<div class="done-questions-column">' . $finishedQuestionCount . '道</div>';
+					$html .= '		<div class="done-questions-column">' . $totalQuestionCount . '道</div>';
+					$html .= '	</div>';
+					
+					$subExamPoints = $examPoint['sub_exam_points'];
+					foreach ($subExamPoints as $subExamPoint) {
+						$html .= '	<div class="sublevel">';
+						$html .= genExamPointHtml($examBankId, $subjectId, $subExamPoint);
+						$html .= '	</div>';
+					}
+					$html .= '</div>';
+					return $html;
+				}
+				
+				foreach ($examPoints as $examPoint) {
+					echo genExamPointHtml($this->examBankId, $this->curSubjectId, $examPoint);
+				}
+				?>
+				</div>
 			</div>
 			<!-- 分享 -->
 			<div class="chapter"></div>

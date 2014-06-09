@@ -104,7 +104,6 @@
 							<div class="analysis-item-content"><?php echo $question['analysis'] != null ? $question['analysis'] : '暂无解析'; ?></div>
 						</div>
 					</div>
-					
 				</div>
 				<?php } ?>
 			</div>
