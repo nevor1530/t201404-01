@@ -2,6 +2,7 @@
 
 class UpdatePasswordForm extends CFormModel
 {
+	public $username;
 	public $password;
 	public $confirm;
 
@@ -16,7 +17,7 @@ class UpdatePasswordForm extends CFormModel
 	{
 		return array(
 			// username and password are required
-			array('password, confirm', 'required'),
+			array('username, password, confirm', 'required'),
 			
 			// password needs to be authenticated
 			array('confirm', 'authenticate'),
@@ -29,7 +30,8 @@ class UpdatePasswordForm extends CFormModel
 	public function attributeLabels()
 	{
 		return array(
-			'password' => '新密码',
+			'username' => '账号',
+			'password' => '密码',
 			'confirm' => '确认密码'
 		);
 	}

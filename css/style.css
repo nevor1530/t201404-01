@@ -532,6 +532,68 @@ ul.subfunction-list li.current a {
 	font-size: 12px;
 }
 /* end of 注册页面 */
+/* 更新密码页面 */
+.updatePassword {
+	padding-top: 70px;
+	margin: 0 auto;
+}
+.updatePassword .title-group {
+	margin: 0 auto;
+	display: table;
+	width: auto;
+}
+.updatePassword .user-icon {
+	background: url("../images/register.png") no-repeat;
+	width: 24px;
+	height: 24px;
+	display: inline-block;
+	vertical-align: sub;
+	margin-right: 5px;
+}
+.updatePassword .title {
+	font-weight: 600;
+	font-family: "Microsoft YaHei" !important;
+	font-size: 24px;
+	letter-spacing: 1px;
+}
+.updatePassword .update-password-form {
+	margin-top: 40px;
+}
+.updatePassword .control-group {
+	display: table;
+	margin-left: auto;
+	margin-right: auto;
+	margin-bottom: 10px;
+}
+.updatePassword .update-password-form .control-label {
+	width: 70px;
+	margin-right: 10px
+}
+.updatePassword .update-password-form .controls .username-input,
+.updatePassword .update-password-form .controls .password-input,
+.updatePassword .update-password-form .controls .confirm-input {
+	width: 260px;
+	height: 30px;
+}
+.updatePassword .confirm-btn {
+	padding: 10px 37px;
+    box-shadow: 0 -4px 0 #2A6496 inset;
+    border-radius: 6px;
+    background-color: #4391e3;
+    color: #FFFFFF;
+    font-size: 16px;
+    letter-spacing: 2px;
+    border-width: 0;
+    margin-left: 80px;
+    margin-top: 20px;
+    width: 265px;
+    height: 50px;
+}
+.updatePassword .confirm-btn:hover {
+	background-color: #5cb6f0;
+	box-shadow: 0 -4px 0 #3195dd inset;
+}
+/* end of 更新密码页面*/
 /* 题库页面 */
 .exam-bank-page .item {
 	margin: 30px 18px 0;
