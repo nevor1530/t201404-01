@@ -104,6 +104,8 @@ class RealExamPaperController extends FunctionController
 		
 		$examPaperInstanceModel = new ExamPaperInstanceModel;
 		$examPaperInstanceModel->instance_type = ExamPaperInstanceModel::REAL_EXAM_PAPER_TYPE;
+		$examPaperInstanceModel->exam_bank_id = $exam_bank_id;
+		$examPaperInstanceModel->subject_id = $subject_id;
 		$examPaperInstanceModel->exam_paper_id = $exam_paper_id;
 		$examPaperInstanceModel->exam_point_id = 0;
 		$examPaperInstanceModel->user_id = $userId = Yii::app()->user->id;

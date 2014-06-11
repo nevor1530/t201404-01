@@ -79,6 +79,8 @@ class ExamPointController extends FunctionController
 		if ($questionRecords != null) {
 			$examPaperInstanceModel = new ExamPaperInstanceModel;
 			$examPaperInstanceModel->instance_type = ExamPaperInstanceModel::NORMAL_PRACTISE_TYPE;
+			$examPaperInstanceModel->exam_bank_id = $exam_bank_id;
+			$examPaperInstanceModel->subject_id = $subject_id;
 			$examPaperInstanceModel->exam_paper_id = 0;
 			$examPaperInstanceModel->exam_point_id = $exam_point_id;
 			$examPaperInstanceModel->user_id = Yii::app()->user->id;

@@ -86,7 +86,18 @@
 			<!-- 分享 -->
 			<div class="chapter">
 				<span>分享报告：</span>
-				<div class="sina-weibo"></div>
+				<?php 
+				$examBankName = "【". $this->examBankName . "】";
+				$curSubjectName = "";
+				foreach ($this->subjects as $subject) { 
+					if ($subject['is_current']) {
+						$curSubjectName = "【". $subject['name'] . "】";
+					}
+				}
+				
+				$title = "我在学海题库" . $examBankName . "进行了一次" . $curSubjectName . "练习：《" . $examPaperName . "》，做题 " . $totalQuestionCount . "道，答对" . $correctQuestionCount ."道（分享自 @学海题库）"; 
+				?>
+				<a class="sina-weibo" target="_blank" href="http://service.weibo.com/share/share.php?appkey=143970315&title=<?php echo $title;?>&url=http://xuehaitiku.com"></a>
 			</div>
 		</div>
 	</div>

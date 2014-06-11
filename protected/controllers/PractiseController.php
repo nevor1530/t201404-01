@@ -33,22 +33,27 @@ class PractiseController extends FunctionController
 		);
 	}
 	
-	public function actionHistory($exam_bank_id, $subject_id = 0) {
+	public function actionHistory($exam_bank_id, $subject_id) {
 		$this->initial($exam_bank_id, $subject_id, Constants::$PRACTISE_TAB);
 		
-		$countSql = "SELECT count(*) FROM exam_paper_instance WHERE user_id=" .  Yii::app()->user->id;
+		$countSql = "SELECT count(*) FROM exam_paper_instance WHERE user_id=" .  Yii::app()->user->id .
+					" AND exam_bank_id=" . $exam_bank_id . " AND subject_id=" . $subject_id;
 		$numberOfRecords = Yii::app()->db->CreateCommand($countSql)->queryScalar();
         $pages=new CPagination(intval($numberOfRecords));
         $pages->pageSize = 5;
         
 		$sql = "SELECT exam_paper_instance_id,instance_type,exam_paper_id,exam_point_id as name,start_time,is_completed FROM exam_paper_instance WHERE " .
 					"user_id=" .  Yii::app()->user->id . " AND " .
+					"exam_bank_id=" . $exam_bank_id . " AND " . 
+					"subject_id=" . $subject_id . " AND " . 
 					"exam_paper_id=0" .
 				" UNION " .
 				"SELECT exam_paper_instance_id,instance_type,exam_paper_instance.exam_paper_id as exam_paper_id,name,start_time,is_completed FROM exam_paper_instance,exam_paper WHERE " . 
 					"user_id=" .  Yii::app()->user->id . " AND " .
+					"exam_paper_instance.exam_bank_id=" . $exam_bank_id . " AND " . 
+					"exam_paper_instance.subject_id=" . $subject_id . " AND " .
 					"exam_paper_instance.exam_paper_id=exam_paper.exam_paper_id AND ".
-					"subject_id=" . $this->curSubjectId .
+					"exam_paper.subject_id=" . $subject_id .
 				" ORDER BY start_time DESC";
 		
 		$offset = $pages->currentPage * $pages->pageSize;
@@ -162,6 +167,8 @@ class PractiseController extends FunctionController
 		if ($questionModels != null) {
 			$examPaperInstanceModel = new ExamPaperInstanceModel;
 			$examPaperInstanceModel->instance_type = ExamPaperInstanceModel::WRONG_QUESTION_PRACTISE_TYPE;
+			$examPaperInstanceModel->exam_bank_id = $exam_bank_id;
+			$examPaperInstanceModel->subject_id = $subject_id;
 			$examPaperInstanceModel->exam_paper_id = 0;
 			$examPaperInstanceModel->exam_point_id = $exam_point_id;
 			$examPaperInstanceModel->user_id = Yii::app()->user->id;
@@ -268,6 +275,8 @@ class PractiseController extends FunctionController
 		if ($questionModels != null) {
 			$examPaperInstanceModel = new ExamPaperInstanceModel;
 			$examPaperInstanceModel->instance_type = ExamPaperInstanceModel::FAVORITE_QUESTION_PRACTISE_TYPE;
+			$examPaperInstanceModel->exam_bank_id = $exam_bank_id;
+			$examPaperInstanceModel->subject_id = $subject_id;
 			$examPaperInstanceModel->exam_paper_id = 0;
 			$examPaperInstanceModel->exam_point_id = $exam_point_id;
 			$examPaperInstanceModel->user_id = Yii::app()->user->id;
