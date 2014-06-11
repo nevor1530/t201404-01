@@ -125,6 +125,7 @@ var m=<?php echo floor($remainTime/60);?>;
 var s=<?php echo $remainTime%60;?>;
 function second(){  
 	if (s == 0 && m == 0) {
+		window.location.href="<?php echo Yii::app()->createUrl("/realExamPaper/completePractise", array("exam_bank_id"=>$this->examBankId,'subject_id'=>$this->curSubjectId, "exam_paper_instance_id" => $examPaperInstanceId, "return_url" => $returnUrl));?>";
 		return;	
 	}
 	
@@ -194,4 +195,6 @@ $(function(){
 		return false;
 	});
 });
+
+gotoTop(window.screen.height);
 </script>

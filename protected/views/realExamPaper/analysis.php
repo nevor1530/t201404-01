@@ -158,4 +158,6 @@ function hideQuestionBlock(questionBlockId) {
 displayQuestionBlock(<?php echo $questionBlocks[0]['id'];?>);	
 <?php } ?>
 
+gotoTop(window.screen.height);
+
 </script>

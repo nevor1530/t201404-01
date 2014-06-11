@@ -55,6 +55,9 @@ a.btn:hover {
 .red-btn:hover {
 	background-color: #f64d61;
 }
+.red-btn a:hover {
+	color: #FFFFFF;
+}
 .green-btn {
 	color: #ffffff;
 	background-color: #89c997;
@@ -711,6 +714,9 @@ ul.subfunction-list li.current a {
 	width: 155px;
 	position: absolute;
 }
+.paper-left-column .btn:first-child {
+	margin-top:0;
+}
 .paper-right-column {
 	margin-left: 160px;
 	border: 1px solid #cbe3ff;
@@ -977,3 +983,30 @@ ul.question-block li.current a {
 	border: 1px solid #e3e3e3;
 }
 /* end of 支付页面*/
+
+/*默认样式，主要是position:fixed实现屏幕绝对定位*/
+#gotoTop{
+	display:none;
+	position:fixed;
+	top:75%;
+	left:50%;
+	cursor:pointer;
+	margin-top:-50px;
+	margin-left:520px;
+	padding:9px 4px;
+	width:20px;
+	text-align:center;
+	border:1px solid #e0e0e0;
+	background:#fff;
+}
+/*用CSS表达式(expression)来实现ie6下position:fixed效果*/
+#gotoTop{
+	_position:absolute;
+	_top:expression(documentElement.scrollTop + documentElement.clientHeight * 3/4 + "px")
+}
+/*鼠标进入的反馈效果*/
+#gotoTop.hover{
+	background:#5CB542;
+	color:#fff;
+	text-decoration:none;
+}

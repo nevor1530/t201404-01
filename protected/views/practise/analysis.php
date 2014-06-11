@@ -117,4 +117,5 @@ $(function(){
 		}, "json"); 	
 	});
 });
+gotoTop(window.screen.height);
 </script> 

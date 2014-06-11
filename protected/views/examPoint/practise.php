@@ -143,4 +143,5 @@ $(function(){
 	});
 });
 
+gotoTop(window.screen.height);
 </script>  

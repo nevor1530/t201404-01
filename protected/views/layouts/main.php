@@ -12,7 +12,7 @@
 
 <body>
 	<div class="header-bg"></div>
-    <div class="container"> 
+    <div id="container" class="container"> 
     	<!-- 顶部蓝底部分-->
     	<div id="header">
     		<a class="logo"></a>
