@@ -4,6 +4,15 @@
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta property="wb:webmaster" content="5fec3f05e522824e" />
 <title>学海题库</title>
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?543039bc393601325ed74e0fb86d0d7e";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
 <script src="<?php echo Yii::app()->request->baseUrl; ?>/js/jquery-2.1.1.min.js" type="text/javascript"></script>
 <script src="<?php echo Yii::app()->request->baseUrl; ?>/js/my_practice.js" type="text/javascript"></script>
 <link href="<?php echo Yii::app()->request->baseUrl; ?>/css/style.css" rel="stylesheet" type="text/css"/>
@@ -40,9 +49,5 @@
         <div id="footer">
         </div>
     </div>	
-    <script type="text/javascript">
-	var _bdhmProtocol = (("https:" == document.location.protocol) ? " https://" : " http://");
-	document.write(unescape("%3Cscript src='" + _bdhmProtocol + "hm.baidu.com/h.js%3F489b48ede2c35cb1247a705458734155' type='text/javascript'%3E%3C/script%3E"));
-	</script>
 </body>
 </html>
