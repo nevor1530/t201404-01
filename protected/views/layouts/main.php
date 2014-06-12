@@ -9,7 +9,10 @@
 <link href="<?php echo Yii::app()->request->baseUrl; ?>/css/style.css" rel="stylesheet" type="text/css"/>
 <link href="<?php echo Yii::app()->request->baseUrl; ?>/css/common.css" rel="stylesheet" type="text/css"/>
 </head>
-
+<script type="text/javascript">
+var _bdhmProtocol = (("https:" == document.location.protocol) ? " https://" : " http://");
+document.write(unescape("%3Cscript src='" + _bdhmProtocol + "hm.baidu.com/h.js%3F489b48ede2c35cb1247a705458734155' type='text/javascript'%3E%3C/script%3E"));
+</script>
 <body>
 	<div class="header-bg"></div>
     <div id="container" class="container"> 
