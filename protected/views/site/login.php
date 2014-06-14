@@ -42,7 +42,7 @@ $this->breadcrumbs=array(
 	
 		<div class="control-group">
 			<input class="login-btn" type="submit" value="登录">
-			<input type="checkbox">
+			<input type="checkbox" name="LoginForm[rememberMe]" value="1">
 			<span class="auto-login-text">下次自动登录</span>
 		</div>
 		
