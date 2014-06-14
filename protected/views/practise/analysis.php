@@ -1,6 +1,11 @@
 <div class="do-paper">
 	<div class="paper-left-column">
-		<div class="btn green-btn"><?php echo $pageName; ?></div>
+		<?php if (isset($exam_paper_instance_id)) : ?>
+		<div class="btn red-btn">
+			<a href="<?php echo Yii::app()->createUrl("/practise/viewReport", array('exam_bank_id'=>$this->examBankId, 'subject_id'=>$this->curSubjectId, 'exam_paper_instance_id' => $exam_paper_instance_id))?>">查看报告</a>
+		</div>
+		<?php endif; ?>
+		<div class="btn green-btn">查看解析</div>
 	</div>
 	<div class="paper-right-column">
 		<div class="chapter-herder"><?php echo $analysisName; ?></div>
@@ -112,4 +117,5 @@ $(function(){
 		}, "json"); 	
 	});
 });
+gotoTop(window.screen.height);
 </script> 

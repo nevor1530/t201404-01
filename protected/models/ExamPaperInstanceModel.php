@@ -34,10 +34,10 @@ class ExamPaperInstanceModel extends CActiveRecord
 		// will receive user inputs.
 		return array(
 			array('user_id, start_time, elapsed_time, is_completed', 'required'),
-			array('exam_paper_id, instance_type, exam_point_id, user_id, elapsed_time, is_completed', 'numerical', 'integerOnly'=>true),
+			array('exam_paper_id, instance_type, exam_bank_id, subject_id, exam_point_id, user_id, elapsed_time, is_completed', 'numerical', 'integerOnly'=>true),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('exam_paper_instance_id, instance_type, exam_paper_id, exam_point_id, user_id, start_time, elapsed_time, is_completed', 'safe', 'on'=>'search'),
+			array('exam_paper_instance_id, instance_type, exam_bank_id, subject_id, exam_paper_id, exam_point_id, user_id, start_time, elapsed_time, is_completed', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -89,6 +89,8 @@ class ExamPaperInstanceModel extends CActiveRecord
 
 		$criteria->compare('exam_paper_instance_id',$this->exam_paper_instance_id);
 		$criteria->compare('instance_type',$this->instance_type);
+		$criteria->compare('exam_bank_id',$this->exam_bank_id);
+		$criteria->compare('subject_id',$this->subject_id);
 		$criteria->compare('exam_paper_id',$this->exam_paper_id);
 		$criteria->compare('exam_point_id',$this->exam_point_id);
 		$criteria->compare('user_id',$this->user_id);

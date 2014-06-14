@@ -7,7 +7,7 @@ $this->pageTitle=Yii::app()->name . ' - 修改密码';
 ?>
 
 <?php $form=$this->beginWidget('CActiveForm', array(
-	'id'=>'updatePassword-form',
+	'id'=>'update-password-form',
 	'enableClientValidation'=>true,
 	'clientOptions'=>array(
 		'validateOnSubmit'=>true,
@@ -20,11 +20,11 @@ $this->pageTitle=Yii::app()->name . ' - 修改密码';
 		<span class="title">修改密码</span>
 	</div>	
 	
-	<div class="login-form form-horizontal">
+	<div class="update-password-form form-horizontal">
 		<div class="control-group">
 			<label class="control-label"><?php echo $form->labelEx($model,'username'); ?></label>
 			<div class="controls">
-				<input class="username-input" type="text" id="LoginForm_username" name="UpdatePasswordForm[username]" placeholder="请输入邮箱">
+				<label class="control-label"><?php echo 'luojunwu1988@163.com'; ?></label>
 			</div>
 		</div>
 	
