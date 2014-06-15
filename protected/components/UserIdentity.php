@@ -27,8 +27,10 @@ class UserIdentity extends CUserIdentity
 		} else {
 			$this->errorCode=self::ERROR_NONE;
 			$this->_id = $model->user_id;
-			if ($model->is_admin) {
+			if ($model->is_admin == 1) {
 				Yii::app()->session['is_admin'] = true;
+			} else {
+				Yii::app()->session['is_admin'] = false;
 			}
 		}
 		return !$this->errorCode;

@@ -546,7 +546,7 @@ ul.subfunction-list li.current a {
 	width: auto;
 }
 .updatePassword .user-icon {
-	background: url("../images/register.png") no-repeat;
+	background: url("../images/update-password.png") no-repeat;
 	width: 24px;
 	height: 24px;
 	display: inline-block;
