@@ -222,9 +222,15 @@ class PractiseController extends FunctionController
 		$this->getWrongQuestionsByExamPoint($userId, $examPoint, $wrongQuestions);
 		
 		$wrongQuestionIds = array_keys($wrongQuestions);
+		$wrongQuestionIds = array_unique($wrongQuestionIds);
+		
+		$pages=new CPagination(count($wrongQuestionIds));
+        $pages->pageSize = 5;
+        
 		$criteria = new CDbCriteria();
 		$criteria->addInCondition("question_id", $wrongQuestionIds);
 		$criteria->order = 'material_id, question_id desc';
+		$pages->applyLimit($criteria);    
 		$questionModels = QuestionModel::model()->findAll($criteria);	
 		
 		$questions = array();
@@ -248,6 +254,7 @@ class PractiseController extends FunctionController
 			'pageName' => '错题解析',
 			'analysisName' => '错题查看：【' . $examPointName . '】',
 			'questions' => $questions,
+			'pages' => $pages
 		));
 	}
 	
@@ -328,10 +335,15 @@ class PractiseController extends FunctionController
 		$favoriteQuestionIds = array();
 		$userId = Yii::app()->user->id;
 		$this->getFavoriteQuestionIdsByExamPoint($userId, $examPoint, $favoriteQuestionIds);
+		$favoriteQuestionIds = array_unique($favoriteQuestionIds);
 		
+		$pages=new CPagination(count($favoriteQuestionIds));
+        $pages->pageSize = 5;
+        
 		$criteria = new CDbCriteria();
 		$criteria->addInCondition("question_id", $favoriteQuestionIds);
 		$criteria->order = 'material_id, question_id desc';
+		$pages->applyLimit($criteria);    
 		$questionModels = QuestionModel::model()->findAll($criteria);	
 		
 		$questions = array();
@@ -353,6 +365,7 @@ class PractiseController extends FunctionController
 			'pageName' => '收藏题解析',
 			'analysisName' => '收藏题查看：【' . $examPointName . '】',
 			'questions' => $questions,
+			'pages' => $pages
 		));
 	}
 	
