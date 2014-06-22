@@ -96,6 +96,23 @@
 			</div>
 			<?php } ?>
 		</div>
+		
+		<?php if (isset($pages) && $pages != null): ?>
+		<!-- pagination -->
+		<div id="pager" style="padding-top:30px;padding-bottom:40px; float:right">    
+		<?php
+		$this->widget('CLinkPager',array(    
+			'header'=>'',    
+			'firstPageLabel' => '首页',    
+			'lastPageLabel' => '末页',    
+			'prevPageLabel' => '上一页',    
+			'nextPageLabel' => '下一页',    
+			'pages' => $pages,    
+			'maxButtonCount'=>6   
+		));?>    
+		</div> 
+		<?php endif; ?>
+		
 	</div>
 </div>
 

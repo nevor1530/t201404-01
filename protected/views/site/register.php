@@ -25,7 +25,7 @@ $this->pageTitle=Yii::app()->name . ' - 注册';
 		<div class="control-group">
 			<?php echo $form->labelEx($model,'username', array('class'=>'control-label')); ?>
 			<div class="controls">
-				<input class="username-input" type="text" id="RegisterForm_username" name="RegisterForm[username]" placeholder="请输入邮箱">
+				<input class="username-input" type="text" id="RegisterForm_username" name="RegisterForm[username]" value="<?php if(isset($model['username'])) echo $model['username']; ?>" placeholder="请输入邮箱">
 			</div>
 		</div>
 	
@@ -43,9 +43,31 @@ $this->pageTitle=Yii::app()->name . ' - 注册';
 			</div>
 		</div>
 	
+		<?php if ($model->hasErrors('username') || $model->hasErrors('password') || $model->hasErrors('confirm')): ?>
+		<div class="control-group">
+			<div class="controls">
+				<div class="error">
+				<?php
+				$hasError = false;
+				foreach($model->getErrors() as $errors) {
+					foreach($errors as $error) {
+						if($error!='') {
+							$hasError = true;
+							echo $error;
+							break;
+						}
+					}
+					if ($hasError) break;
+				}
+				?>
+				</div> 
+			</div>
+		</div>
+		<?php endif; ?>
+		
 		<div class="control-group">
 			<input class="register-btn" type="submit" value="注册">
-			<input type="checkbox">
+			<input type="checkbox" checked>
 			<span class="policy-text">已阅读并同意使用条款和隐私策略</span>
 		</div>
 	

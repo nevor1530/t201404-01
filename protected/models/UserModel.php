@@ -35,11 +35,11 @@ class UserModel extends ActiveRecord
 		// will receive user inputs.
 		return array(
 			array('username, password', 'required'),
-			array('is_admin', 'numerical', 'integerOnly'=>true),
 			array('username', 'length', 'max'=>30),
 			array('username', 'unique'),
 			array('password', 'length', 'max'=>32),
 			array('creation_time', 'safe'),
+			array('is_admin', 'numerical', 'integerOnly'=>true),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
 			array('user_id, username, password, creation_time, is_admin', 'safe', 'on'=>'search'),

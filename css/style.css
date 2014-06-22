@@ -80,6 +80,36 @@ a.btn:hover {
 	background-color: #5cb6f0;
 	box-shadow: 0 -4px 0 #3195dd inset;
 }
+.alert-info {
+    background-color: #D9EDF7;
+    border-color: #BCE8F1;
+    border-radius: 4px;
+    color: #3A87AD;
+    padding-bottom: 8px;
+    padding-left: 14px;
+    padding-right: 35px;
+    padding-top: 8px;
+    text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
+}
+.alert .close {
+    line-height: 18px;
+    position: relative;
+    right: -21px;
+    top: -2px;
+}
+button.close {
+	background-color: rgba(0, 0, 0, 0);
+	cursor: pointer;
+    padding: 0;
+}
+.close {
+    color: #000000;
+    float: right;
+    font-size: 20px;
+    font-weight: bold;
+    opacity: 0.2;
+    text-shadow: 0 1px 0 #FFFFFF;
+}
 .logo {
 	background-image: url("../images/logo.png");
 	width: 212px;
@@ -546,7 +576,7 @@ ul.subfunction-list li.current a {
 	width: auto;
 }
 .updatePassword .user-icon {
-	background: url("../images/register.png") no-repeat;
+	background: url("../images/update-password.png") no-repeat;
 	width: 24px;
 	height: 24px;
 	display: inline-block;
