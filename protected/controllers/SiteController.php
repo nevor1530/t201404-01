@@ -3,6 +3,35 @@
 class SiteController extends Controller
 {
 	/**
+	 * @return array action filters
+	 */
+	public function filters()
+	{
+		return array(
+			'accessControl', // perform access control for CRUD operations
+		);
+	}
+	
+	/**
+	 * Specifies the access control rules.
+	 * This method is used by the 'accessControl' filter.
+	 * @return array access control rules
+	 */
+	public function accessRules()
+	{
+		return array(
+			array('allow', // allow authenticated user to perform the following actions
+				'actions'=>array('index', 'updatePassword', 'logout'),
+				'users'=>array('@'),
+			),
+			array('allow',  
+				'actions'=>array('login', 'error', 'register'),
+				'users'=>array('*'),
+			),
+		);
+	}
+	
+	/**
 	 * Declares class-based actions.
 	 */
 	public function actions()
@@ -102,9 +131,10 @@ class SiteController extends Controller
 		$this->render('register',array('model'=>$model));
 	}
 	
-	public function actionUpdatePassword() {
+	public function actionUpdatePassword($result = '') {
 		$model=new UpdatePasswordForm;
-
+		$model->username = Yii::app()->user->name;
+		
 		// if it is ajax validation request
 		if(isset($_POST['ajax']) && $_POST['ajax']==='update-password-form')
 		{
@@ -117,12 +147,20 @@ class SiteController extends Controller
 		{
 			$model->attributes=$_POST['UpdatePasswordForm'];
 			// validate user input and redirect to the previous page if valid
-			if($model->validate())
-				$this->redirect('updatePassword');
+			if($model->validate()) {
+				if ($model->updatePassword()) {
+					$this->redirect(array('updatePassword', 'result'=> 'success'));
+				} else {
+					$this->redirect(array('updatePassword', 'result'=> 'fail'));
+				}
+			} else {
+				$result = '';
+			}
 		}
+		
 		// display the login form
 		$this->layout = 'main';
-		$this->render('update_password',array('model'=>$model));
+		$this->render('update_password',array('model'=>$model, 'result' => $result));
 	}
 
 	/**

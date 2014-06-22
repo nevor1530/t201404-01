@@ -19,6 +19,9 @@ class UpdatePasswordForm extends CFormModel
 			// username and password are required
 			array('username, password, confirm', 'required'),
 			
+			array('password', 'length', 'min' => 6),
+			array('confirm', 'length', 'min' => 6),
+			
 			// password needs to be authenticated
 			array('confirm', 'authenticate'),
 		);
@@ -31,8 +34,8 @@ class UpdatePasswordForm extends CFormModel
 	{
 		return array(
 			'username' => '账号',
-			'password' => '密码',
-			'confirm' => '确认密码'
+			'password' => '新密码',
+			'confirm' => '确认新密码'
 		);
 	}
 
@@ -52,6 +55,12 @@ class UpdatePasswordForm extends CFormModel
 
 	public function updatePassword()
 	{
+		$userId = Yii::app()->user->id;
+		$userModel = UserModel::model()->findByPk($userId);
+		$userModel->password = md5($this->password);
+		if ($userModel->save()) {
+			return true;
+		}
 		return false;
 	}
 }
