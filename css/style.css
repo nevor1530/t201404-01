@@ -1040,3 +1040,64 @@ ul.question-block li.current a {
 	color:#fff;
 	text-decoration:none;
 }
+.dialog-backdrop {
+	opacity: 0.3;
+	filter: alpha(opacity=30);
+	background: black;
+	height: 100%;
+	left: 0;
+	margin: 0;
+	padding: 0;
+	position: fixed;
+	top: 0;
+	width: 100%;
+	z-index: 999;
+	background-color: #000000;
+}
+.dialog-wrap {
+	position: absolute;
+	z-index: 1000;
+	float: left;
+}
+.dialog-wrap .dialog {
+	-webkit-background-clip: padding-box;
+	-moz-background-clip: padding-box;
+	background-clip: padding-box;
+	background-color: #ffffff;
+	border: 6px solid rgba(0, 0, 0, 0.3);
+	outline: none;
+	position: relative;
+	height: auto;
+	overflow: hidden;
+	float: left;
+}
+.dialog-wrap .dialog .dialog-hd {
+	padding: 9px 15px;
+	border-bottom: 1px solid #eee;
+}
+button.close {
+	padding: 0;
+	cursor: pointer;
+	background: transparent;
+	border: 0;
+	-webkit-appearance: none;
+	float: right;
+	font-size: 20px;
+	font-weight: bold;
+	line-height: 20px;
+	color: #000000;
+	text-shadow: 0 1px 0 #ffffff;
+	opacity: 0.2;
+	filter: alpha(opacity=20);
+}
+.dialog-wrap .dialog .dialog-bd {
+	padding: 15px;
+}
+.download-confirm-wrap {
+	min-width: 400px;
+}
+.download-confirm-wrap .shenlun-text {
+	font-size: 18px;
+	line-height: 30px;
+	height: 50px;
+}

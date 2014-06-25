@@ -57,3 +57,86 @@ $(function(){
 	        window.event.cancelBubble=true
 	}
 });
+
+/*
+ * demo:
+ *		var options = {
+ *			title: '',
+ *			content: '',
+ *			confirmBtnLabel: '确定',
+ *			cancelBtnLabel: '取消',
+ *			confirmCallback: function(){}
+ *		};
+ *		$.myplugin.show(options);
+ *
+ */
+$(function(){
+	var rawhtml = '<div class="dialog-backdrop" style="z-index: 999;"></div>\
+				<div class="dialog-wrap need-payment-dialog-wrap" style="z-index: 1000; visibility: visible; top: 261px; left: 408px;">\
+					<div class="dialog">\
+					    <div class="dialog-hd">\
+					        <span class="title bold">申论练习</span>\
+					        <button class="close">×</button>\
+					    </div>\
+					    <div class="dialog-bd">\
+					    	<div class="download-confirm-wrap">\
+								<div class="download-confirm">\
+								    <div class="shenlun-text">\
+								    	你的批改次数不足，先去练习?\
+								   	</div>\
+								    <div class="text-right">\
+								        <span class="b-btn btn-cancel">\
+											{cancelBtnLabel}\
+								        </span>\
+								        <span class="b-btn b-btn-primary btn-confirm">\
+								        	{confirmBtnLabel}\
+								        </span>\
+								    </div>\
+								</div>\
+							</div>\
+						</div>\
+					</div>\
+				</div>';
+	var $dom;
+	function close(){
+		if ($dom != null){
+			$dom.remove();
+			$dom = null;
+		}
+	}
+	
+	var defaultOptions = {
+		title: '',
+		content: '',
+		confirmBtnLabel: '确定',
+		cancelBtnLabel: '取消',
+		confirmCallback: null
+	};
+	
+	jQuery.mydialog = {
+		show: function(options){
+			if ($dom != null){
+				return;
+			}
+			options = $.extend(defaultOptions, options); 
+			var html = rawhtml.replace("{cancelBtnLabel}", options.cancelBtnLabel);
+			html = html.replace("{confirmBtnLabel}", options.confirmBtnLabel);
+			$dom = $(html);
+			$('body').append($dom);
+			$('.dialog-wrap .close').on('click', function(){
+				close();
+			});
+			$('.dialog-wrap .btn-confirm').on('click', function(){
+				if (typeof(options.confirmCallback) == 'function'){
+					options.confirmCallback();
+				}
+			});
+			$('.dialog-wrap .btn-cancel').on('click', function(){
+				close();
+			});
+		},
+		dismiss: function(){
+			close();
+		}
+	};
+});
