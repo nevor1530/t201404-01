@@ -67,7 +67,7 @@ $(function(){
  *			cancelBtnLabel: '取消',
  *			confirmCallback: function(){}
  *		};
- *		$.myplugin.show(options);
+ *		$jQuery.mydialog.show(options);
  *
  */
 $(function(){
@@ -75,14 +75,14 @@ $(function(){
 				<div class="dialog-wrap need-payment-dialog-wrap" style="z-index: 1000; visibility: visible; top: 261px; left: 408px;">\
 					<div class="dialog">\
 					    <div class="dialog-hd">\
-					        <span class="title bold">申论练习</span>\
+					        <span class="title bold">{title}</span>\
 					        <button class="close">×</button>\
 					    </div>\
 					    <div class="dialog-bd">\
 					    	<div class="download-confirm-wrap">\
 								<div class="download-confirm">\
 								    <div class="shenlun-text">\
-								    	你的批改次数不足，先去练习?\
+								    	{content}\
 								   	</div>\
 								    <div class="text-right">\
 								        <span class="b-btn btn-cancel">\
@@ -119,7 +119,9 @@ $(function(){
 				return;
 			}
 			options = $.extend(defaultOptions, options); 
-			var html = rawhtml.replace("{cancelBtnLabel}", options.cancelBtnLabel);
+			var html = rawhtml.replace("{title}", options.title);
+			html = html.replace("{content}", options.content);
+			html = html.replace("{cancelBtnLabel}", options.cancelBtnLabel);
 			html = html.replace("{confirmBtnLabel}", options.confirmBtnLabel);
 			$dom = $(html);
 			$('body').append($dom);

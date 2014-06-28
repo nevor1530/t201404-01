@@ -148,11 +148,12 @@ class PractiseController extends FunctionController
 		$examPoint = ExamPointModel::model()->findByPk($exam_point_id);
 		$examPointName = $examPoint->name;
 		
-		$candidateWrongQuestionIds = array();
+		$wrongQuestions = array();
 		$userId = Yii::app()->user->id;
-		$this->getWrongQuestionIdsByExamPoint($userId, $examPoint, $candidateWrongQuestionIds);
+		$this->getWrongQuestionsByExamPoint($userId, $examPoint, $wrongQuestions);
+		$candidateWrongQuestionIds = array_keys($wrongQuestions);
 		$candidateWrongQuestionIds = array_unique($candidateWrongQuestionIds);
-
+		
 		$selectedWrongQuestionIds = array();
 		if (count($candidateWrongQuestionIds) > 0) {
 			$selectedQuestionIds = $this->randArray($candidateWrongQuestionIds, 15);
@@ -199,6 +200,7 @@ class PractiseController extends FunctionController
 			$this->render('//examPoint/practise', array(
 				'returnUrl' => $return_url,
 				'practiseName' => '错题训练：【' . $examPointName . '】',
+				'unansweredQuestionsCount' => count($questions),
 				'examPaperInstanceId' => $examPaperInstanceModel->exam_paper_instance_id,
 				'elapsedTime' => $examPaperInstanceModel->elapsed_time,
 				'questions' => $questions,
@@ -316,6 +318,7 @@ class PractiseController extends FunctionController
 				'practiseName' => '收藏题训练：【' . $examPointName . '】',
 				'examPaperInstanceId' => $examPaperInstanceModel->exam_paper_instance_id,
 				'elapsedTime' => $examPaperInstanceModel->elapsed_time,
+				'unansweredQuestionsCount' => count($questions),
 				'questions' => $questions,
 			));
 		} else {

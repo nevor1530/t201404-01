@@ -2,7 +2,7 @@
 	<div class="paper-left-column">
 		<div id="clock" class="clock"></div>
 		<div class="btn red-btn">
-			<a href="<?php echo Yii::app()->createUrl("/realExamPaper/completePractise", array("exam_bank_id"=>$this->examBankId,'subject_id'=>$this->curSubjectId, "exam_paper_instance_id" => $examPaperInstanceId, "return_url" => $returnUrl));?>">交卷</a>
+			<a class="submit-paper" href="<?php echo Yii::app()->createUrl("/realExamPaper/completePractise", array("exam_bank_id"=>$this->examBankId,'subject_id'=>$this->curSubjectId, "exam_paper_instance_id" => $examPaperInstanceId, "return_url" => $returnUrl));?>">交卷</a>
 		</div>
 		<div class="btn green-btn">
 			<a href="<?php echo ($returnUrl != null? urldecode($returnUrl) : Yii::app()->createUrl("/realExamPaper/list", array("exam_bank_id"=>$this->examBankId,'subject_id'=>$this->curSubjectId, 'is_recommendation' => true)));?>">下次再做</a>
@@ -162,7 +162,28 @@ function submitAnswer(questionId) {
 	$("#answerForm").submit();
 }
 
+var unansweredQuestionsCount = <?php echo isset($unansweredQuestionsCount)? $unansweredQuestionsCount:0;?>;
 $(function(){
+	$(".submit-paper").on('click', function(e) {
+		e.preventDefault();
+		$this = $(this);
+		var href = $this.attr("href");
+		var content = '确定要交卷吗？';
+		if (unansweredQuestionsCount > 0) {
+			content = '还剩' + unansweredQuestionsCount + '道题未答完，' + content;
+		}
+		var options = {
+ 			title: '<?php echo $practiseName; ?>',
+ 			content: content,
+ 			confirmBtnLabel: '确定',
+ 			cancelBtnLabel: '取消',
+ 			confirmCallback: function(){
+ 				location.href=href;
+ 			}
+ 		};
+ 		jQuery.mydialog.show(options);
+	});
+	
 	$(".favorite").on('click', function(e){
 		e.preventDefault();
 		$this = $(this);
@@ -188,6 +209,8 @@ $(function(){
 			success: function(data) {
 				if (data.status === 1) {
 					alert(data.errMsg);
+				} else {
+					unansweredQuestionsCount--;
 				}
 			}
 		};

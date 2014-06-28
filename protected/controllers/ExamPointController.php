@@ -115,6 +115,7 @@ class ExamPointController extends FunctionController
 				'returnUrl' => $return_url,
 				'practiseName' => '专项训练：【' . $examPointName . '】',
 				'examPaperInstanceId' => $examPaperInstanceModel->exam_paper_instance_id,
+				'unansweredQuestionsCount' => count($questions),
 				'elapsedTime' => $examPaperInstanceModel->elapsed_time,
 				'questions' => $questions,
 			));
@@ -140,6 +141,7 @@ class ExamPointController extends FunctionController
 				$examPointName = $examPoint->name;
 			}
 			
+			$unansweredQuestionsCount = 0;
 			$criteria = new CDbCriteria();
 			$criteria->addCondition('user_id = ' . $userId);  
 			$criteria->addCondition('exam_paper_instance_id = ' . $exam_paper_instance_id);  
@@ -152,6 +154,8 @@ class ExamPointController extends FunctionController
 					$myAnswer = array();
 					if ($questionInstanceModel->myanswer != null) {
 						$myAnswer = explode("|", $questionInstanceModel->myanswer);
+					} else {
+						$unansweredQuestionsCount++;
 					}
 					
 					$questionModel = QuestionModel::model()->findByPk($questionInstanceModel->question_id);	
@@ -171,6 +175,7 @@ class ExamPointController extends FunctionController
 					'examBankId' => $exam_bank_id,
 					'subjectId' => $subject_id,
 					'returnUrl' => $return_url,
+					'unansweredQuestionsCount' => $unansweredQuestionsCount,
 					'practiseName' => '专项训练：【' . $examPointName . '】',
 					'examPaperInstanceId' => $exam_paper_instance_id,
 					'elapsedTime' => $examPaperInstanceModel->elapsed_time,
