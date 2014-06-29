@@ -119,17 +119,24 @@ class RealExamPaperController extends FunctionController
 			$criteria->order = 'sequence asc';
 			$questionBlockModels = QuestionBlockModel::model()->findAll($criteria);	
 			
+			$unansweredQuestionsCount = 0;
 			$questionBlocks = array();
 			if ($questionBlockModels != null) {
 				for ($i = 0; $i < count($questionBlockModels) ;$i++) {
 					$questionBlockModel = $questionBlockModels[$i];
 					$question_block_id = $questionBlockModel->question_block_id;
+					$questions = $this->getQuestions($exam_paper_id, $question_block_id);
+					foreach ($questions as $question) {
+						if ($question['isAnswered'] == false) {
+							$unansweredQuestionsCount++;
+						}
+					}
 					
 					$questionBlocks[] = array(
 						'id' => $questionBlockModel->question_block_id,
 						'name' => $questionBlockModel->name,
 						'description' => $questionBlockModel->description,
-						'questions' => $this->getQuestions($exam_paper_id, $question_block_id),
+						'questions' => $questions,
 					);
 				}	
 			}
@@ -139,6 +146,7 @@ class RealExamPaperController extends FunctionController
 				'examPaperInstanceId' => $examPaperInstanceModel->exam_paper_instance_id,
 				'remainTime' =>  $examPaperModel->time_length,
 				'paperName' => $examPaperModel->name,
+				'unansweredQuestionsCount' => $unansweredQuestionsCount,
 				'questionBlocks' => $questionBlocks,
 			));
 		}  else {
@@ -168,17 +176,24 @@ class RealExamPaperController extends FunctionController
 			$criteria->order = 'sequence asc';
 			$questionBlockModels = QuestionBlockModel::model()->findAll($criteria);	
 			
+			$unansweredQuestionsCount = 0;
 			$questionBlocks = array();
 			if ($questionBlockModels != null) {
 				for ($i = 0; $i < count($questionBlockModels) ;$i++) {
 					$questionBlockModel = $questionBlockModels[$i];
 					$question_block_id = $questionBlockModel->question_block_id;
+					$questions = $this->getQuestions($exam_paper_id, $question_block_id, $exam_paper_instance_id);
+					foreach ($questions as $question) {
+						if ($question['isAnswered'] == false) {
+							$unansweredQuestionsCount++;
+						}
+					}
 					
 					$questionBlocks[] = array(
 						'id' => $questionBlockModel->question_block_id,
 						'name' => $questionBlockModel->name,
 						'description' => $questionBlockModel->description,
-						'questions' => $this->getQuestions($exam_paper_id, $question_block_id, $exam_paper_instance_id),
+						'questions' => $questions
 					);
 				}	
 			}
@@ -188,6 +203,7 @@ class RealExamPaperController extends FunctionController
 				'examPaperInstanceId' => $examPaperInstanceModel->exam_paper_instance_id,
 				'remainTime' =>  $examPaperModel->time_length - $examPaperInstanceModel->elapsed_time,
 				'paperName' => $examPaperModel->name,
+				'unansweredQuestionsCount' => $unansweredQuestionsCount,
 				'questionBlocks' => $questionBlocks,
 			));
 			Yii::app()->end();

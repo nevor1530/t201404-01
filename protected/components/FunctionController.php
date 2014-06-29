@@ -66,6 +66,7 @@ class FunctionController extends Controller
 		$question['content'] = $questionModel->questionExtra->title;
 		$question['answerOptions'] = array();
 		$question['questionType'] = $questionModel->question_type;
+		$question['isAnswered'] = ($myAnswer != null && count($myAnswer) > 0);
 		
 		if ($questionModel->question_type == QuestionModel::SINGLE_CHOICE_TYPE || $questionModel->question_type == QuestionModel::MULTIPLE_CHOICE_TYPE) {
 			$questionAnswerOptions = $questionModel->questionAnswerOptions;
