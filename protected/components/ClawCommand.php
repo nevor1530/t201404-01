@@ -12,10 +12,19 @@ class ClawCommand extends CConsoleCommand
 		curl_setopt($ch, CURLOPT_MAXREDIRS, 3);
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 		
-		$cookie = file_get_contents(dirname(__FILE__).'/cookie');
+		$cookie = file_get_contents(dirname(__FILE__).'/../runtime/cookie');
 		curl_setopt($ch, CURLOPT_COOKIE, $cookie);
 		
 		$html = curl_exec($ch);
 		return $html;
+	}
+	
+	protected function check_login($html){
+		$titleDom = $html->find('title', 0);
+		if (strpos($titleDom->plaintext, '登录') !== false){
+			return false;
+		} else {
+			return true;
+		}
 	}
 }

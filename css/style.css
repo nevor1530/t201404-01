@@ -1055,9 +1055,15 @@ ul.question-block li.current a {
 	background-color: #000000;
 }
 .dialog-wrap {
-	position: absolute;
+	position: fixed;
 	z-index: 1000;
-	float: left;
+	top: 0;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	width: 450px;
+	height: 180px;
+	margin: auto;
 }
 .dialog-wrap .dialog {
 	-webkit-background-clip: padding-box;

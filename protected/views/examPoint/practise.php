@@ -167,4 +167,5 @@ $(function(){
 });
 
 gotoTop(window.screen.height);
+$(".paper-left-column").scrollFix(0);
 </script>  
