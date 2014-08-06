@@ -8,10 +8,10 @@ class ClawExamPaperCommand extends ClawCommand
 	
 	/**
 	 * @param subject_id, 本地数据库的课程ID, example value: 0
-	 * @param course 猿题库的课程, example value: 'xingce'
+	 * @param course 猿题库的课程, example value: 'cjkjsw'
 	 * @param $url 练习历史列表页, example value: "http://yuantiku.com/{course}/history"
 	 */
-	public function actionClaw($subject_id, $course, $url){
+	public function actionClaw($subject_id, $course, $url="http://yuantiku.com/{course}/history"){
 		$this->recordMaxId();
 		
 		$url = str_replace('{course}', $course, $url);
@@ -36,7 +36,7 @@ class ClawExamPaperCommand extends ClawCommand
 		$html = str_get_html($raw);
 		// check 是否有效登录
 		if (!$this->check_login($html)){
-			display('未登录');
+			$this->display('未登录');
 			exit();
 		}
 		
@@ -74,28 +74,30 @@ class ClawExamPaperCommand extends ClawCommand
 		$this->display('claw paper: '.$title);
 	
 		// TODO 保存试卷到数据库
-		$paperModel = new ExamPaperModel();
-		$paperModel->subject_id = $subject_id;
-		$paperModel->name = $title;
-		$paperModel->shortName = $title;
-		if (!$paperModel->save()){
-			$this->failed();
-		}
+//		$paperModel = new ExamPaperModel();
+//		$paperModel->subject_id = $subject_id;
+//		$paperModel->name = $title;
+//		$paperModel->shortName = $title;
+//		if (!$paperModel->save()){
+//			$this->failed();
+//		}
 		
 		// $paper_id
-		$paper_id = $paperModel->primaryKey;
+//		$paper_id = $paperModel->primaryKey;
+		$paper_id = 0;
 		
 		// 解析模块
-		$blockDoms = $html->find('div.exercise-hd ul.nav a.chapter-switch');
+		$blockDoms = $html->find('div.exercise-hd ul.nav a.exercise-link');
 		$blocks = array();
-		foreach($blockDoms as $dom){
+		foreach($blockDoms as $i=>$dom){
 			$text = $dom->plaintext;
-			// text is formed like '常识判断				[0 \35]', so it should be cut
-			$reg = '/^(?<name>\S+)(?:\s+)\[\s*\d+\s*\/\s*(?<questions>\d+)\s*\]/';
+			// text is formed like '一、常识判断[0 \35]', so it should be cut
+			$reg = '/^(?<name>\S+)(?:\s*)\[\s*\d+\s*\/\s*(?<questions>\d+)\s*\]/';
 			if (preg_match($reg, $text, $matches)){
 				$blockName = $matches['name'];
 				$questions = $matches['questions'];
-				$blockIndex = $this->dom_data($dom, 'chapter-index');
+//				$blockIndex = $this->dom_data($dom, 'chapter-index');
+				$blockIndex = $i;
 			} else {
 				throw new Exception('模块'.$text.'解析出错');
 			}
@@ -103,12 +105,11 @@ class ClawExamPaperCommand extends ClawCommand
 			// TODO save block
 			// $block_id
 			$block_id = 0;
-			echo $blockName.' '.$questions."\n";
+			$this->display($blockName.' '.$questions."\n");
 	
 			// parse block
-			$url = 'http://yuantiku.com/api/{course}/exercises/{exerciseId}/solutions/html?chapterIndex={chapterIndex}';
-			$url = str_replace(array('{course}', '{exerciseId}', '{chapterIndex}'), array($course, $exercise_id, $blockIndex), $url);
-			echo '开始解析模块'.$blockName." $url\n";
+			$url = 'http://yuantiku.com'.$dom->href;
+			$this->display('开始解析模块'.$blockName." $url\n");
 			$this->parse_block($url, $block_id, $paper_id);
 		}
 		// TODO 调试用，调通后删除
@@ -151,10 +152,10 @@ class ClawExamPaperCommand extends ClawCommand
 		$this->_max_exam_paper_id = Yii::app()->db->createCommand($sql)->queryScalar();
 		
 		$sql = 'select max(question_block_id) as maxid from question_block';
-		$this->_question_block_id = Yii::app()->db->createCommand($sql)->queryScalar();
+		$this->_max_question_block_id = Yii::app()->db->createCommand($sql)->queryScalar();
 		
 		$sql = 'select max(question_id) as maxid from question';
-		$this->_question_id = Yii::app()->db->createCommand($sql)->queryScalar();
+		$this->_max_question_id = Yii::app()->db->createCommand($sql)->queryScalar();
 	}
 	
 	/**
